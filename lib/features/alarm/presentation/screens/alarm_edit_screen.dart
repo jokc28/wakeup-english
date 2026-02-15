@@ -511,6 +511,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     final time = await showTimePicker(
       context: context,
       initialTime: form.time,
+      initialEntryMode: TimePickerEntryMode.input,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

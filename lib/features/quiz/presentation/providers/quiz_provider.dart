@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/services/mission_type_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
 import '../../../alarm/data/repositories/alarm_repository.dart';
 import '../../data/repositories/quiz_repository.dart';
@@ -81,9 +80,11 @@ class QuizSession extends _$QuizSession {
       difficulty: alarm.quizDifficulty.name,
     );
 
-    // Apply mission type conversions based on user settings
-    final missionState = ref.read(missionTypeProvider);
-    questions = applyMissionTypes(questions, missionState);
+    // Convert all questions to word scramble format
+    questions = questions.map((q) => q.copyWith(
+      type: QuizType.wordScramble,
+      options: [],
+    )).toList();
 
     state = state.copyWith(
       questions: questions,
