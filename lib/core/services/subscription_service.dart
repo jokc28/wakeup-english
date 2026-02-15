@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -9,6 +10,8 @@ import '../constants/iap_constants.dart';
 class SubscriptionService {
   static bool _initialized = false;
 
+  static bool _hasValidApiKey = false;
+
   static Future<void> initialize() async {
     if (_initialized) return;
 
@@ -16,12 +19,27 @@ class SubscriptionService {
         ? IapConstants.revenueCatApiKeyIOS
         : IapConstants.revenueCatApiKeyAndroid;
 
-    final configuration = PurchasesConfiguration(apiKey);
-    await Purchases.configure(configuration);
+    // Skip RevenueCat if using placeholder API keys
+    if (apiKey.contains('YOUR_') || apiKey.isEmpty) {
+      debugPrint('[SubscriptionService] Skipping RevenueCat (placeholder key)');
+      _hasValidApiKey = false;
+      _initialized = true;
+      return;
+    }
+
+    try {
+      final configuration = PurchasesConfiguration(apiKey);
+      await Purchases.configure(configuration);
+      _hasValidApiKey = true;
+    } catch (e) {
+      debugPrint('[SubscriptionService] Configure error: $e');
+      _hasValidApiKey = false;
+    }
     _initialized = true;
   }
 
   Future<bool> isPremium() async {
+    if (!_hasValidApiKey) return false;
     try {
       final customerInfo = await Purchases.getCustomerInfo();
       return customerInfo.entitlements.all[IapConstants.premiumEntitlementId]
@@ -74,6 +92,7 @@ class SubscriptionService {
   }
 
   Future<Offerings?> getOfferings() async {
+    if (!_hasValidApiKey) return null;
     try {
       return await Purchases.getOfferings();
     } catch (e) {
@@ -83,6 +102,7 @@ class SubscriptionService {
   }
 
   Future<bool> purchasePackage(Package package) async {
+    if (!_hasValidApiKey) return false;
     try {
       final customerInfo = await Purchases.purchasePackage(package);
       return customerInfo.entitlements.all[IapConstants.premiumEntitlementId]
@@ -95,6 +115,7 @@ class SubscriptionService {
   }
 
   Future<bool> restorePurchases() async {
+    if (!_hasValidApiKey) return false;
     try {
       final customerInfo = await Purchases.restorePurchases();
       return customerInfo.entitlements.all[IapConstants.premiumEntitlementId]
@@ -107,6 +128,7 @@ class SubscriptionService {
   }
 
   void addCustomerInfoUpdateListener(void Function(CustomerInfo) listener) {
+    if (!_hasValidApiKey) return;
     Purchases.addCustomerInfoUpdateListener(listener);
   }
 
