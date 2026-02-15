@@ -54,7 +54,7 @@ class AlarmTile extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha:0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -74,7 +74,7 @@ class AlarmTile extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                           color: isEnabled
                               ? theme.colorScheme.onSurface
-                              : theme.colorScheme.onSurface.withOpacity(0.4),
+                              : theme.colorScheme.onSurface.withValues(alpha:0.4),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -89,7 +89,7 @@ class AlarmTile extends ConsumerWidget {
                                   color: isEnabled
                                       ? theme.colorScheme.onSurfaceVariant
                                       : theme.colorScheme.onSurfaceVariant
-                                          .withOpacity(0.4),
+                                          .withValues(alpha:0.4),
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -99,7 +99,7 @@ class AlarmTile extends ConsumerWidget {
                               '•',
                               style: TextStyle(
                                 color: theme.colorScheme.onSurfaceVariant
-                                    .withOpacity(0.4),
+                                    .withValues(alpha:0.4),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -110,7 +110,7 @@ class AlarmTile extends ConsumerWidget {
                               color: isEnabled
                                   ? theme.colorScheme.onSurfaceVariant
                                   : theme.colorScheme.onSurfaceVariant
-                                      .withOpacity(0.4),
+                                      .withValues(alpha:0.4),
                             ),
                           ),
                         ],
@@ -124,7 +124,7 @@ class AlarmTile extends ConsumerWidget {
                             size: 16,
                             color: isEnabled
                                 ? AppColors.primary
-                                : AppColors.primary.withOpacity(0.4),
+                                : AppColors.primary.withValues(alpha:0.4),
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -132,7 +132,7 @@ class AlarmTile extends ConsumerWidget {
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isEnabled
                                   ? AppColors.primary
-                                  : AppColors.primary.withOpacity(0.4),
+                                  : AppColors.primary.withValues(alpha:0.4),
                             ),
                           ),
                         ],

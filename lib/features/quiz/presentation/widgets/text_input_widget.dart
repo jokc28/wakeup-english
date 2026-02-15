@@ -75,10 +75,10 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.warning.withOpacity(0.1),
+              color: AppColors.warning.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppColors.warning.withOpacity(0.3),
+                color: AppColors.warning.withValues(alpha:0.3),
               ),
             ),
             child: Row(
@@ -113,7 +113,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   ? (widget.isCorrect
                       ? AppColors.quizCorrect
                       : AppColors.quizIncorrect)
-                  : theme.colorScheme.outline.withOpacity(0.3),
+                  : theme.colorScheme.outline.withValues(alpha:0.3),
               width: widget.showResult ? 2 : 1,
             ),
           ),
@@ -137,7 +137,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   ? (widget.isCorrect
                           ? AppColors.quizCorrect
                           : AppColors.quizIncorrect)
-                      .withOpacity(0.1)
+                      .withValues(alpha:0.1)
                   : theme.colorScheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -162,7 +162,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.quizCorrect.withOpacity(0.1),
+              color: AppColors.quizCorrect.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(

@@ -128,7 +128,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 32),
         decoration: BoxDecoration(
-          color: AppColors.primary.withOpacity(0.1),
+          color: AppColors.primary.withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(24),
         ),
         child: Column(
@@ -145,7 +145,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             Text(
               'Tap to change',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primary.withOpacity(0.7),
+                    color: AppColors.primary.withValues(alpha:0.7),
                   ),
             ),
           ],

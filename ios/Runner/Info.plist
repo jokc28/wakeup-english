@@ -64,11 +64,11 @@
 	<key>MinimumOSVersion</key>
 	<string>14.0</string>
 
-	<!-- App Transport Security - allow all connections for development -->
+	<!-- App Transport Security -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<true/>
+		<false/>
 	</dict>
 
 	<!-- Localization -->

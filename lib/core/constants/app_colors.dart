@@ -1,40 +1,51 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
-  // Primary colors
-  static const Color primary = Color(0xFF6C63FF);
-  static const Color primaryLight = Color(0xFF9D97FF);
-  static const Color primaryDark = Color(0xFF4A42E8);
+  // Brand Primary - Deep indigo with personality
+  static const Color primary = Color(0xFF4A56E2);
+  static const Color primaryLight = Color(0xFF7B84F3);
+  static const Color primaryDark = Color(0xFF2E38B8);
+  static const Color primarySurface = Color(0xFFEEEFFC);
 
-  // Secondary colors
-  static const Color secondary = Color(0xFFFF6B6B);
-  static const Color secondaryLight = Color(0xFFFF9999);
-  static const Color secondaryDark = Color(0xFFE84A4A);
+  // Brand Secondary - Coral warmth ("wake up" energy)
+  static const Color secondary = Color(0xFFFF6F61);
+  static const Color secondaryLight = Color(0xFFFF9E94);
+  static const Color secondaryDark = Color(0xFFE54B3C);
 
-  // Background colors
-  static const Color backgroundLight = Color(0xFFF5F5F7);
-  static const Color backgroundDark = Color(0xFF1C1C1E);
+  // Accent - Vibrant green for gamification / correct answers
+  static const Color accent = Color(0xFF58CC02);
+  static const Color accentLight = Color(0xFFD7FFB8);
+  static const Color accentDark = Color(0xFF43A800);
+
+  // Background colors - Warm neutrals instead of cold grays
+  static const Color backgroundLight = Color(0xFFF7F7FB);
+  static const Color backgroundDark = Color(0xFF131320);
   static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color surfaceDark = Color(0xFF2C2C2E);
+  static const Color surfaceDark = Color(0xFF1E1E30);
 
   // Text colors
-  static const Color textPrimaryLight = Color(0xFF1C1C1E);
-  static const Color textSecondaryLight = Color(0xFF8E8E93);
-  static const Color textPrimaryDark = Color(0xFFFFFFFF);
-  static const Color textSecondaryDark = Color(0xFF98989D);
+  static const Color textPrimaryLight = Color(0xFF1A1A2E);
+  static const Color textSecondaryLight = Color(0xFF6E6E82);
+  static const Color textPrimaryDark = Color(0xFFF5F5FF);
+  static const Color textSecondaryDark = Color(0xFF9898B0);
 
   // Status colors
-  static const Color success = Color(0xFF34C759);
-  static const Color error = Color(0xFFFF3B30);
-  static const Color warning = Color(0xFFFFCC00);
+  static const Color success = Color(0xFF58CC02);
+  static const Color error = Color(0xFFFF4B4B);
+  static const Color warning = Color(0xFFFFC800);
+  static const Color info = Color(0xFF1CB0F6);
 
   // Alarm colors
-  static const Color alarmActive = Color(0xFF6C63FF);
-  static const Color alarmInactive = Color(0xFF8E8E93);
+  static const Color alarmActive = Color(0xFF4A56E2);
+  static const Color alarmInactive = Color(0xFFB8B8CC);
 
-  // Quiz colors
-  static const Color quizCorrect = Color(0xFF34C759);
-  static const Color quizIncorrect = Color(0xFFFF3B30);
-  static const Color quizOption = Color(0xFFF2F2F7);
+  // Quiz colors - Duolingo-inspired vibrant feedback
+  static const Color quizCorrect = Color(0xFF58CC02);
+  static const Color quizCorrectBg = Color(0xFFD7FFB8);
+  static const Color quizIncorrect = Color(0xFFFF4B4B);
+  static const Color quizIncorrectBg = Color(0xFFFFE0E0);
+  static const Color quizOption = Color(0xFFF0F0F8);
   static const Color quizOptionSelected = Color(0xFFE8E7FF);
+  static const Color quizOptionBorder = Color(0xFFE0E0EC);
+  static const Color quizStreak = Color(0xFFFFC800);
 }

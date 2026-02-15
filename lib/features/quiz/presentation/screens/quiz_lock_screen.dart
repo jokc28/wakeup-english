@@ -101,7 +101,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.15),
+              color: AppColors.success.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -248,7 +248,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
               value: session.progress,
-              backgroundColor: AppColors.primary.withOpacity(0.15),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
               valueColor: const AlwaysStoppedAnimation(AppColors.primary),
               minHeight: 8,
             ),

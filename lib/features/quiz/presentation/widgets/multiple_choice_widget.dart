@@ -74,17 +74,17 @@ class _OptionButton extends StatelessWidget {
 
     if (showResult) {
       if (isCorrect) {
-        backgroundColor = AppColors.quizCorrect.withOpacity(0.15);
+        backgroundColor = AppColors.quizCorrectBg;
         borderColor = AppColors.quizCorrect;
         textColor = AppColors.quizCorrect;
       } else if (isIncorrect) {
-        backgroundColor = AppColors.quizIncorrect.withOpacity(0.15);
+        backgroundColor = AppColors.quizIncorrectBg;
         borderColor = AppColors.quizIncorrect;
         textColor = AppColors.quizIncorrect;
       } else {
         backgroundColor = theme.colorScheme.surface;
-        borderColor = theme.colorScheme.outline.withOpacity(0.3);
-        textColor = theme.colorScheme.onSurface.withOpacity(0.5);
+        borderColor = theme.colorScheme.outline.withValues(alpha: 0.3);
+        textColor = theme.colorScheme.onSurface.withValues(alpha: 0.5);
       }
     } else {
       if (isSelected) {
@@ -132,7 +132,7 @@ class _OptionButton extends StatelessWidget {
                   border: Border.all(
                     color: isSelected || (showResult && isCorrect)
                         ? Colors.transparent
-                        : theme.colorScheme.outline.withOpacity(0.3),
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Center(

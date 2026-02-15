@@ -82,7 +82,7 @@ class AlarmListScreen extends ConsumerWidget {
             Icon(
               Icons.alarm_off_outlined,
               size: 100,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha:0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -98,7 +98,7 @@ class AlarmListScreen extends ConsumerWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurfaceVariant
-                        .withOpacity(0.7),
+                        .withValues(alpha:0.7),
                   ),
               textAlign: TextAlign.center,
             ),
