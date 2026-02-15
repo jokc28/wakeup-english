@@ -60,6 +60,9 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
   }
 
   Future<void> refresh() async {
+    // In debug mode, keep the debug override if active
+    if (kDebugMode && state.isPremium && _debugPremium) return;
+
     final premium = await _service.isPremium();
     final trial = await _service.isTrialActive();
     final days = await _service.trialDaysRemaining;
@@ -69,6 +72,15 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
       isTrialActive: trial,
       daysRemaining: days,
     );
+  }
+
+  bool _debugPremium = false;
+
+  /// Debug only: toggle premium status for testing
+  void debugTogglePremium() {
+    if (!kDebugMode) return;
+    _debugPremium = !_debugPremium;
+    state = state.copyWith(isPremium: _debugPremium);
   }
 }
 

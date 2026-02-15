@@ -1,6 +1,6 @@
-import 'package:alarm/alarm.dart' as alarm_pkg;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../../../core/constants/alarm_sounds.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -23,18 +23,17 @@ class SoundPickerSheet extends ConsumerStatefulWidget {
 
 class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
   String? _playingPath;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void dispose() {
-    _stopPreview();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   Future<void> _stopPreview() async {
-    if (_playingPath != null) {
-      try {
-        await alarm_pkg.Alarm.stop(999999);
-      } catch (_) {}
+    await _audioPlayer.stop();
+    if (mounted) {
       setState(() => _playingPath = null);
     }
   }
@@ -43,31 +42,20 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
     await _stopPreview();
 
     try {
-      final settings = alarm_pkg.AlarmSettings(
-        id: 999999,
-        dateTime: DateTime.now().add(const Duration(seconds: 1)),
-        assetAudioPath: assetPath,
-        loopAudio: false,
-        vibrate: false,
-        volume: 0.5,
-        fadeDuration: 0,
-        warningNotificationOnKill: false,
-        androidFullScreenIntent: false,
-        notificationSettings: const alarm_pkg.NotificationSettings(
-          title: 'Preview',
-          body: 'Sound preview',
-        ),
-      );
-      await alarm_pkg.Alarm.set(alarmSettings: settings);
+      await _audioPlayer.setAsset(assetPath);
+      await _audioPlayer.setVolume(0.5);
+      await _audioPlayer.play();
       setState(() => _playingPath = assetPath);
 
-      // Auto-stop after 3 seconds
-      Future.delayed(const Duration(seconds: 3), () {
+      // Auto-stop after 4 seconds
+      Future.delayed(const Duration(seconds: 4), () {
         if (mounted && _playingPath == assetPath) {
           _stopPreview();
         }
       });
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Sound preview error: $e');
+    }
   }
 
   @override

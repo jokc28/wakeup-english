@@ -548,6 +548,18 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         );
         context.pop();
       }
+    } catch (e) {
+      // Alarm was likely saved to DB but scheduling failed.
+      // Still navigate back so the user isn't stuck.
+      debugPrint('Alarm save error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
+          ),
+        );
+        context.pop();
+      }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

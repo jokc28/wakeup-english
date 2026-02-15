@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -133,6 +134,26 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: '이전 구매 내역 복원',
             onTap: () => _handleRestore(context, ref),
           ),
+          if (kDebugMode)
+            _buildSettingsTile(
+              context,
+              icon: subState.isPremium ? Icons.toggle_on : Icons.toggle_off,
+              title: '[Debug] 프리미엄 모드',
+              subtitle: subState.isPremium ? '활성화됨 - 탭하여 해제' : '비활성화됨 - 탭하여 활성화',
+              titleColor: Colors.deepOrange,
+              onTap: () {
+                ref.read(subscriptionProvider.notifier).debugTogglePremium();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      subState.isPremium
+                          ? '프리미엄 모드 해제됨'
+                          : '프리미엄 모드 활성화됨',
+                    ),
+                  ),
+                );
+              },
+            ),
           const SizedBox(height: 24),
 
           // About Section

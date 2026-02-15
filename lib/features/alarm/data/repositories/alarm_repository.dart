@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/database/app_database.dart';
@@ -58,9 +59,14 @@ class AlarmRepository {
 
     // Schedule the alarm if enabled
     if (alarm.isEnabled) {
-      final createdAlarm = await _db.getAlarmById(id);
-      if (createdAlarm != null) {
-        await _alarmService.setAlarm(createdAlarm);
+      try {
+        final createdAlarm = await _db.getAlarmById(id);
+        if (createdAlarm != null) {
+          await _alarmService.setAlarm(createdAlarm);
+        }
+      } catch (e) {
+        // Alarm is saved in DB; scheduling can be retried later
+        debugPrint('Alarm scheduling failed: $e');
       }
     }
 
