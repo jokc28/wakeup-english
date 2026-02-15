@@ -1,0 +1,149 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../domain/entities/alarm.dart';
+import '../providers/alarm_provider.dart';
+import '../widgets/alarm_tile.dart';
+
+/// Main screen showing list of all alarms
+class AlarmListScreen extends ConsumerWidget {
+  const AlarmListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final alarmsAsync = ref.watch(alarmsProvider);
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('WakeUp English'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => context.push(AppStrings.settingsRoute),
+          ),
+        ],
+      ),
+      body: alarmsAsync.when(
+        data: (alarms) {
+          if (alarms.isEmpty) {
+            return _buildEmptyState(context);
+          }
+          return _buildAlarmList(context, ref, alarms);
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: AppColors.error,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading alarms',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                error.toString(),
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(AppStrings.alarmAddRoute),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Alarm'),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.alarm_off_outlined,
+              size: 100,
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.3),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No alarms set',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap the button below to create your first alarm with English quiz',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withOpacity(0.7),
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlarmList(
+    BuildContext context,
+    WidgetRef ref,
+    List<AlarmEntity> alarms,
+  ) {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+      itemCount: alarms.length,
+      itemBuilder: (context, index) {
+        final alarm = alarms[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: AlarmTile(
+            alarm: alarm,
+            onTap: () => context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
+            onDelete: () {
+              ref.read(alarmOperationsProvider.notifier).deleteAlarm(alarm.id!);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    alarm.label.isNotEmpty
+                        ? 'Deleted "${alarm.label}"'
+                        : 'Alarm deleted',
+                  ),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {
+                      // TODO: Implement undo
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}

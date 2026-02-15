@@ -1,0 +1,148 @@
+{
+  "@@locale": "en",
+  "appTitle": "WakeUp English",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "alarms": "Alarms",
+  "@alarms": {
+    "description": "Label for alarms tab"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Label for settings tab"
+  },
+  "addAlarm": "Add Alarm",
+  "@addAlarm": {
+    "description": "Button to add new alarm"
+  },
+  "editAlarm": "Edit Alarm",
+  "@editAlarm": {
+    "description": "Title for edit alarm screen"
+  },
+  "deleteAlarm": "Delete Alarm",
+  "@deleteAlarm": {
+    "description": "Button to delete alarm"
+  },
+  "saveAlarm": "Save",
+  "@saveAlarm": {
+    "description": "Button to save alarm"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "alarmTime": "Alarm Time",
+  "@alarmTime": {
+    "description": "Label for alarm time picker"
+  },
+  "repeatDays": "Repeat",
+  "@repeatDays": {
+    "description": "Label for repeat days selection"
+  },
+  "alarmLabel": "Label",
+  "@alarmLabel": {
+    "description": "Label for alarm name input"
+  },
+  "quizDifficulty": "Quiz Difficulty",
+  "@quizDifficulty": {
+    "description": "Label for quiz difficulty selection"
+  },
+  "difficultyEasy": "Easy",
+  "@difficultyEasy": {
+    "description": "Easy difficulty"
+  },
+  "difficultyMedium": "Medium",
+  "@difficultyMedium": {
+    "description": "Medium difficulty"
+  },
+  "difficultyHard": "Hard",
+  "@difficultyHard": {
+    "description": "Hard difficulty"
+  },
+  "monday": "Mon",
+  "tuesday": "Tue",
+  "wednesday": "Wed",
+  "thursday": "Thu",
+  "friday": "Fri",
+  "saturday": "Sat",
+  "sunday": "Sun",
+  "solveToStop": "Solve the quiz to stop the alarm",
+  "@solveToStop": {
+    "description": "Instruction on quiz lock screen"
+  },
+  "correct": "Correct!",
+  "@correct": {
+    "description": "Shown when answer is correct"
+  },
+  "incorrect": "Incorrect, try again",
+  "@incorrect": {
+    "description": "Shown when answer is wrong"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button"
+  },
+  "questionsRemaining": "{count} questions remaining",
+  "@questionsRemaining": {
+    "description": "Shows remaining questions",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noAlarms": "No alarms set",
+  "@noAlarms": {
+    "description": "Shown when there are no alarms"
+  },
+  "alarmEnabled": "Alarm enabled",
+  "@alarmEnabled": {
+    "description": "Shown when alarm is enabled"
+  },
+  "alarmDisabled": "Alarm disabled",
+  "@alarmDisabled": {
+    "description": "Shown when alarm is disabled"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "korean": "한국어",
+  "@korean": {
+    "description": "Korean language option"
+  },
+  "sound": "Sound",
+  "@sound": {
+    "description": "Alarm sound setting"
+  },
+  "vibration": "Vibration",
+  "@vibration": {
+    "description": "Vibration setting"
+  },
+  "snooze": "Snooze",
+  "@snooze": {
+    "description": "Snooze setting"
+  },
+  "snoozeDuration": "Snooze Duration",
+  "@snoozeDuration": {
+    "description": "Label for snooze duration"
+  },
+  "minutes": "{count} minutes",
+  "@minutes": {
+    "description": "Minutes label",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizCount": "Number of Questions",
+  "@quizCount": {
+    "description": "Label for number of quiz questions"
+  }
+}
