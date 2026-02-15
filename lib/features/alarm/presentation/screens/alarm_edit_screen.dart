@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/alarm_sounds.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
+import '../widgets/sound_picker_sheet.dart';
 
 /// Screen for creating or editing an alarm
 class AlarmEditScreen extends ConsumerStatefulWidget {
@@ -45,7 +47,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Alarm' : 'Add Alarm'),
+        title: Text(isEditing ? '알람 수정' : '알람 추가'),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
@@ -112,7 +114,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                     ),
                   )
                 : Text(
-                    isEditing ? 'Save Changes' : 'Create Alarm',
+                    isEditing ? '변경사항 저장' : '알람 만들기',
                     style: const TextStyle(fontSize: 16),
                   ),
           ),
@@ -143,7 +145,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Tap to change',
+              '탭하여 변경',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.primary.withValues(alpha:0.7),
                   ),
@@ -159,14 +161,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Label',
+          '라벨',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _labelController,
           decoration: InputDecoration(
-            hintText: 'Alarm name (optional)',
+            hintText: '알람 이름 (선택사항)',
             filled: true,
             fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(
@@ -185,13 +187,13 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   }
 
   Widget _buildRepeatDays(BuildContext context, AlarmEntity form) {
-    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const days = ['월', '화', '수', '목', '금', '토', '일'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Repeat',
+          '반복',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 12),
@@ -244,7 +246,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Quiz Settings',
+          '퀴즈 설정',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 12),
@@ -258,7 +260,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Difficulty'),
+              const Text('난이도'),
               const SizedBox(height: 8),
               SegmentedButton<QuizDifficulty>(
                 segments: QuizDifficulty.values.map((d) {
@@ -279,7 +281,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Number of Questions'),
+                  const Text('문제 수'),
                   Row(
                     children: [
                       IconButton(
@@ -324,7 +326,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Sound & Vibration',
+          '소리 및 진동',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 12),
@@ -336,10 +338,22 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           ),
           child: Column(
             children: [
+              // Sound selector
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('알람 소리'),
+                subtitle: Text(
+                  AlarmSounds.getByPath(form.soundPath)?.displayName ??
+                      'Classic Alarm',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showSoundPicker(context, form),
+              ),
+              const Divider(),
               // Vibration toggle
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Vibration'),
+                title: const Text('진동'),
                 value: form.vibrationEnabled,
                 onChanged: (value) {
                   ref
@@ -351,8 +365,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               // Gradual volume toggle
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Gradual Volume Increase'),
-                subtitle: const Text('Sound starts quiet and gets louder'),
+                title: const Text('점진적 볼륨 증가'),
+                subtitle: const Text('소리가 작게 시작해서 점점 커집니다'),
                 value: form.gradualVolume,
                 onChanged: (value) {
                   ref
@@ -364,7 +378,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               // Volume slider
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Volume'),
+                title: const Text('볼륨'),
                 subtitle: Slider(
                   value: form.volume.toDouble(),
                   min: 0,
@@ -390,7 +404,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Snooze',
+          '미루기',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 12),
@@ -405,7 +419,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               // Snooze toggle
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Enable Snooze'),
+                title: const Text('미루기 사용'),
                 value: form.snoozeDuration > 0,
                 onChanged: (value) {
                   ref
@@ -419,13 +433,13 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Snooze Duration'),
+                    const Text('미루기 시간'),
                     DropdownButton<int>(
                       value: form.snoozeDuration,
                       items: [5, 10, 15, 20, 30].map((minutes) {
                         return DropdownMenuItem(
                           value: minutes,
-                          child: Text('$minutes min'),
+                          child: Text('$minutes분'),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -444,7 +458,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Max Snoozes'),
+                    const Text('최대 미루기 횟수'),
                     DropdownButton<int>(
                       value: form.maxSnoozes,
                       items: [1, 2, 3, 5, 10].map((count) {
@@ -469,6 +483,27 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showSoundPicker(BuildContext context, AlarmEntity form) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        maxChildSize: 0.85,
+        minChildSize: 0.4,
+        builder: (context, scrollController) => SoundPickerSheet(
+          currentSoundPath: form.soundPath,
+          onSoundSelected: (path) {
+            ref
+                .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                .setSoundPath(path);
+          },
+        ),
+      ),
     );
   }
 
@@ -508,7 +543,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       if (id != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isEditing ? 'Alarm updated' : 'Alarm created'),
+            content: Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
           ),
         );
         context.pop();
@@ -524,19 +559,19 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Alarm'),
-        content: const Text('Are you sure you want to delete this alarm?'),
+        title: const Text('알람 삭제'),
+        content: const Text('이 알람을 삭제하시겠습니까?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text('취소'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
-            child: const Text('Delete'),
+            child: const Text('삭제'),
           ),
         ],
       ),

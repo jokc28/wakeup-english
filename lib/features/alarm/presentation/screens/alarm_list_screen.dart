@@ -19,7 +19,7 @@ class AlarmListScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('WakeUp English'),
+        title: const Text('영어 알람'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -49,7 +49,7 @@ class AlarmListScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Error loading alarms',
+                '알람 불러오기 오류',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -67,7 +67,7 @@ class AlarmListScreen extends ConsumerWidget {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
-        label: const Text('Add Alarm'),
+        label: const Text('알람 추가'),
       ),
     );
   }
@@ -86,14 +86,14 @@ class AlarmListScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'No alarms set',
+              '설정된 알람 없음',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Tap the button below to create your first alarm with English quiz',
+              '아래 버튼을 눌러 영어 퀴즈 알람을 만들어 보세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context)
                         .colorScheme
@@ -129,11 +129,11 @@ class AlarmListScreen extends ConsumerWidget {
                 SnackBar(
                   content: Text(
                     alarm.label.isNotEmpty
-                        ? 'Deleted "${alarm.label}"'
-                        : 'Alarm deleted',
+                        ? '"${alarm.label}" 삭제됨'
+                        : '알람이 삭제되었습니다',
                   ),
                   action: SnackBarAction(
-                    label: 'Undo',
+                    label: '되돌리기',
                     onPressed: () {
                       // TODO: Implement undo
                     },

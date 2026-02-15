@@ -3,18 +3,24 @@ enum QuizType {
   multipleChoice,
   fillInTheBlank,
   translation,
-  listening;
+  listening,
+  wordScramble,
+  speakingChallenge;
 
   String get displayName {
     switch (this) {
       case QuizType.multipleChoice:
-        return 'Multiple Choice';
+        return '객관식';
       case QuizType.fillInTheBlank:
-        return 'Fill in the Blank';
+        return '빈칸 채우기';
       case QuizType.translation:
-        return 'Translation';
+        return '번역';
       case QuizType.listening:
-        return 'Listening';
+        return '듣기';
+      case QuizType.wordScramble:
+        return '철자 맞추기';
+      case QuizType.speakingChallenge:
+        return '말하기 도전';
     }
   }
 
@@ -30,6 +36,12 @@ enum QuizType {
         return QuizType.translation;
       case 'listening':
         return QuizType.listening;
+      case 'word_scramble':
+      case 'wordscramble':
+        return QuizType.wordScramble;
+      case 'speaking_challenge':
+      case 'speakingchallenge':
+        return QuizType.speakingChallenge;
       default:
         return QuizType.multipleChoice;
     }
@@ -47,15 +59,15 @@ enum QuizCategory {
   String get displayName {
     switch (this) {
       case QuizCategory.vocabulary:
-        return 'Vocabulary';
+        return '어휘';
       case QuizCategory.grammar:
-        return 'Grammar';
+        return '문법';
       case QuizCategory.idioms:
-        return 'Idioms';
+        return '관용어';
       case QuizCategory.phrases:
-        return 'Phrases';
+        return '구문';
       case QuizCategory.pronunciation:
-        return 'Pronunciation';
+        return '발음';
     }
   }
 
@@ -106,10 +118,22 @@ class QuizQuestion {
   });
 
   /// Check if the given answer is correct
+  /// For speaking challenges, uses 80% similarity threshold
   bool checkAnswer(String answer) {
     // Normalize both strings for comparison
     final normalizedAnswer = answer.trim().toLowerCase();
     final normalizedCorrect = correctAnswer.trim().toLowerCase();
+
+    if (type == QuizType.speakingChallenge) {
+      // 80% fuzzy match for speaking challenges
+      final distance = _levenshteinDistance(normalizedAnswer, normalizedCorrect);
+      final maxLen = normalizedAnswer.length > normalizedCorrect.length
+          ? normalizedAnswer.length
+          : normalizedCorrect.length;
+      if (maxLen == 0) return false;
+      final similarity = 1.0 - (distance / maxLen);
+      return similarity >= 0.8;
+    }
 
     return normalizedAnswer == normalizedCorrect;
   }

@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/services/mission_type_provider.dart';
+import '../../../../core/services/subscription_provider.dart';
 import '../../../alarm/data/repositories/alarm_repository.dart';
-import '../../../alarm/domain/entities/alarm.dart';
 import '../../data/repositories/quiz_repository.dart';
 import '../../domain/entities/quiz_question.dart';
 
@@ -70,15 +71,19 @@ class QuizSession extends _$QuizSession {
   /// Initialize quiz session for an alarm
   Future<void> initializeQuiz() async {
     final alarmRepo = ref.read(alarmRepositoryProvider);
-    final quizRepo = ref.read(quizRepositoryProvider);
+    final quizRepo = ref.read(quizRepositoryProvider(ref.read(hasFullAccessProvider)));
 
     final alarm = await alarmRepo.getAlarmById(alarmId);
     if (alarm == null) return;
 
-    final questions = await quizRepo.getRandomQuestions(
+    var questions = await quizRepo.getRandomQuestions(
       count: alarm.quizCount,
       difficulty: alarm.quizDifficulty.name,
     );
+
+    // Apply mission type conversions based on user settings
+    final missionState = ref.read(missionTypeProvider);
+    questions = applyMissionTypes(questions, missionState);
 
     state = state.copyWith(
       questions: questions,
@@ -107,7 +112,7 @@ class QuizSession extends _$QuizSession {
         ? DateTime.now().difference(state.startTime!).inMilliseconds
         : 0;
 
-    final quizRepo = ref.read(quizRepositoryProvider);
+    final quizRepo = ref.read(quizRepositoryProvider(ref.read(hasFullAccessProvider)));
     await quizRepo.recordAnswer(
       questionId: question.id,
       correct: isCorrect,
@@ -164,6 +169,6 @@ Future<List<QuizQuestion>> quizQuestions(
   required int count,
   required String difficulty,
 }) async {
-  final repository = ref.watch(quizRepositoryProvider);
+  final repository = ref.watch(quizRepositoryProvider(ref.watch(hasFullAccessProvider)));
   return repository.getRandomQuestions(count: count, difficulty: difficulty);
 }

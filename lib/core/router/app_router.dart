@@ -6,6 +6,7 @@ import '../../features/alarm/presentation/screens/alarm_list_screen.dart';
 import '../../features/alarm/presentation/screens/alarm_edit_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_lock_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/subscription/presentation/screens/paywall_screen.dart';
 import '../constants/app_strings.dart';
 
 /// Provider for the app router
@@ -126,6 +127,28 @@ class AppRouter {
           },
         ),
       ),
+
+      // Paywall Screen
+      GoRoute(
+        path: AppStrings.paywallRoute,
+        name: 'paywall',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const PaywallScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+        ),
+      ),
     ],
 
     // Error handling
@@ -185,5 +208,10 @@ class AppRouter {
   /// Navigate to settings
   static void navigateToSettings() {
     router.go(AppStrings.settingsRoute);
+  }
+
+  /// Navigate to paywall
+  static void navigateToPaywall() {
+    router.push(AppStrings.paywallRoute);
   }
 }

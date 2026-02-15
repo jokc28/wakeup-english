@@ -91,7 +91,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Hint: ${widget.question.hint}',
+                    '힌트: ${widget.question.hint}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface,
                     ),
@@ -131,7 +131,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   : null,
             ),
             decoration: InputDecoration(
-              hintText: 'Type your answer...',
+              hintText: '답을 입력하세요...',
               filled: true,
               fillColor: widget.showResult
                   ? (widget.isCorrect
@@ -178,7 +178,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                     text: TextSpan(
                       style: theme.textTheme.bodyMedium,
                       children: [
-                        const TextSpan(text: 'Correct answer: '),
+                        const TextSpan(text: '정답: '),
                         TextSpan(
                           text: widget.question.correctAnswer,
                           style: const TextStyle(
@@ -208,7 +208,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
               ),
             ),
             child: const Text(
-              'Submit',
+              '제출',
               style: TextStyle(fontSize: 16),
             ),
           ),

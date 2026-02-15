@@ -27,6 +27,15 @@ dependencies:
   alarm: ^4.1.0
   permission_handler: ^11.3.1
 
+  # In-App Purchases
+  purchases_flutter: ^8.1.0
+
+  # Speech Recognition
+  speech_to_text: ^7.0.0
+
+  # Local Storage
+  shared_preferences: ^2.2.3
+
   # Routing
   go_router: ^14.2.0
 

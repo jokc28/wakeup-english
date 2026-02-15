@@ -6,6 +6,7 @@ abstract class AppStrings {
   static const String alarmAddRoute = '/alarms/add';
   static const String quizLockRoute = '/quiz-lock';
   static const String settingsRoute = '/settings';
+  static const String paywallRoute = '/paywall';
 
   // Database
   static const String databaseName = 'wakeup_english.db';
@@ -19,6 +20,9 @@ abstract class AppStrings {
   static const String prefDefaultSnooze = 'pref_default_snooze';
   static const String prefDefaultQuizCount = 'pref_default_quiz_count';
   static const String prefVibrationEnabled = 'pref_vibration_enabled';
+  static const String prefTrialStartDate = 'trial_start_date';
+  static const String prefEnabledMissionTypes = 'pref_enabled_mission_types';
+  static const String prefInstallDate = 'install_date';
 
   // Notification channels
   static const String alarmChannelId = 'alarm_channel';

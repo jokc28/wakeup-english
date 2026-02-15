@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../constants/alarm_sounds.dart';
+import '../constants/iap_constants.dart';
 import '../database/app_database.dart';
 
 /// Provider for AlarmService
@@ -65,9 +67,18 @@ class AlarmService {
     return notification && exactAlarm;
   }
 
+  /// Validate sound path against subscription status.
+  /// Falls back to default if premium sound is used without access.
+  String _validateSoundPath(String soundPath, bool hasFullAccess) {
+    if (hasFullAccess) return soundPath;
+    final sound = AlarmSounds.getByPath(soundPath);
+    if (sound == null || sound.isFree) return soundPath;
+    return IapConstants.freeSoundPaths.first;
+  }
+
   /// Schedule a new alarm
   /// Returns true if successful
-  Future<bool> setAlarm(Alarm alarm) async {
+  Future<bool> setAlarm(Alarm alarm, {bool hasFullAccess = false}) async {
     if (!_initialized) {
       throw StateError('AlarmService not initialized. Call initialize() first.');
     }
@@ -82,11 +93,14 @@ class AlarmService {
       return false;
     }
 
+    // Validate sound path against subscription
+    final validatedSoundPath = _validateSoundPath(alarm.soundPath, hasFullAccess);
+
     // Create alarm settings
     final alarmSettings = alarm_pkg.AlarmSettings(
       id: alarm.id,
       dateTime: nextFireTime,
-      assetAudioPath: alarm.soundPath,
+      assetAudioPath: validatedSoundPath,
       loopAudio: true,
       vibrate: alarm.vibrationEnabled,
       volume: alarm.volume / 100.0,

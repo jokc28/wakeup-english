@@ -9,11 +9,11 @@ enum QuizDifficulty {
   String get displayName {
     switch (this) {
       case QuizDifficulty.easy:
-        return 'Easy';
+        return '쉬움';
       case QuizDifficulty.medium:
-        return 'Medium';
+        return '보통';
       case QuizDifficulty.hard:
-        return 'Hard';
+        return '어려움';
     }
   }
 
@@ -90,12 +90,12 @@ class AlarmEntity {
 
   /// Returns a formatted string for repeat days
   String get repeatDaysDisplay {
-    if (repeatDays.isEmpty) return 'Once';
-    if (isDaily) return 'Every day';
-    if (isWeekdays) return 'Weekdays';
-    if (isWeekends) return 'Weekends';
+    if (repeatDays.isEmpty) return '한 번';
+    if (isDaily) return '매일';
+    if (isWeekdays) return '주중';
+    if (isWeekends) return '주말';
 
-    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
     final sortedDays = List<int>.from(repeatDays)..sort();
     return sortedDays.map((d) => dayNames[d]).join(', ');
   }

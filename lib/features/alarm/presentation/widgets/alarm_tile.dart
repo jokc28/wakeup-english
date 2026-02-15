@@ -128,7 +128,7 @@ class AlarmTile extends ConsumerWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${alarm.quizCount} ${alarm.quizDifficulty.displayName} questions',
+                            '${alarm.quizDifficulty.displayName} ${alarm.quizCount}문제',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isEnabled
                                   ? AppColors.primary
@@ -162,23 +162,23 @@ class AlarmTile extends ConsumerWidget {
     return await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Delete Alarm'),
+            title: const Text('알람 삭제'),
             content: Text(
               alarm.label.isNotEmpty
-                  ? 'Delete alarm "${alarm.label}"?'
-                  : 'Delete alarm at ${alarm.timeDisplay}?',
+                  ? '"${alarm.label}" 알람을 삭제하시겠습니까?'
+                  : '${alarm.timeDisplay} 알람을 삭제하시겠습니까?',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: const Text('취소'),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.error,
                 ),
-                child: const Text('Delete'),
+                child: const Text('삭제'),
               ),
             ],
           ),

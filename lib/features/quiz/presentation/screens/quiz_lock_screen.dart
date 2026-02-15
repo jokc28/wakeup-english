@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:flutter/foundation.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/subscription_provider.dart';
+import '../../../../core/services/subscription_service.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/multiple_choice_widget.dart';
+import '../widgets/speaking_challenge_widget.dart';
 import '../widgets/text_input_widget.dart';
+import '../widgets/word_scramble_widget.dart';
 
 /// Lock screen that appears when alarm fires
 /// User must solve quiz to dismiss the alarm
@@ -79,7 +85,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 16),
-          Text('Loading quiz...'),
+          Text('퀴즈 불러오는 중...'),
         ],
       ),
     );
@@ -114,7 +120,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
 
           // Result text
           Text(
-            'Quiz Completed!',
+            '퀴즈 완료!',
             style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -123,7 +129,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
 
           // Score
           Text(
-            '$correctCount / $totalCount correct ($percentage%)',
+            '$totalCount문제 중 $correctCount개 정답 ($percentage%)',
             style: theme.textTheme.titleLarge?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -141,7 +147,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
               ),
             ),
             child: const Text(
-              'Stop Alarm',
+              '알람 해제',
               style: TextStyle(fontSize: 18),
             ),
           ),
@@ -170,7 +176,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
               children: [
                 // Question number
                 Text(
-                  'Question ${session.currentIndex + 1} of ${session.questions.length}',
+                  '${session.questions.length}문제 중 ${session.currentIndex + 1}번',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
@@ -233,7 +239,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Wake Up!',
+                '일어나세요!',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: AppColors.secondary,
                       fontWeight: FontWeight.bold,
@@ -290,7 +296,6 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
         );
 
       case QuizType.listening:
-        // TODO: Implement listening type
         return MultipleChoiceWidget(
           question: question,
           selectedAnswer: session.selectedAnswer,
@@ -299,6 +304,30 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
             ref
                 .read(quizSessionProvider(widget.alarmId).notifier)
                 .selectAnswer(answer);
+            ref
+                .read(quizSessionProvider(widget.alarmId).notifier)
+                .submitAnswer(answer);
+          },
+        );
+
+      case QuizType.wordScramble:
+        return WordScrambleWidget(
+          question: question,
+          showResult: session.showingResult,
+          isCorrect: session.answers.isNotEmpty && session.answers.last,
+          onSubmit: (answer) {
+            ref
+                .read(quizSessionProvider(widget.alarmId).notifier)
+                .submitAnswer(answer);
+          },
+        );
+
+      case QuizType.speakingChallenge:
+        return SpeakingChallengeWidget(
+          question: question,
+          showResult: session.showingResult,
+          isCorrect: session.answers.isNotEmpty && session.answers.last,
+          onSubmit: (answer) {
             ref
                 .read(quizSessionProvider(widget.alarmId).notifier)
                 .submitAnswer(answer);
@@ -328,7 +357,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Explanation',
+                '해설',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -373,7 +402,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
             ),
           ),
           child: Text(
-            isLastQuestion ? 'Finish Quiz' : 'Next Question',
+            isLastQuestion ? '퀴즈 완료' : '다음 문제',
             style: const TextStyle(fontSize: 16),
           ),
         ),
@@ -382,6 +411,16 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
   }
 
   Future<void> _dismissAlarm() async {
+    // Check if trial has expired and user is not premium
+    final subState = ref.read(subscriptionProvider);
+    if (!subState.isPremium) {
+      final trialExpired = await SubscriptionService.isTrialExpired();
+      if (trialExpired && mounted) {
+        _showTrialExpiredPaywall();
+        return;
+      }
+    }
+
     // Stop the alarm
     await ref.read(alarmOperationsProvider.notifier).stopAlarm(widget.alarmId);
 
@@ -389,5 +428,65 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
     if (mounted) {
       AppRouter.navigateToAlarmList();
     }
+  }
+
+  void _showTrialExpiredPaywall() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          '무료 체험 종료',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.workspace_premium,
+                size: 36,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '무료 체험 기간(7일)이 만료되었습니다.\n계속 이용하려면 구독해주세요.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15),
+            ),
+          ],
+        ),
+        actions: [
+          // Debug-only restore purchase button
+          if (kDebugMode)
+            TextButton(
+              onPressed: () async {
+                final service = ref.read(subscriptionServiceProvider);
+                final success = await service.restorePurchases();
+                if (success && mounted) {
+                  ref.read(subscriptionProvider.notifier).refresh();
+                  Navigator.of(context).pop();
+                  _dismissAlarm();
+                }
+              },
+              child: const Text('구매 복원 (Debug)'),
+            ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              AppRouter.navigateToPaywall();
+            },
+            child: const Text('구독하기'),
+          ),
+        ],
+      ),
+    );
   }
 }

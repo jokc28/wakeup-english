@@ -7,24 +7,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/services/alarm_service.dart';
+import '../../../../core/constants/iap_constants.dart';
 import '../../domain/entities/quiz_question.dart';
 import '../models/quiz_question_model.dart';
 
 /// Provider for QuizRepository
-final quizRepositoryProvider = Provider<QuizRepository>((ref) {
-  final db = ref.watch(databaseProvider);
-  return QuizRepository(db);
-});
+final quizRepositoryProvider = Provider.family<QuizRepository, bool>(
+  (ref, hasFullAccess) {
+    final db = ref.watch(databaseProvider);
+    return QuizRepository(db, hasFullAccess: hasFullAccess);
+  },
+);
 
 /// Repository for quiz questions and progress
 class QuizRepository {
   final AppDatabase _db;
+  final bool hasFullAccess;
   List<QuizQuestion>? _cachedQuestions;
   final _random = Random();
 
-  QuizRepository(this._db);
+  QuizRepository(this._db, {this.hasFullAccess = false});
 
   /// Load all quiz questions from JSON asset
+  /// If user doesn't have full access, only returns free tier questions
   Future<List<QuizQuestion>> loadAllQuestions() async {
     if (_cachedQuestions != null) {
       return _cachedQuestions!;
@@ -36,10 +41,18 @@ class QuizRepository {
       );
       final jsonList = jsonDecode(jsonString) as List<dynamic>;
 
-      _cachedQuestions = jsonList
+      var questions = jsonList
           .map((json) => QuizQuestionModel.fromJson(json as Map<String, dynamic>).toEntity())
           .toList();
 
+      // Filter to free questions if no full access
+      if (!hasFullAccess) {
+        questions = questions
+            .where((q) => IapConstants.freeQuizQuestionIds.contains(q.id))
+            .toList();
+      }
+
+      _cachedQuestions = questions;
       return _cachedQuestions!;
     } catch (e) {
       // Return default questions if loading fails

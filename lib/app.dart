@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/constants/app_colors.dart';
 import 'core/router/app_router.dart';
 import 'core/services/alarm_service.dart';
+import 'core/services/subscription_service.dart';
 
 /// Main app widget
 class WakeUpEnglishApp extends ConsumerStatefulWidget {
@@ -20,13 +21,27 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
   void initState() {
     super.initState();
     _setupAlarmListener();
+    _recordTrialStart();
+  }
+
+  Future<void> _recordTrialStart() async {
+    try {
+      await SubscriptionService.recordTrialStart();
+      await SubscriptionService.recordInstallDate();
+    } catch (e) {
+      debugPrint('[App] Failed to record trial start: $e');
+    }
   }
 
   void _setupAlarmListener() {
-    final alarmService = ref.read(alarmServiceProvider);
-    alarmService.onAlarmRing.listen((alarmSettings) {
-      AppRouter.navigateToQuizLock(alarmSettings.id);
-    });
+    try {
+      final alarmService = ref.read(alarmServiceProvider);
+      alarmService.onAlarmRing.listen((alarmSettings) {
+        AppRouter.navigateToQuizLock(alarmSettings.id);
+      });
+    } catch (e) {
+      debugPrint('[App] Failed to setup alarm listener: $e');
+    }
   }
 
   @override
@@ -39,7 +54,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: 'WakeUp English',
+          title: '영어 알람',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
           localizationsDelegates: const [
