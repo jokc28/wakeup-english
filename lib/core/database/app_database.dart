@@ -135,6 +135,15 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  /// Get question IDs shown within the cooldown period
+  Future<Set<String>> getRecentlyShownQuestionIds({int cooldownDays = 3}) async {
+    final cutoff = DateTime.now().subtract(Duration(days: cooldownDays));
+    final rows = await (select(quizProgress)
+          ..where((q) => q.lastShownAt.isBiggerOrEqualValue(cutoff)))
+        .get();
+    return rows.map((r) => r.questionId).toSet();
+  }
+
   // ============ Alarm History Operations ============
 
   /// Record alarm trigger

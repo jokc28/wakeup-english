@@ -11,7 +11,7 @@ import '../../domain/entities/quiz_question.dart';
 /// Widget for word scramble quiz type
 /// Single-word answers: scramble letters
 /// Multi-word answers: scramble words
-/// Chunky 3D Duolingo-style tiles
+/// Chunky 3D Duolingo-style tiles with animated transitions
 class WordScrambleWidget extends StatefulWidget {
   final QuizQuestion question;
   final bool showResult;
@@ -36,6 +36,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
   final List<_PlacedPiece> _placedPieces = [];
   bool _hasSubmitted = false;
   late bool _isWordMode;
+  int _placedAnimKey = 0; // increments to trigger pop-in on new tiles
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
     if (oldWidget.question != widget.question) {
       _placedPieces.clear();
       _hasSubmitted = false;
+      _placedAnimKey = 0;
       _initScramble();
     }
   }
@@ -95,9 +97,11 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
     HapticFeedback.lightImpact();
     setState(() {
       _usedIndices[index] = true;
+      _placedAnimKey++;
       _placedPieces.add(_PlacedPiece(
         piece: _scrambledPieces[index],
         sourceIndex: index,
+        animKey: _placedAnimKey,
       ));
     });
   }
@@ -128,11 +132,12 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
     final correctDisplay = _isWordMode
         ? widget.question.correctAnswer
         : widget.question.correctAnswer.toUpperCase();
+    final totalSlots = _scrambledPieces.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Answer area - placed pieces
+        // Answer area — placed pieces + empty slots
         Container(
           constraints: const BoxConstraints(minHeight: 64),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -156,36 +161,40 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
           child: Wrap(
             spacing: _isWordMode ? 8 : 6,
             runSpacing: 6,
-            children: [
-              ..._placedPieces.asMap().entries.map((entry) {
+            children: List.generate(totalSlots, (i) {
+              if (i < _placedPieces.length) {
+                // Filled slot — placed tile with pop-in animation
+                final placed = _placedPieces[i];
                 return GestureDetector(
-                  onTap: () => _removePiece(entry.key),
+                  onTap: () => _removePiece(i),
                   child: _ChunkyTile(
-                    text: entry.value.piece,
+                    key: ValueKey('placed_${placed.animKey}'),
+                    text: placed.piece,
                     isWordMode: _isWordMode,
                     isPlaced: true,
                     isCorrect: widget.showResult && widget.isCorrect,
                     isIncorrect: widget.showResult && !widget.isCorrect,
-                  ),
+                  )
+                      .animate()
+                      .scale(
+                        begin: const Offset(0.0, 0.0),
+                        end: const Offset(1.0, 1.0),
+                        duration: 200.ms,
+                        curve: Curves.easeOutBack,
+                      )
+                      .fadeIn(duration: 150.ms),
                 );
-              }),
-              if (_placedPieces.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    _isWordMode ? '아래 단어를 탭하여 문장을 완성하세요' : '아래 글자를 탭하여 단어를 만드세요',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondaryLight.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ),
-            ],
+              } else {
+                // Empty slot placeholder
+                return _EmptySlot(isWordMode: _isWordMode);
+              }
+            }),
           ),
         ),
 
         const SizedBox(height: 20),
 
-        // Scrambled pieces with staggered bounce-in
+        // Scrambled pieces pool with staggered bounce-in
         if (!widget.showResult)
           Wrap(
             spacing: 8,
@@ -195,24 +204,30 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
               final isUsed = _usedIndices[entry.key];
               return GestureDetector(
                 onTap: isUsed ? null : () => _addPiece(entry.key),
-                child: AnimatedOpacity(
+                child: AnimatedScale(
+                  scale: isUsed ? 0.85 : 1.0,
                   duration: const Duration(milliseconds: 150),
-                  opacity: isUsed ? 0.3 : 1.0,
-                  child: _ChunkyTile(
-                    text: entry.value,
-                    isWordMode: _isWordMode,
-                    isPlaced: false,
-                    isDisabled: isUsed,
-                  )
-                      .animate()
-                      .scale(
-                        begin: const Offset(0.7, 0.7),
-                        end: const Offset(1.0, 1.0),
-                        delay: (50 * entry.key).ms,
-                        duration: 300.ms,
-                        curve: Curves.easeOutBack,
-                      )
-                      .fadeIn(delay: (50 * entry.key).ms, duration: 200.ms),
+                  curve: Curves.easeInOut,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 150),
+                    opacity: isUsed ? 0.25 : 1.0,
+                    child: _ChunkyTile(
+                      text: entry.value,
+                      isWordMode: _isWordMode,
+                      isPlaced: false,
+                      isDisabled: isUsed,
+                    )
+                        .animate()
+                        .scale(
+                          begin: const Offset(0.7, 0.7),
+                          end: const Offset(1.0, 1.0),
+                          delay: (50 * entry.key).ms,
+                          duration: 300.ms,
+                          curve: Curves.easeOutBack,
+                        )
+                        .fadeIn(
+                            delay: (50 * entry.key).ms, duration: 200.ms),
+                  ),
                 ),
               );
             }).toList(),
@@ -281,8 +296,59 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
 class _PlacedPiece {
   final String piece;
   final int sourceIndex;
+  final int animKey;
 
-  const _PlacedPiece({required this.piece, required this.sourceIndex});
+  const _PlacedPiece({
+    required this.piece,
+    required this.sourceIndex,
+    required this.animKey,
+  });
+}
+
+/// Empty placeholder slot shown in the answer area
+class _EmptySlot extends StatelessWidget {
+  final bool isWordMode;
+
+  const _EmptySlot({required this.isWordMode});
+
+  @override
+  Widget build(BuildContext context) {
+    if (isWordMode) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppColors.quizOptionBorder.withValues(alpha: 0.4),
+            width: 1.5,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+          color: AppColors.quizOption.withValues(alpha: 0.15),
+        ),
+        child: Text(
+          '___',
+          style: GoogleFonts.jua(
+            fontSize: 18,
+            color: AppColors.textSecondaryLight.withValues(alpha: 0.3),
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppColors.quizOptionBorder.withValues(alpha: 0.4),
+            width: 1.5,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+          color: AppColors.quizOption.withValues(alpha: 0.15),
+        ),
+      );
+    }
+  }
 }
 
 /// Chunky 3D tile (Duolingo-style) with bottom border for depth
@@ -295,6 +361,7 @@ class _ChunkyTile extends StatelessWidget {
   final bool isDisabled;
 
   const _ChunkyTile({
+    super.key,
     required this.text,
     required this.isWordMode,
     this.isPlaced = false,

@@ -75,6 +75,8 @@ class QuizRepository {
   }
 
   /// Get random questions for an alarm quiz
+  /// Filters out questions shown within the last 3 days (no-repeat cooldown).
+  /// Falls back to oldest-shown questions if all are in cooldown.
   Future<List<QuizQuestion>> getRandomQuestions({
     required int count,
     required String difficulty,
@@ -82,12 +84,25 @@ class QuizRepository {
     final questions = await getQuestionsByDifficulty(difficulty);
 
     if (questions.isEmpty) {
-      // Fall back to all questions if no questions for difficulty
       final allQuestions = await loadAllQuestions();
       return _selectRandom(allQuestions, count);
     }
 
-    return _selectRandom(questions, count);
+    // Apply 3-day no-repeat cooldown
+    final recentIds = await _db.getRecentlyShownQuestionIds(cooldownDays: 3);
+    final fresh = questions.where((q) => !recentIds.contains(q.id)).toList();
+
+    if (fresh.length >= count) {
+      return _selectRandom(fresh, count);
+    }
+
+    // Not enough fresh questions — use fresh ones first, fill rest from cooldown pool
+    // sorted by oldest lastShownAt (so least-recently-seen come first)
+    final cooldownPool = questions.where((q) => recentIds.contains(q.id)).toList();
+    final result = List<QuizQuestion>.from(fresh);
+    result.addAll(_selectRandom(cooldownPool, count - result.length));
+    result.shuffle(_random);
+    return result;
   }
 
   /// Get questions prioritizing ones the user struggles with
