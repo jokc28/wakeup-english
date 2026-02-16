@@ -341,7 +341,7 @@ class SettingsScreen extends ConsumerWidget {
               FilledButton(
                 onPressed: () => AppRouter.navigateToPaywall(),
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: AppColors.action,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   minimumSize: const Size(0, 36),
                 ),
@@ -382,7 +382,7 @@ class SettingsScreen extends ConsumerWidget {
             ListTile(
               leading: const Text('🇺🇸'),
               title: const Text('English'),
-              trailing: const Icon(Icons.check, color: AppColors.primary),
+              trailing: const Icon(Icons.check, color: AppColors.action),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Change language
@@ -413,7 +413,7 @@ class SettingsScreen extends ConsumerWidget {
             return ListTile(
               title: Text('$count문제'),
               trailing: count == 3
-                  ? const Icon(Icons.check, color: AppColors.primary)
+                  ? const Icon(Icons.check, color: AppColors.action)
                   : null,
               onTap: () {
                 Navigator.pop(context);
@@ -443,7 +443,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             ListTile(
               title: const Text('보통'),
-              trailing: const Icon(Icons.check, color: AppColors.primary),
+              trailing: const Icon(Icons.check, color: AppColors.action),
               subtitle: const Text('중급 수준'),
               onTap: () {
                 Navigator.pop(context);
@@ -473,7 +473,7 @@ class SettingsScreen extends ConsumerWidget {
             return ListTile(
               title: Text('$minutes분'),
               trailing: minutes == 5
-                  ? const Icon(Icons.check, color: AppColors.primary)
+                  ? const Icon(Icons.check, color: AppColors.action)
                   : null,
               onTap: () {
                 Navigator.pop(context);

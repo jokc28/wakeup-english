@@ -64,7 +64,7 @@ class AlarmListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppStrings.alarmAddRoute),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.action,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text('알람 추가'),

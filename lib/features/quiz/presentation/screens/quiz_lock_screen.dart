@@ -1,6 +1,10 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -11,10 +15,14 @@ import '../../../../core/services/subscription_service.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
 import '../providers/quiz_provider.dart';
+import '../widgets/animated_clock_widget.dart';
 import '../widgets/multiple_choice_widget.dart';
+import '../widgets/slide_to_start_widget.dart';
 import '../widgets/speaking_challenge_widget.dart';
 import '../widgets/text_input_widget.dart';
 import '../widgets/word_scramble_widget.dart';
+
+enum LockScreenPhase { alarm, quiz, completed }
 
 /// Lock screen that appears when alarm fires
 /// User must solve quiz to dismiss the alarm
@@ -27,29 +35,43 @@ class QuizLockScreen extends ConsumerStatefulWidget {
   ConsumerState<QuizLockScreen> createState() => _QuizLockScreenState();
 }
 
-class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
+class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
+    with TickerProviderStateMixin {
+  LockScreenPhase _phase = LockScreenPhase.alarm;
+  late ConfettiController _confettiController;
+  late AnimationController _bgShimmerController;
+  late Animation<double> _bgShimmerAnimation;
+
+  // Feedback overlay state
+  bool _showCorrectOverlay = false;
+  bool _showWrongShake = false;
+
   @override
   void initState() {
     super.initState();
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
+    _bgShimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+    _bgShimmerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _bgShimmerController, curve: Curves.easeInOut),
+    );
     _initializeScreen();
   }
 
   Future<void> _initializeScreen() async {
-    // Configure system UI for lock screen
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.immersiveSticky,
-    );
-
-    // Set screen to stay on
-    // Note: This requires additional setup in native code
-
-    // Initialize quiz
-    await ref.read(quizSessionProvider(widget.alarmId).notifier).initializeQuiz();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    await ref
+        .read(quizSessionProvider(widget.alarmId).notifier)
+        .initializeQuiz();
   }
 
   @override
   void dispose() {
-    // Restore system UI
+    _confettiController.dispose();
+    _bgShimmerController.dispose();
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
       overlays: SystemUiOverlay.values,
@@ -57,211 +79,307 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
     super.dispose();
   }
 
+  void _onSlideComplete() {
+    HapticFeedback.mediumImpact();
+    setState(() => _phase = LockScreenPhase.quiz);
+  }
+
+  void _triggerCorrectFeedback() {
+    HapticFeedback.mediumImpact();
+    _confettiController.play();
+    setState(() => _showCorrectOverlay = true);
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) setState(() => _showCorrectOverlay = false);
+    });
+  }
+
+  void _triggerWrongFeedback() {
+    HapticFeedback.heavyImpact();
+    setState(() => _showWrongShake = true);
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) setState(() => _showWrongShake = false);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(quizSessionProvider(widget.alarmId));
-    final theme = Theme.of(context);
 
-    // Prevent back navigation
+    // Listen for answer results to trigger feedback
+    ref.listen(quizSessionProvider(widget.alarmId), (prev, next) {
+      if (prev != null &&
+          next.showingResult &&
+          !prev.showingResult &&
+          _phase == LockScreenPhase.quiz) {
+        final isCorrect = next.answers.isNotEmpty && next.answers.last;
+        if (isCorrect) {
+          _triggerCorrectFeedback();
+        } else {
+          _triggerWrongFeedback();
+        }
+      }
+      if (next.isCompleted && _phase != LockScreenPhase.completed) {
+        setState(() => _phase = LockScreenPhase.completed);
+        _confettiController.play();
+      }
+    });
+
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: theme.colorScheme.surface,
-        body: SafeArea(
-          child: session.questions.isEmpty
-              ? _buildLoading()
-              : session.isCompleted
-                  ? _buildCompleted(session)
-                  : _buildQuiz(session),
+        body: Stack(
+          children: [
+            // Content
+            _buildPhaseContent(session),
+            // Correct answer green flash
+            if (_showCorrectOverlay)
+              AnimatedOpacity(
+                opacity: _showCorrectOverlay ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 200),
+                child: IgnorePointer(
+                  child: Container(
+                    color: AppColors.quizCorrect.withValues(alpha: 0.15),
+                  ),
+                ),
+              ),
+            // Confetti
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                numberOfParticles: 20,
+                maxBlastForce: 20,
+                minBlastForce: 5,
+                gravity: 0.2,
+                colors: const [
+                  AppColors.action,
+                  AppColors.primaryLight,
+                  AppColors.primary,
+                  AppColors.info,
+                  Colors.white,
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhaseContent(QuizSessionState session) {
+    switch (_phase) {
+      case LockScreenPhase.alarm:
+        return _buildAlarmPhase();
+      case LockScreenPhase.quiz:
+        if (session.questions.isEmpty) return _buildLoading();
+        return _buildQuizPhase(session);
+      case LockScreenPhase.completed:
+        return _buildCompletedPhase(session);
+    }
+  }
+
+  // --- Alarm Phase ---
+  Widget _buildAlarmPhase() {
+    return AnimatedBuilder(
+      animation: _bgShimmerAnimation,
+      builder: (context, child) {
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.lerp(AppColors.gradientStart, AppColors.gradientEnd,
+                        _bgShimmerAnimation.value * 0.3) ??
+                    AppColors.gradientStart,
+                Color.lerp(AppColors.gradientEnd, AppColors.gradientStart,
+                        _bgShimmerAnimation.value * 0.3) ??
+                    AppColors.gradientEnd,
+              ],
+            ),
+          ),
+          child: child,
+        );
+      },
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(flex: 2),
+              // Greeting
+              Text(
+                '좋은 아침이에요!',
+                style: GoogleFonts.jua(
+                  fontSize: 28,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+              )
+                  .animate()
+                  .fadeIn(duration: 800.ms, delay: 200.ms)
+                  .slideY(begin: -0.2, end: 0),
+              const SizedBox(height: 16),
+              // Massive clock
+              const AnimatedClockWidget(),
+              const Spacer(flex: 3),
+              // Slide to start
+              SlideToStartWidget(onSlideComplete: _onSlideComplete),
+              const SizedBox(height: 48),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildLoading() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text('퀴즈 불러오는 중...'),
-        ],
+    return Container(
+      color: AppColors.backgroundLight,
+      child: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: AppColors.primary),
+            SizedBox(height: 16),
+            Text('퀴즈 불러오는 중...'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCompleted(QuizSessionState session) {
-    final theme = Theme.of(context);
-    final correctCount = session.correctCount;
-    final totalCount = session.questions.length;
-    final percentage = (correctCount / totalCount * 100).round();
-
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Success icon
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.success.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.check_circle,
-              size: 80,
-              color: AppColors.success,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // Result text
-          Text(
-            '퀴즈 완료!',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Score
-          Text(
-            '$totalCount문제 중 $correctCount개 정답 ($percentage%)',
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 48),
-
-          // Dismiss button
-          FilledButton(
-            onPressed: _dismissAlarm,
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              minimumSize: const Size.fromHeight(56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: const Text(
-              '알람 해제',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuiz(QuizSessionState session) {
+  // --- Quiz Phase ---
+  Widget _buildQuizPhase(QuizSessionState session) {
     final question = session.currentQuestion;
     if (question == null) return const SizedBox();
 
     final theme = Theme.of(context);
 
-    return Column(
-      children: [
-        // Header with progress
-        _buildHeader(session),
-
-        // Question content
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Question number
-                Text(
-                  '${session.questions.length}문제 중 ${session.currentIndex + 1}번',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Question text
-                Text(
-                  question.question,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                // Korean translation if available
-                if (question.questionKo.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    question.questionKo,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 24),
-
-                // Answer input based on question type
-                _buildAnswerInput(question, session),
-
-                // Explanation after answering
-                if (session.showingResult && question.explanation != null) ...[
-                  const SizedBox(height: 24),
-                  _buildExplanation(question),
-                ],
-              ],
+    return Container(
+      color: AppColors.backgroundLight,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Progress header
+            _buildQuizHeader(session),
+            // Question content in floating card
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: _buildQuizCard(question, session, theme),
+              ),
             ),
-          ),
+            // Bottom action button
+            if (session.showingResult) _buildNextButton(session),
+          ],
         ),
-
-        // Bottom action button
-        if (session.showingResult) _buildNextButton(session),
-      ],
+      ),
     );
   }
 
-  Widget _buildHeader(QuizSessionState session) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+  Widget _buildQuizHeader(QuizSessionState session) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       child: Column(
         children: [
-          // Time display
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.alarm,
-                color: AppColors.secondary,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '일어나세요!',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: session.progress,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
-              minHeight: 8,
+          // Question counter
+          Text(
+            '${session.currentIndex + 1} / ${session.questions.length}',
+            style: GoogleFonts.jua(
+              fontSize: 18,
+              color: AppColors.primary,
             ),
+          ),
+          const SizedBox(height: 12),
+          // Thick progress bar
+          LinearPercentIndicator(
+            lineHeight: 12,
+            percent: session.progress.clamp(0.0, 1.0),
+            backgroundColor: AppColors.quizOption,
+            progressColor: AppColors.action,
+            barRadius: const Radius.circular(6),
+            padding: EdgeInsets.zero,
+            animation: true,
+            animationDuration: 300,
+            animateFromLastPercent: true,
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildQuizCard(
+      QuizQuestion question, QuizSessionState session, ThemeData theme) {
+    final cardContent = Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Question text
+          Text(
+            question.question,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          // Korean translation
+          if (question.questionKo.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              question.questionKo,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondaryLight,
+              ),
+            ),
+          ],
+          const SizedBox(height: 24),
+          // Answer input
+          _buildAnswerInput(question, session),
+          // Explanation
+          if (session.showingResult && question.explanation != null) ...[
+            const SizedBox(height: 24),
+            _buildExplanation(question),
+          ],
+        ],
+      ),
+    );
+
+    // Wrap with shake animation for wrong answers
+    if (_showWrongShake) {
+      return TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 300),
+        builder: (context, value, child) {
+          final shake =
+              (value < 0.5 ? value * 2 : (1 - value) * 2) * 10;
+          final dir = (value * 4).floor() % 2 == 0 ? 1 : -1;
+          return Transform.translate(
+            offset: Offset(shake * dir, 0),
+            child: child,
+          );
+        },
+        child: cardContent,
+      );
+    }
+
+    return cardContent
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .slideY(begin: 0.05, end: 0);
   }
 
   Widget _buildAnswerInput(QuizQuestion question, QuizSessionState session) {
@@ -275,7 +393,6 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
             ref
                 .read(quizSessionProvider(widget.alarmId).notifier)
                 .selectAnswer(answer);
-            // Auto-submit for multiple choice
             ref
                 .read(quizSessionProvider(widget.alarmId).notifier)
                 .submitAnswer(answer);
@@ -342,7 +459,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
+        color: AppColors.quizOption,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -353,7 +470,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
               Icon(
                 Icons.info_outline,
                 size: 20,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: AppColors.textSecondaryLight,
               ),
               const SizedBox(width: 8),
               Text(
@@ -374,7 +491,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
             Text(
               question.explanationKo!,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+                color: AppColors.textSecondaryLight,
               ),
             ),
           ],
@@ -392,10 +509,12 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
         padding: const EdgeInsets.all(24),
         child: FilledButton(
           onPressed: () {
-            ref.read(quizSessionProvider(widget.alarmId).notifier).nextQuestion();
+            ref
+                .read(quizSessionProvider(widget.alarmId).notifier)
+                .nextQuestion();
           },
           style: FilledButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.action,
             minimumSize: const Size.fromHeight(56),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -403,7 +522,84 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
           ),
           child: Text(
             isLastQuestion ? '퀴즈 완료' : '다음 문제',
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // --- Completed Phase ---
+  Widget _buildCompletedPhase(QuizSessionState session) {
+    final correctCount = session.correctCount;
+    final totalCount = session.questions.length;
+
+    return Container(
+      color: AppColors.backgroundLight,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              // Green checkmark circle
+              Container(
+                width: 120,
+                height: 120,
+                decoration: const BoxDecoration(
+                  color: AppColors.action,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  size: 72,
+                  color: Colors.white,
+                ),
+              )
+                  .animate()
+                  .scale(
+                    begin: const Offset(0.5, 0.5),
+                    end: const Offset(1.0, 1.0),
+                    duration: 500.ms,
+                    curve: Curves.easeOutBack,
+                  )
+                  .fadeIn(),
+              const SizedBox(height: 32),
+              // Score display
+              Text(
+                '$correctCount/$totalCount 정답!',
+                style: GoogleFonts.jua(
+                  fontSize: 36,
+                  color: AppColors.textPrimaryLight,
+                ),
+              ).animate().fadeIn(delay: 300.ms),
+              const SizedBox(height: 8),
+              Text(
+                '퀴즈 완료!',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textSecondaryLight,
+                ),
+              ).animate().fadeIn(delay: 500.ms),
+              const Spacer(),
+              // Dismiss button
+              FilledButton(
+                onPressed: _dismissAlarm,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.action,
+                  minimumSize: const Size.fromHeight(56),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text(
+                  '알람 해제',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+              ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.2, end: 0),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
       ),
@@ -411,7 +607,6 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
   }
 
   Future<void> _dismissAlarm() async {
-    // Check if trial has expired and user is not premium
     final subState = ref.read(subscriptionProvider);
     if (!subState.isPremium) {
       final trialExpired = await SubscriptionService.isTrialExpired();
@@ -421,10 +616,8 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
       }
     }
 
-    // Stop the alarm
     await ref.read(alarmOperationsProvider.notifier).stopAlarm(widget.alarmId);
 
-    // Navigate back to alarm list
     if (mounted) {
       AppRouter.navigateToAlarmList();
     }
@@ -464,7 +657,6 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen> {
           ],
         ),
         actions: [
-          // Debug-only restore purchase button
           if (kDebugMode)
             TextButton(
               onPressed: () async {

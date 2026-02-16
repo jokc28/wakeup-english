@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/entities/quiz_question.dart';
 
 /// Widget for displaying multiple choice quiz options
+/// With staggered fade-in and haptic feedback
 class MultipleChoiceWidget extends StatelessWidget {
   final QuizQuestion question;
   final String? selectedAnswer;
@@ -31,14 +34,30 @@ class MultipleChoiceWidget extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: _OptionButton(
-            label: String.fromCharCode(65 + index), // A, B, C, D
+            label: String.fromCharCode(65 + index),
             text: option,
             isSelected: isSelected,
             isCorrect: showResult && isCorrect,
             isIncorrect: showResult && isSelected && !isCorrect,
             showResult: showResult,
-            onTap: showResult ? null : () => onSelect(option),
-          ),
+            onTap: showResult
+                ? null
+                : () {
+                    HapticFeedback.lightImpact();
+                    onSelect(option);
+                  },
+          )
+              .animate()
+              .fadeIn(
+                delay: (80 * index).ms,
+                duration: 300.ms,
+              )
+              .slideX(
+                begin: 0.05,
+                end: 0,
+                delay: (80 * index).ms,
+                duration: 300.ms,
+              ),
         );
       }).toList(),
     );
@@ -83,7 +102,7 @@ class _OptionButton extends StatelessWidget {
         textColor = AppColors.quizIncorrect;
       } else {
         backgroundColor = theme.colorScheme.surface;
-        borderColor = theme.colorScheme.outline.withValues(alpha: 0.3);
+        borderColor = AppColors.quizOptionBorder.withValues(alpha: 0.3);
         textColor = theme.colorScheme.onSurface.withValues(alpha: 0.5);
       }
     } else {
@@ -98,7 +117,7 @@ class _OptionButton extends StatelessWidget {
       }
     }
 
-    return Material(
+    Widget content = Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
@@ -132,7 +151,7 @@ class _OptionButton extends StatelessWidget {
                   border: Border.all(
                     color: isSelected || (showResult && isCorrect)
                         ? Colors.transparent
-                        : theme.colorScheme.outline.withValues(alpha: 0.3),
+                        : AppColors.quizOptionBorder.withValues(alpha: 0.5),
                   ),
                 ),
                 child: Center(
@@ -171,5 +190,24 @@ class _OptionButton extends StatelessWidget {
         ),
       ),
     );
+
+    // Shake animation for incorrect answer
+    if (isIncorrect && showResult) {
+      content = TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 300),
+        builder: (context, value, child) {
+          final shake = (value < 0.5 ? value * 2 : (1 - value) * 2) * 8;
+          final dir = (value * 4).floor() % 2 == 0 ? 1 : -1;
+          return Transform.translate(
+            offset: Offset(shake * dir, 0),
+            child: child,
+          );
+        },
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

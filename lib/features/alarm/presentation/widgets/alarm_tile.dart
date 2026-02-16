@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -52,9 +53,17 @@ class AlarmTile extends ConsumerWidget {
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
+              border: isEnabled
+                  ? Border(
+                      left: BorderSide(
+                        color: AppColors.primary,
+                        width: 4,
+                      ),
+                    )
+                  : null,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -74,7 +83,8 @@ class AlarmTile extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                           color: isEnabled
                               ? theme.colorScheme.onSurface
-                              : theme.colorScheme.onSurface.withValues(alpha:0.4),
+                              : theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.4),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -89,17 +99,17 @@ class AlarmTile extends ConsumerWidget {
                                   color: isEnabled
                                       ? theme.colorScheme.onSurfaceVariant
                                       : theme.colorScheme.onSurfaceVariant
-                                          .withValues(alpha:0.4),
+                                          .withValues(alpha: 0.4),
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              '•',
+                              '\u2022',
                               style: TextStyle(
                                 color: theme.colorScheme.onSurfaceVariant
-                                    .withValues(alpha:0.4),
+                                    .withValues(alpha: 0.4),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -110,7 +120,7 @@ class AlarmTile extends ConsumerWidget {
                               color: isEnabled
                                   ? theme.colorScheme.onSurfaceVariant
                                   : theme.colorScheme.onSurfaceVariant
-                                      .withValues(alpha:0.4),
+                                      .withValues(alpha: 0.4),
                             ),
                           ),
                         ],
@@ -124,7 +134,7 @@ class AlarmTile extends ConsumerWidget {
                             size: 16,
                             color: isEnabled
                                 ? AppColors.primary
-                                : AppColors.primary.withValues(alpha:0.4),
+                                : AppColors.primary.withValues(alpha: 0.4),
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -132,7 +142,7 @@ class AlarmTile extends ConsumerWidget {
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isEnabled
                                   ? AppColors.primary
-                                  : AppColors.primary.withValues(alpha:0.4),
+                                  : AppColors.primary.withValues(alpha: 0.4),
                             ),
                           ),
                         ],
@@ -144,11 +154,12 @@ class AlarmTile extends ConsumerWidget {
                 Switch.adaptive(
                   value: isEnabled,
                   onChanged: (value) {
+                    HapticFeedback.lightImpact();
                     ref
                         .read(alarmOperationsProvider.notifier)
                         .toggleAlarm(alarm.id!, value);
                   },
-                  activeColor: AppColors.primary,
+                  activeColor: AppColors.action,
                 ),
               ],
             ),

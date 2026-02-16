@@ -124,9 +124,9 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
                     ),
                   ),
                   trailing: isLocked
-                      ? const Icon(Icons.lock, size: 20, color: AppColors.secondary)
+                      ? const Icon(Icons.lock, size: 20, color: AppColors.primary)
                       : isSelected
-                          ? const Icon(Icons.check_circle, color: AppColors.primary)
+                          ? const Icon(Icons.check_circle, color: AppColors.action)
                           : null,
                   onTap: () {
                     if (isLocked) {

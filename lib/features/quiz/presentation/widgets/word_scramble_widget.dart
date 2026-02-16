@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/entities/quiz_question.dart';
@@ -8,6 +11,7 @@ import '../../domain/entities/quiz_question.dart';
 /// Widget for word scramble quiz type
 /// Single-word answers: scramble letters
 /// Multi-word answers: scramble words
+/// Chunky 3D Duolingo-style tiles
 class WordScrambleWidget extends StatefulWidget {
   final QuizQuestion question;
   final bool showResult;
@@ -31,7 +35,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
   late List<bool> _usedIndices;
   final List<_PlacedPiece> _placedPieces = [];
   bool _hasSubmitted = false;
-  late bool _isWordMode; // true = scramble words, false = scramble letters
+  late bool _isWordMode;
 
   @override
   void initState() {
@@ -55,14 +59,12 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
     _isWordMode = words.length > 1;
 
     if (_isWordMode) {
-      // Multi-word: scramble word order
       _scrambledPieces = List.from(words);
       final rng = Random();
       do {
         _scrambledPieces.shuffle(rng);
       } while (_scrambledPieces.join(' ') == answer && words.length > 1);
     } else {
-      // Single-word: scramble letters
       final word = answer.toUpperCase();
       _scrambledPieces = word.split('');
       final rng = Random();
@@ -75,6 +77,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
 
   void _addPiece(int index) {
     if (_usedIndices[index] || widget.showResult) return;
+    HapticFeedback.lightImpact();
     setState(() {
       _usedIndices[index] = true;
       _placedPieces.add(_PlacedPiece(
@@ -86,6 +89,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
 
   void _removePiece(int placedIndex) {
     if (widget.showResult) return;
+    HapticFeedback.lightImpact();
     setState(() {
       final removed = _placedPieces.removeAt(placedIndex);
       _usedIndices[removed.sourceIndex] = false;
@@ -98,6 +102,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
         ? _placedPieces.map((p) => p.piece).join(' ')
         : _placedPieces.map((p) => p.piece).join();
     if (answer.isEmpty) return;
+    HapticFeedback.mediumImpact();
     setState(() => _hasSubmitted = true);
     widget.onSubmit(answer);
   }
@@ -114,33 +119,33 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
       children: [
         // Answer area - placed pieces
         Container(
-          constraints: const BoxConstraints(minHeight: 56),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          constraints: const BoxConstraints(minHeight: 64),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: widget.showResult
                   ? (widget.isCorrect
                       ? AppColors.quizCorrect
                       : AppColors.quizIncorrect)
-                  : theme.colorScheme.outline.withValues(alpha: 0.3),
-              width: widget.showResult ? 2 : 1,
+                  : AppColors.quizOptionBorder,
+              width: widget.showResult ? 2.5 : 1.5,
             ),
             color: widget.showResult
                 ? (widget.isCorrect
                         ? AppColors.quizCorrect
                         : AppColors.quizIncorrect)
                     .withValues(alpha: 0.08)
-                : null,
+                : AppColors.quizOption.withValues(alpha: 0.5),
           ),
           child: Wrap(
-            spacing: _isWordMode ? 8 : 4,
-            runSpacing: 4,
+            spacing: _isWordMode ? 8 : 6,
+            runSpacing: 6,
             children: [
               ..._placedPieces.asMap().entries.map((entry) {
                 return GestureDetector(
                   onTap: () => _removePiece(entry.key),
-                  child: _PieceTile(
+                  child: _ChunkyTile(
                     text: entry.value.piece,
                     isWordMode: _isWordMode,
                     isPlaced: true,
@@ -151,12 +156,11 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
               }),
               if (_placedPieces.isEmpty)
                 Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   child: Text(
                     _isWordMode ? '아래 단어를 탭하여 문장을 완성하세요' : '아래 글자를 탭하여 단어를 만드세요',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant
-                          .withValues(alpha: 0.5),
+                      color: AppColors.textSecondaryLight.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -166,7 +170,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
 
         const SizedBox(height: 20),
 
-        // Scrambled pieces
+        // Scrambled pieces with staggered bounce-in
         if (!widget.showResult)
           Wrap(
             spacing: 8,
@@ -179,12 +183,21 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 150),
                   opacity: isUsed ? 0.3 : 1.0,
-                  child: _PieceTile(
+                  child: _ChunkyTile(
                     text: entry.value,
                     isWordMode: _isWordMode,
                     isPlaced: false,
                     isDisabled: isUsed,
-                  ),
+                  )
+                      .animate()
+                      .scale(
+                        begin: const Offset(0.7, 0.7),
+                        end: const Offset(1.0, 1.0),
+                        delay: (50 * entry.key).ms,
+                        duration: 300.ms,
+                        curve: Curves.easeOutBack,
+                      )
+                      .fadeIn(delay: (50 * entry.key).ms, duration: 200.ms),
                 ),
               );
             }).toList(),
@@ -233,7 +246,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
           FilledButton(
             onPressed: _submit,
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.action,
               minimumSize: const Size.fromHeight(56),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -241,7 +254,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
             ),
             child: const Text(
               '제출',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -257,7 +270,8 @@ class _PlacedPiece {
   const _PlacedPiece({required this.piece, required this.sourceIndex});
 }
 
-class _PieceTile extends StatelessWidget {
+/// Chunky 3D tile (Duolingo-style) with bottom border for depth
+class _ChunkyTile extends StatelessWidget {
   final String text;
   final bool isWordMode;
   final bool isPlaced;
@@ -265,7 +279,7 @@ class _PieceTile extends StatelessWidget {
   final bool isIncorrect;
   final bool isDisabled;
 
-  const _PieceTile({
+  const _ChunkyTile({
     required this.text,
     required this.isWordMode,
     this.isPlaced = false,
@@ -276,67 +290,82 @@ class _PieceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     Color bgColor;
     Color textColor;
+    Color borderBottomColor;
 
     if (isCorrect) {
-      bgColor = AppColors.quizCorrect.withValues(alpha: 0.15);
-      textColor = AppColors.quizCorrect;
+      bgColor = AppColors.quizCorrectBg;
+      textColor = AppColors.actionDark;
+      borderBottomColor = AppColors.quizCorrect;
     } else if (isIncorrect) {
-      bgColor = AppColors.quizIncorrect.withValues(alpha: 0.15);
+      bgColor = AppColors.quizIncorrectBg;
       textColor = AppColors.quizIncorrect;
+      borderBottomColor = AppColors.quizIncorrect;
     } else if (isPlaced) {
-      bgColor = AppColors.primary.withValues(alpha: 0.12);
-      textColor = AppColors.primary;
+      bgColor = AppColors.primarySurface;
+      textColor = AppColors.primaryDark;
+      borderBottomColor = AppColors.primary.withValues(alpha: 0.4);
     } else {
-      bgColor = theme.colorScheme.surfaceContainerHighest;
-      textColor = theme.colorScheme.onSurface;
+      bgColor = AppColors.quizOption;
+      textColor = AppColors.textPrimaryLight;
+      borderBottomColor = AppColors.quizOptionBorder;
     }
 
     if (isWordMode) {
-      // Word tiles: variable width
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isPlaced
-                ? AppColors.primary.withValues(alpha: 0.3)
-                : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: Border(
+            bottom: BorderSide(color: borderBottomColor, width: 4),
+            top: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
+            left: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
+            right: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.jua(
+            fontSize: 18,
             color: textColor,
           ),
         ),
       );
     } else {
-      // Letter tiles: fixed width
       return Container(
-        width: 44,
-        height: 44,
+        width: 52,
+        height: 52,
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isPlaced
-                ? AppColors.primary.withValues(alpha: 0.3)
-                : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: Border(
+            bottom: BorderSide(color: borderBottomColor, width: 4),
+            top: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
+            left: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
+            right: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Center(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.jua(
+              fontSize: 22,
               color: textColor,
             ),
           ),

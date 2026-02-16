@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/entities/quiz_question.dart';
@@ -33,7 +34,6 @@ class _TextInputWidgetState extends State<TextInputWidget> {
     _controller = TextEditingController();
     _focusNode = FocusNode();
 
-    // Auto-focus the input
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -58,7 +58,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 
   void _submit() {
     if (_controller.text.trim().isEmpty || _hasSubmitted) return;
-
+    HapticFeedback.mediumImpact();
     setState(() => _hasSubmitted = true);
     widget.onSubmit(_controller.text.trim());
   }
@@ -75,15 +75,15 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.warning.withValues(alpha:0.1),
+              color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppColors.warning.withValues(alpha:0.3),
+                color: AppColors.warning.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.lightbulb_outline,
                   color: AppColors.warning,
                   size: 20,
@@ -113,7 +113,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   ? (widget.isCorrect
                       ? AppColors.quizCorrect
                       : AppColors.quizIncorrect)
-                  : theme.colorScheme.outline.withValues(alpha:0.3),
+                  : AppColors.quizOptionBorder,
               width: widget.showResult ? 2 : 1,
             ),
           ),
@@ -137,11 +137,16 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   ? (widget.isCorrect
                           ? AppColors.quizCorrect
                           : AppColors.quizIncorrect)
-                      .withValues(alpha:0.1)
-                  : theme.colorScheme.surface,
+                      .withValues(alpha: 0.1)
+                  : AppColors.quizOption,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
               ),
               contentPadding: const EdgeInsets.all(20),
               suffixIcon: widget.showResult
@@ -162,12 +167,12 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.quizCorrect.withValues(alpha:0.1),
+              color: AppColors.quizCorrect.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.check_circle_outline,
                   color: AppColors.quizCorrect,
                   size: 20,
@@ -195,13 +200,13 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           ),
         ],
 
-        // Submit button (only when not showing result)
+        // Submit button
         if (!widget.showResult) ...[
           const SizedBox(height: 20),
           FilledButton(
             onPressed: _submit,
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.action,
               minimumSize: const Size.fromHeight(56),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -209,7 +214,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
             ),
             child: const Text(
               '제출',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         ],

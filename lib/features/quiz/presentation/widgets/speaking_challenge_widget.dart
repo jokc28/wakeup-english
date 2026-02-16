@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_gradients.dart';
 import '../../domain/entities/quiz_question.dart';
 
 /// Widget for speaking challenge quiz type
@@ -100,6 +102,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
   void _startListening() async {
     if (!_speechAvailable || widget.showResult || _hasSubmitted) return;
 
+    HapticFeedback.mediumImpact();
     setState(() {
       _isListening = true;
       _recognizedText = '';
@@ -116,10 +119,10 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
   }
 
   void _stopListening() async {
+    HapticFeedback.lightImpact();
     await _speech.stop();
     setState(() => _isListening = false);
 
-    // Auto-submit if we have recognized text
     if (_recognizedText.isNotEmpty && !_hasSubmitted) {
       _submit(_recognizedText);
     }
@@ -137,11 +140,11 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
 
   void _submit(String answer) {
     if (_hasSubmitted || answer.trim().isEmpty) return;
+    HapticFeedback.mediumImpact();
     setState(() => _hasSubmitted = true);
     widget.onSubmit(answer.trim());
   }
 
-  /// Calculate similarity percentage between two strings
   double _calculateSimilarity(String a, String b) {
     final s1 = a.toLowerCase().trim();
     final s2 = b.toLowerCase().trim();
@@ -202,7 +205,8 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
           ),
           child: Column(
             children: [
-              const Icon(Icons.record_voice_over, color: AppColors.primary, size: 32),
+              const Icon(Icons.record_voice_over,
+                  color: AppColors.primary, size: 32),
               const SizedBox(height: 8),
               Text(
                 '아래 문장을 영어로 말해 보세요',
@@ -223,7 +227,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                 Text(
                   widget.question.questionKo,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: AppColors.textSecondaryLight,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -244,7 +248,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                           ? AppColors.quizCorrect
                           : AppColors.quizIncorrect)
                       .withValues(alpha: 0.1)
-                  : theme.colorScheme.surfaceContainerHighest,
+                  : AppColors.quizOption,
               borderRadius: BorderRadius.circular(12),
               border: widget.showResult
                   ? Border.all(
@@ -260,7 +264,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                 Text(
                   '인식된 텍스트:',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: AppColors.textSecondaryLight,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -297,7 +301,6 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
         // Mic button or typing fallback
         if (!widget.showResult) ...[
           if (_showTypingFallback) ...[
-            // Typing fallback
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -321,7 +324,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
               decoration: InputDecoration(
                 hintText: '영어로 입력하세요...',
                 filled: true,
-                fillColor: theme.colorScheme.surface,
+                fillColor: AppColors.quizOption,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -335,16 +338,17 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                   ? null
                   : () => _submit(_textController.text),
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.action,
                 minimumSize: const Size.fromHeight(56),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text('제출', style: TextStyle(fontSize: 16)),
+              child: const Text('제출',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             ),
           ] else ...[
-            // Mic button
+            // Gradient mic button
             Center(
               child: GestureDetector(
                 onTapDown: (_) => _startListening(),
@@ -355,19 +359,23 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                   width: _isListening ? 100 : 80,
                   height: _isListening ? 100 : 80,
                   decoration: BoxDecoration(
-                    color: _isListening
-                        ? AppColors.secondary
-                        : AppColors.primary,
+                    gradient: AppGradients.alarmBackground,
                     shape: BoxShape.circle,
                     boxShadow: _isListening
                         ? [
                             BoxShadow(
-                              color: AppColors.secondary.withValues(alpha: 0.4),
+                              color: AppColors.primary.withValues(alpha: 0.4),
                               blurRadius: 20,
                               spreadRadius: 4,
                             ),
                           ]
-                        : null,
+                        : [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                   ),
                   child: Icon(
                     _isListening ? Icons.mic : Icons.mic_none,
@@ -382,14 +390,13 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
               _isListening ? '듣고 있습니다...' : '길게 눌러 말하기',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: _isListening
-                    ? AppColors.secondary
-                    : theme.colorScheme.onSurfaceVariant,
+                    ? AppColors.primary
+                    : AppColors.textSecondaryLight,
                 fontWeight: _isListening ? FontWeight.w600 : null,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            // Show typing fallback option
             TextButton(
               onPressed: () => setState(() => _showTypingFallback = true),
               child: Text(

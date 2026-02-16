@@ -38,7 +38,7 @@ class CommonButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: foregroundColor ?? AppColors.primary,
+            foregroundColor: foregroundColor ?? AppColors.action,
             side: BorderSide(
               color: foregroundColor ?? AppColors.primary,
             ),
@@ -57,7 +57,7 @@ class CommonButton extends StatelessWidget {
       child: FilledButton(
         onPressed: isLoading ? null : onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppColors.primary,
+          backgroundColor: backgroundColor ?? AppColors.action,
           foregroundColor: foregroundColor ?? Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -75,7 +75,7 @@ class CommonButton extends StatelessWidget {
         height: 24,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: isOutlined ? AppColors.primary : Colors.white,
+          color: isOutlined ? AppColors.action : Colors.white,
         ),
       );
     }
@@ -124,7 +124,7 @@ class CommonIconButton extends StatelessWidget {
       width: size,
       height: size,
       child: Material(
-        color: backgroundColor ?? AppColors.primary.withValues(alpha:0.1),
+        color: backgroundColor ?? AppColors.primary.withValues(alpha: 0.1),
         shape: const CircleBorder(),
         child: InkWell(
           onTap: onPressed,

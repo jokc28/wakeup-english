@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/services/subscription_provider.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
@@ -41,6 +44,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     final subState = ref.watch(subscriptionProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Column(
           children: [
@@ -58,88 +62,89 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
 
-                    // Premium icon
+                    // Mascot area — gradient circle with school icon
                     Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppColors.primary, AppColors.primaryLight],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(24),
+                      width: 120,
+                      height: 120,
+                      decoration: const BoxDecoration(
+                        gradient: AppGradients.premiumCard,
+                        shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.workspace_premium,
-                        size: 44,
+                        Icons.school_rounded,
+                        size: 56,
                         color: Colors.white,
                       ),
-                    ),
+                    )
+                        .animate()
+                        .scale(
+                          begin: const Offset(0.8, 0.8),
+                          end: const Offset(1.0, 1.0),
+                          duration: 500.ms,
+                          curve: Curves.easeOutBack,
+                        )
+                        .fadeIn(),
                     const SizedBox(height: 24),
 
-                    // Title
+                    // Title in Jua font
                     Text(
                       '프리미엄 잠금 해제',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.jua(
+                        fontSize: 28,
+                        color: AppColors.textPrimaryLight,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       '영어 알람의 모든 기능을 이용해 보세요',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: AppColors.textSecondaryLight,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
 
-                    // Feature list
+                    // Value props with green checkmark circles
                     _buildFeatureItem(
                       context,
-                      Icons.library_books,
                       '120개 퀴즈 문제',
                       '모든 카테고리와 난이도의 전체 라이브러리',
                     ),
                     _buildFeatureItem(
                       context,
-                      Icons.music_note,
                       '10가지 알람 소리',
                       '파도 소리, 피아노, 재즈 등 프리미엄 사운드',
                     ),
                     _buildFeatureItem(
                       context,
-                      Icons.trending_up,
                       '고급 학습 기능',
                       '취약 부분에 집중하는 맞춤형 퀴즈',
                     ),
                     _buildFeatureItem(
                       context,
-                      Icons.auto_awesome,
                       '새로운 콘텐츠 업데이트',
                       '정기적인 새 문제 및 소리 추가',
                     ),
                     const SizedBox(height: 32),
 
-                    // Price section
+                    // Price section with warm gradient background
                     if (_isLoading)
-                      const CircularProgressIndicator()
+                      const CircularProgressIndicator(color: AppColors.primary)
                     else
                       _buildPriceSection(context),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-                    // CTA Button
+                    // Pulsing CTA button
                     SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: FilledButton(
                         onPressed: _isPurchasing ? null : _handlePurchase,
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: AppColors.action,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -163,7 +168,18 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 ),
                               ),
                       ),
-                    ),
+                    )
+                        .animate(
+                          onPlay: (controller) => controller.repeat(
+                            reverse: true,
+                          ),
+                        )
+                        .scale(
+                          begin: const Offset(1.0, 1.0),
+                          end: const Offset(1.03, 1.03),
+                          duration: 2.seconds,
+                          curve: Curves.easeInOut,
+                        ),
                     const SizedBox(height: 12),
 
                     // Restore purchases
@@ -173,11 +189,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Terms & privacy
+                    // Terms & privacy footer
                     Text(
                       '구독은 현재 기간 종료 최소 24시간 전에 해지하지 않으면 자동으로 갱신됩니다. 기기 설정에서 구독을 관리할 수 있습니다.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: AppColors.textSecondaryLight,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -223,7 +239,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
   Widget _buildFeatureItem(
     BuildContext context,
-    IconData icon,
     String title,
     String subtitle,
   ) {
@@ -233,14 +248,19 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
+          // Green checkmark circle
           Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              color: AppColors.action,
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.primary, size: 22),
+            child: const Icon(
+              Icons.check_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -268,61 +288,53 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     final offering = _offerings?.current;
     final monthlyPackage = offering?.monthly;
 
-    if (monthlyPackage == null) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.primary, width: 2),
-        ),
-        child: Column(
-          children: [
-            Text(
-              '프리미엄 월간',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '가격 정보 없음',
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      );
-    }
+    final priceText =
+        monthlyPackage != null ? '${monthlyPackage.storeProduct.priceString}/월' : '가격 정보 없음';
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary, width: 2),
+        gradient: AppGradients.premiumCard,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Text(
             '프리미엄 월간',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+            style: GoogleFonts.jua(
+              fontSize: 18,
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            '${monthlyPackage.storeProduct.priceString}/월',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w700,
+            priceText,
+            style: GoogleFonts.jua(
+              fontSize: 28,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            '7일 무료 체험 포함',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.accent,
-              fontWeight: FontWeight.w600,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              '7일 무료 체험 포함',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
             ),
           ),
         ],

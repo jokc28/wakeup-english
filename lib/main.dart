@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'app.dart';
 import 'core/services/alarm_service.dart';
@@ -9,6 +11,55 @@ import 'core/services/subscription_service.dart';
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Global error handler — prevents white screen on uncaught errors
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    debugPrint('[FlutterError] ${details.exceptionAsString()}');
+    debugPrint('[FlutterError] ${details.stack}');
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('[PlatformError] $error');
+    debugPrint('[PlatformError] $stack');
+    return true;
+  };
+
+  // Allow GoogleFonts to fall back gracefully if font download fails
+  GoogleFonts.config.allowRuntimeFetching = true;
+
+  // In release mode, show a friendly error screen instead of white/grey screen
+  if (kReleaseMode) {
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      return MaterialApp(
+        home: Scaffold(
+          backgroundColor: const Color(0xFFFFFDF5),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.warning_amber_rounded,
+                      size: 64, color: Color(0xFFFF8C00)),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '앱을 다시 시작해 주세요',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '일시적인 오류가 발생했습니다.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    };
+  }
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([

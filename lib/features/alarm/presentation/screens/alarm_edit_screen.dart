@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -98,7 +99,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           child: FilledButton(
             onPressed: _isLoading ? null : _saveAlarm,
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.action,
               minimumSize: const Size.fromHeight(56),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -125,7 +126,10 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
 
   Widget _buildTimePicker(BuildContext context, AlarmEntity form) {
     return GestureDetector(
-      onTap: () => _selectTime(context, form),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        _selectTime(context, form);
+      },
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 32),
@@ -203,6 +207,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             final isSelected = form.repeatDays.contains(index);
             return GestureDetector(
               onTap: () {
+                HapticFeedback.lightImpact();
                 ref
                     .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
                     .toggleRepeatDay(index);

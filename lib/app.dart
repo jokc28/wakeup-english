@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'core/constants/app_colors.dart';
 import 'core/router/app_router.dart';
@@ -74,7 +75,35 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
     );
   }
 
-  // --- Premium Typography ---
+  // --- Premium Typography with Jua for headings ---
+  // Safe wrapper: returns Jua TextStyle, falls back to system font on failure
+  static TextStyle _jua({
+    required double fontSize,
+    FontWeight fontWeight = FontWeight.w400,
+    double? letterSpacing,
+    double? height,
+    required Color color,
+  }) {
+    try {
+      return GoogleFonts.jua(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+        height: height,
+        color: color,
+      );
+    } catch (e) {
+      debugPrint('[App] GoogleFonts.jua() failed, using fallback: $e');
+      return TextStyle(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+        height: height,
+        color: color,
+      );
+    }
+  }
+
   static TextTheme _buildTextTheme(Brightness brightness) {
     final base = brightness == Brightness.light
         ? AppColors.textPrimaryLight
@@ -84,36 +113,33 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         : AppColors.textSecondaryDark;
 
     return TextTheme(
-      displayLarge: TextStyle(
-        fontSize: 56,
-        fontWeight: FontWeight.w700,
+      // Headings use Jua — rounded, friendly Korean font
+      displayLarge: _jua(
+        fontSize: 72,
         letterSpacing: -1.5,
         height: 1.1,
         color: base,
       ),
-      displayMedium: TextStyle(
+      displayMedium: _jua(
         fontSize: 44,
-        fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
         height: 1.15,
         color: base,
       ),
-      headlineLarge: TextStyle(
+      headlineLarge: _jua(
         fontSize: 32,
-        fontWeight: FontWeight.w700,
         letterSpacing: -0.25,
         color: base,
       ),
-      headlineMedium: TextStyle(
+      headlineMedium: _jua(
         fontSize: 26,
-        fontWeight: FontWeight.w700,
         color: base,
       ),
-      headlineSmall: TextStyle(
+      headlineSmall: _jua(
         fontSize: 22,
-        fontWeight: FontWeight.w600,
         color: base,
       ),
+      // Body/label text: system font for readability
       titleLarge: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
@@ -173,7 +199,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         brightness: Brightness.light,
         surface: AppColors.backgroundLight,
         primary: AppColors.primary,
-        secondary: AppColors.secondary,
+        secondary: AppColors.action,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.backgroundLight,
@@ -213,7 +239,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.action,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 56),
           textStyle: const TextStyle(
@@ -229,7 +255,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.action,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 56),
           textStyle: const TextStyle(
@@ -252,7 +278,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.action,
         foregroundColor: Colors.white,
         elevation: 4,
         highlightElevation: 8,
@@ -269,7 +295,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.primary;
+            return AppColors.action;
           }
           return AppColors.alarmInactive.withValues(alpha: 0.3);
         }),
@@ -335,7 +361,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         brightness: Brightness.dark,
         surface: AppColors.backgroundDark,
         primary: AppColors.primaryLight,
-        secondary: AppColors.secondary,
+        secondary: AppColors.action,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,
@@ -375,7 +401,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.action,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 56),
           textStyle: const TextStyle(
@@ -391,7 +417,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.action,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 56),
           textStyle: const TextStyle(
@@ -412,7 +438,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.action,
         foregroundColor: Colors.white,
         elevation: 4,
         shape: RoundedRectangleBorder(
@@ -428,7 +454,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.primaryLight;
+            return AppColors.action;
           }
           return AppColors.alarmInactive.withValues(alpha: 0.3);
         }),
