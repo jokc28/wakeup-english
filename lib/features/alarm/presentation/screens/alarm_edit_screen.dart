@@ -11,6 +11,13 @@ import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
 import '../widgets/sound_picker_sheet.dart';
 
+// --- Design constants ---
+const _kCardColor = Color(0xFFF5F5F5);
+const _kCardRadius = 20.0;
+const _kTextDark = Color(0xFF333333);
+const _kTextHint = Color(0xFF999999);
+const _kHorizontalPadding = 24.0;
+
 /// Screen for creating or editing an alarm
 class AlarmEditScreen extends ConsumerStatefulWidget {
   final int? alarmId;
@@ -43,88 +50,84 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   Widget build(BuildContext context) {
     final form = ref.watch(alarmFormProvider(alarmId: widget.alarmId));
 
-    // Sync label controller with form state
     if (_labelController.text != form.label) {
       _labelController.text = form.label;
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA),
       appBar: AppBar(
-        title: Text(isEditing ? '알람 수정' : '알람 추가'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => context.pop(),
+        backgroundColor: const Color(0xFFFAFAFA),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: Text(
+          isEditing ? '알람 수정' : '알람 추가',
+          style: const TextStyle(
+            color: _kTextDark,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+        leading: TextButton(
+          onPressed: () => context.pop(),
+          child: const Text(
+            '취소',
+            style: TextStyle(color: _kTextHint, fontSize: 16),
+          ),
+        ),
+        leadingWidth: 80,
         actions: [
           if (isEditing)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
-              color: AppColors.error,
+              icon: const Icon(Icons.delete_outline, size: 22),
+              color: AppColors.error.withValues(alpha: 0.7),
               onPressed: _showDeleteConfirmation,
             ),
+          TextButton(
+            onPressed: _isLoading ? null : _saveAlarm,
+            child: _isLoading
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    '저장',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Time Picker
+            const SizedBox(height: 8),
             _buildTimePicker(context, form),
-            const SizedBox(height: 24),
-
-            // Label
-            _buildLabelField(context),
-            const SizedBox(height: 24),
-
-            // Repeat Days
-            _buildRepeatDays(context, form),
-            const SizedBox(height: 24),
-
-            // Quiz Settings
-            _buildQuizSettings(context, form),
-            const SizedBox(height: 24),
-
-            // Sound & Vibration
-            _buildSoundSettings(context, form),
-            const SizedBox(height: 24),
-
-            // Snooze Settings
-            _buildSnoozeSettings(context, form),
-            const SizedBox(height: 100),
+            const SizedBox(height: 28),
+            _buildLabelCard(context),
+            const SizedBox(height: 16),
+            _buildRepeatCard(context, form),
+            const SizedBox(height: 16),
+            _buildMissionCard(context, form),
+            const SizedBox(height: 16),
+            _buildSoundCard(context, form),
+            const SizedBox(height: 16),
+            _buildSnoozeCard(context, form),
+            const SizedBox(height: 40),
           ],
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: FilledButton(
-            onPressed: _isLoading ? null : _saveAlarm,
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.action,
-              minimumSize: const Size.fromHeight(56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: _isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Text(
-                    isEditing ? '변경사항 저장' : '알람 만들기',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-          ),
         ),
       ),
     );
   }
+
+  // ─── Time Display ───────────────────────────────────────────
 
   Widget _buildTimePicker(BuildContext context, AlarmEntity form) {
     return GestureDetector(
@@ -132,13 +135,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         HapticFeedback.lightImpact();
         _selectTime(context, form);
       },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha:0.1),
-          borderRadius: BorderRadius.circular(24),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
             Text(
@@ -147,14 +145,13 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                     fontWeight: FontWeight.w300,
                     color: AppColors.primary,
                     fontSize: 72,
+                    letterSpacing: -2,
                   ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              '탭하여 변경',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primary.withValues(alpha:0.7),
-                  ),
+            const SizedBox(height: 4),
+            const Text(
+              '탭하여 시간 변경',
+              style: TextStyle(color: _kTextHint, fontSize: 13),
             ),
           ],
         ),
@@ -162,46 +159,46 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     );
   }
 
-  Widget _buildLabelField(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  // ─── Label Card ─────────────────────────────────────────────
+
+  Widget _buildLabelCard(BuildContext context) {
+    return _SettingsCard(
       children: [
-        Text(
-          '라벨',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _labelController,
-          decoration: InputDecoration(
-            hintText: '알람 이름 (선택사항)',
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+        _SettingsRow(
+          icon: Icons.label_outline,
+          label: '알람 이름',
+          child: Expanded(
+            child: TextField(
+              controller: _labelController,
+              textAlign: TextAlign.right,
+              style: const TextStyle(color: _kTextDark, fontSize: 15),
+              decoration: const InputDecoration(
+                hintText: '선택사항',
+                hintStyle: TextStyle(color: _kTextHint, fontSize: 15),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              onChanged: (value) {
+                ref
+                    .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                    .setLabel(value);
+              },
             ),
           ),
-          onChanged: (value) {
-            ref
-                .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-                .setLabel(value);
-          },
         ),
       ],
     );
   }
 
-  Widget _buildRepeatDays(BuildContext context, AlarmEntity form) {
+  // ─── Repeat Card ────────────────────────────────────────────
+
+  Widget _buildRepeatCard(BuildContext context, AlarmEntity form) {
     const days = ['월', '화', '수', '목', '금', '토', '일'];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return _SettingsCard(
       children: [
-        Text(
-          '반복',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        const _SectionHeader(icon: Icons.repeat, label: '반복'),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -215,21 +212,23 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                     .toggleRepeatDay(index);
               },
               child: Container(
-                width: 44,
-                height: 44,
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: isSelected ? AppColors.primary : Colors.white,
                   shape: BoxShape.circle,
+                  border: isSelected
+                      ? null
+                      : Border.all(color: const Color(0xFFE0E0E0)),
                 ),
                 child: Center(
                   child: Text(
                     days[index],
                     style: TextStyle(
-                      color: isSelected ? Colors.white : null,
+                      color: isSelected ? Colors.white : _kTextDark,
+                      fontSize: 13,
                       fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                          isSelected ? FontWeight.w700 : FontWeight.w400,
                     ),
                   ),
                 ),
@@ -237,161 +236,130 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             );
           }),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text(
           form.repeatDaysDisplay,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+          style: const TextStyle(color: _kTextHint, fontSize: 13),
         ),
       ],
     );
   }
 
-  Widget _buildQuizSettings(BuildContext context, AlarmEntity form) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  // ─── Mission (Quiz) Card ────────────────────────────────────
+
+  Widget _buildMissionCard(BuildContext context, AlarmEntity form) {
+    return _SettingsCard(
       children: [
-        Text(
-          '퀴즈 설정',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 12),
+        const _SectionHeader(icon: Icons.extension_outlined, label: '기상 미션'),
+        const SizedBox(height: 14),
         // Difficulty
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          children: [
+            const Text('난이도', style: TextStyle(color: _kTextDark, fontSize: 15)),
+            const Spacer(),
+            _MiniSegment<QuizDifficulty>(
+              values: QuizDifficulty.values,
+              selected: form.quizDifficulty,
+              labelOf: (d) => d.displayName,
+              onChanged: (d) {
+                HapticFeedback.lightImpact();
+                ref
+                    .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                    .setQuizDifficulty(d);
+              },
+            ),
+          ],
+        ),
+        const _ThinDivider(),
+        // Question count
+        Row(
+          children: [
+            const Text('문제 수', style: TextStyle(color: _kTextDark, fontSize: 15)),
+            const Spacer(),
+            _StepperControl(
+              value: form.quizCount,
+              min: 1,
+              max: 10,
+              onChanged: (v) {
+                HapticFeedback.lightImpact();
+                ref
+                    .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                    .setQuizCount(v);
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ─── Sound Card ─────────────────────────────────────────────
+
+  Widget _buildSoundCard(BuildContext context, AlarmEntity form) {
+    return _SettingsCard(
+      children: [
+        const _SectionHeader(icon: Icons.music_note_outlined, label: '알람음'),
+        const _ThinDivider(),
+        // Sound selector
+        _SettingsRow(
+          label: '소리',
+          onTap: () => _showSoundPicker(context, form),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('난이도'),
-              const SizedBox(height: 8),
-              SegmentedButton<QuizDifficulty>(
-                segments: QuizDifficulty.values.map((d) {
-                  return ButtonSegment(
-                    value: d,
-                    label: Text(d.displayName),
-                  );
-                }).toList(),
-                selected: {form.quizDifficulty},
-                onSelectionChanged: (selected) {
-                  ref
-                      .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-                      .setQuizDifficulty(selected.first);
-                },
+              Text(
+                AlarmSounds.getByPath(form.soundPath)?.displayName ??
+                    'Classic Alarm',
+                style: TextStyle(color: AppColors.primary, fontSize: 15),
               ),
-              const SizedBox(height: 16),
-              // Question count
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('문제 수'),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle_outline),
-                        onPressed: form.quizCount > 1
-                            ? () {
-                                ref
-                                    .read(alarmFormProvider(alarmId: widget.alarmId)
-                                        .notifier)
-                                    .setQuizCount(form.quizCount - 1);
-                              }
-                            : null,
-                      ),
-                      Text(
-                        '${form.quizCount}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline),
-                        onPressed: form.quizCount < 10
-                            ? () {
-                                ref
-                                    .read(alarmFormProvider(alarmId: widget.alarmId)
-                                        .notifier)
-                                    .setQuizCount(form.quizCount + 1);
-                              }
-                            : null,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              const SizedBox(width: 4),
+              Icon(Icons.chevron_right, size: 20, color: _kTextHint),
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildSoundSettings(BuildContext context, AlarmEntity form) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '소리 및 진동',
-          style: Theme.of(context).textTheme.titleMedium,
+        const _ThinDivider(),
+        // Vibration
+        _ToggleRow(
+          label: '진동',
+          value: form.vibrationEnabled,
+          onChanged: (v) {
+            ref
+                .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                .setVibrationEnabled(v);
+          },
         ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            children: [
-              // Sound selector
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('알람 소리'),
-                subtitle: Text(
-                  AlarmSounds.getByPath(form.soundPath)?.displayName ??
-                      'Classic Alarm',
+        const _ThinDivider(),
+        // Gradual volume
+        _ToggleRow(
+          label: '점진적 볼륨',
+          value: form.gradualVolume,
+          onChanged: (v) {
+            ref
+                .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                .setGradualVolume(v);
+          },
+        ),
+        const _ThinDivider(),
+        // Volume slider
+        Row(
+          children: [
+            const Text('볼륨', style: TextStyle(color: _kTextDark, fontSize: 15)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: SliderTheme(
+                data: SliderThemeData(
+                  activeTrackColor: AppColors.primary,
+                  inactiveTrackColor: const Color(0xFFE0E0E0),
+                  thumbColor: AppColors.primary,
+                  overlayColor: AppColors.primary.withValues(alpha: 0.1),
+                  trackHeight: 3,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
                 ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showSoundPicker(context, form),
-              ),
-              const Divider(),
-              // Vibration toggle
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('진동'),
-                value: form.vibrationEnabled,
-                onChanged: (value) {
-                  ref
-                      .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-                      .setVibrationEnabled(value);
-                },
-              ),
-              const Divider(),
-              // Gradual volume toggle
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('점진적 볼륨 증가'),
-                subtitle: const Text('소리가 작게 시작해서 점점 커집니다'),
-                value: form.gradualVolume,
-                onChanged: (value) {
-                  ref
-                      .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-                      .setGradualVolume(value);
-                },
-              ),
-              const Divider(),
-              // Volume slider
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('볼륨'),
-                subtitle: Slider(
+                child: Slider(
                   value: form.volume.toDouble(),
                   min: 0,
                   max: 100,
                   divisions: 10,
-                  label: '${form.volume}%',
                   onChanged: (value) {
                     ref
                         .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
@@ -399,99 +367,75 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   },
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              width: 38,
+              child: Text(
+                '${form.volume}%',
+                style: const TextStyle(color: _kTextHint, fontSize: 13),
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildSnoozeSettings(BuildContext context, AlarmEntity form) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  // ─── Snooze Card ────────────────────────────────────────────
+
+  Widget _buildSnoozeCard(BuildContext context, AlarmEntity form) {
+    final snoozeEnabled = form.snoozeDuration > 0;
+
+    return _SettingsCard(
       children: [
-        Text(
-          '미루기',
-          style: Theme.of(context).textTheme.titleMedium,
+        _ToggleRow(
+          icon: Icons.snooze_outlined,
+          label: '다시 알림',
+          value: snoozeEnabled,
+          onChanged: (v) {
+            ref
+                .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                .setSnoozeDuration(v ? 5 : 0);
+          },
         ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+        if (snoozeEnabled) ...[
+          const _ThinDivider(),
+          _SettingsRow(
+            label: '간격',
+            child: _PillSelector<int>(
+              values: const [5, 10, 15, 20, 30],
+              selected: form.snoozeDuration,
+              labelOf: (v) => '$v분',
+              onChanged: (v) {
+                HapticFeedback.lightImpact();
+                ref
+                    .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                    .setSnoozeDuration(v);
+              },
+            ),
           ),
-          child: Column(
-            children: [
-              // Snooze toggle
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('미루기 사용'),
-                value: form.snoozeDuration > 0,
-                onChanged: (value) {
-                  ref
-                      .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-                      .setSnoozeDuration(value ? 5 : 0);
-                },
-              ),
-              if (form.snoozeDuration > 0) ...[
-                const Divider(),
-                // Snooze duration
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('미루기 시간'),
-                    DropdownButton<int>(
-                      value: form.snoozeDuration,
-                      items: [5, 10, 15, 20, 30].map((minutes) {
-                        return DropdownMenuItem(
-                          value: minutes,
-                          child: Text('$minutes분'),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref
-                              .read(
-                                  alarmFormProvider(alarmId: widget.alarmId).notifier)
-                              .setSnoozeDuration(value);
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                // Max snoozes
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('최대 미루기 횟수'),
-                    DropdownButton<int>(
-                      value: form.maxSnoozes,
-                      items: [1, 2, 3, 5, 10].map((count) {
-                        return DropdownMenuItem(
-                          value: count,
-                          child: Text('$count'),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref
-                              .read(
-                                  alarmFormProvider(alarmId: widget.alarmId).notifier)
-                              .setMaxSnoozes(value);
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ],
+          const _ThinDivider(),
+          _SettingsRow(
+            label: '최대 횟수',
+            child: _PillSelector<int>(
+              values: const [1, 2, 3, 5, 10],
+              selected: form.maxSnoozes,
+              labelOf: (v) => '$v회',
+              onChanged: (v) {
+                HapticFeedback.lightImpact();
+                ref
+                    .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                    .setMaxSnoozes(v);
+              },
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
+
+  // ─── Actions ────────────────────────────────────────────────
 
   void _showSoundPicker(BuildContext context, AlarmEntity form) {
     showModalBottomSheet(
@@ -527,19 +471,20 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       builder: (sheetContext) {
         return Container(
           height: 340,
-          decoration: BoxDecoration(
-            color: AppColors.backgroundLight,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             children: [
               // Toolbar
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.grey.withValues(alpha: 0.2),
+                      color: Colors.grey.withValues(alpha: 0.15),
                     ),
                   ),
                 ),
@@ -548,20 +493,17 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(sheetContext),
-                      child: Text(
+                      child: const Text(
                         '취소',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: _kTextHint, fontSize: 16),
                       ),
                     ),
-                    Text(
+                    const Text(
                       '알람 시간 설정',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimaryLight,
+                        color: _kTextDark,
                       ),
                     ),
                     TextButton(
@@ -579,7 +521,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                       child: Text(
                         '완료',
                         style: TextStyle(
-                          color: AppColors.action,
+                          color: AppColors.primary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -626,19 +568,19 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       if (id != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
+            content:
+                Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
           ),
         );
         context.pop();
       }
     } catch (e) {
-      // Alarm was likely saved to DB but scheduling failed.
-      // Still navigate back so the user isn't stuck.
       debugPrint('Alarm save error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
+            content:
+                Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
           ),
         );
         context.pop();
@@ -663,9 +605,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             child: const Text('삭제'),
           ),
         ],
@@ -680,5 +620,310 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         context.pop();
       }
     }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Reusable building blocks (private to this file)
+// ═══════════════════════════════════════════════════════════════
+
+/// Rounded card container for a settings group.
+class _SettingsCard extends StatelessWidget {
+  final List<Widget> children;
+  const _SettingsCard({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      decoration: BoxDecoration(
+        color: _kCardColor,
+        borderRadius: BorderRadius.circular(_kCardRadius),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+    );
+  }
+}
+
+/// Section header with icon and label.
+class _SectionHeader extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _SectionHeader({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: AppColors.primary),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            color: _kTextDark,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A single row inside a settings card: label on left, child on right.
+class _SettingsRow extends StatelessWidget {
+  final IconData? icon;
+  final String label;
+  final Widget child;
+  final VoidCallback? onTap;
+
+  const _SettingsRow({
+    this.icon,
+    required this.label,
+    required this.child,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final content = Row(
+      children: [
+        if (icon != null) ...[
+          Icon(icon, size: 20, color: AppColors.primary),
+          const SizedBox(width: 8),
+        ],
+        Text(label, style: const TextStyle(color: _kTextDark, fontSize: 15)),
+        const Spacer(),
+        child,
+      ],
+    );
+
+    if (onTap != null) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: content,
+      );
+    }
+    return content;
+  }
+}
+
+/// A toggle (switch) row.
+class _ToggleRow extends StatelessWidget {
+  final IconData? icon;
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const _ToggleRow({
+    this.icon,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        if (icon != null) ...[
+          Icon(icon, size: 20, color: AppColors.primary),
+          const SizedBox(width: 8),
+        ],
+        Text(label, style: const TextStyle(color: _kTextDark, fontSize: 15)),
+        const Spacer(),
+        SizedBox(
+          height: 28,
+          child: CupertinoSwitch(
+            value: value,
+            activeTrackColor: AppColors.primary,
+            onChanged: (v) {
+              HapticFeedback.lightImpact();
+              onChanged(v);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Thin divider inside cards.
+class _ThinDivider extends StatelessWidget {
+  const _ThinDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Divider(height: 1, color: Colors.grey.withValues(alpha: 0.15)),
+    );
+  }
+}
+
+/// Compact segmented control (pill-shaped).
+class _MiniSegment<T> extends StatelessWidget {
+  final List<T> values;
+  final T selected;
+  final String Function(T) labelOf;
+  final ValueChanged<T> onChanged;
+
+  const _MiniSegment({
+    required this.values,
+    required this.selected,
+    required this.labelOf,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(3),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: values.map((v) {
+          final isActive = v == selected;
+          return GestureDetector(
+            onTap: () => onChanged(v),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: isActive ? AppColors.primary : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                labelOf(v),
+                style: TextStyle(
+                  color: isActive ? Colors.white : _kTextHint,
+                  fontSize: 13,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// A + / – stepper for numeric values.
+class _StepperControl extends StatelessWidget {
+  final int value;
+  final int min;
+  final int max;
+  final ValueChanged<int> onChanged;
+
+  const _StepperControl({
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _stepButton(Icons.remove, value > min ? () => onChanged(value - 1) : null),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Text(
+              '$value',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          _stepButton(Icons.add, value < max ? () => onChanged(value + 1) : null),
+        ],
+      ),
+    );
+  }
+
+  Widget _stepButton(IconData icon, VoidCallback? onTap) {
+    final enabled = onTap != null;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: enabled ? _kCardColor : const Color(0xFFEEEEEE),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          size: 16,
+          color: enabled ? _kTextDark : const Color(0xFFCCCCCC),
+        ),
+      ),
+    );
+  }
+}
+
+/// Horizontal scrollable pill selector.
+class _PillSelector<T> extends StatelessWidget {
+  final List<T> values;
+  final T selected;
+  final String Function(T) labelOf;
+  final ValueChanged<T> onChanged;
+
+  const _PillSelector({
+    required this.values,
+    required this.selected,
+    required this.labelOf,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: values.map((v) {
+        final isActive = v == selected;
+        return Padding(
+          padding: const EdgeInsets.only(left: 6),
+          child: GestureDetector(
+            onTap: () => onChanged(v),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: isActive ? AppColors.primary : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                labelOf(v),
+                style: TextStyle(
+                  color: isActive ? Colors.white : _kTextHint,
+                  fontSize: 13,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }
