@@ -30,17 +30,35 @@ class AlarmEditScreen extends ConsumerStatefulWidget {
 
 class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   late TextEditingController _labelController;
+  late FocusNode _labelFocusNode;
   bool _isLoading = false;
+  bool _labelHasText = false;
 
   @override
   void initState() {
     super.initState();
     _labelController = TextEditingController();
+    _labelController.addListener(() {
+      final hasText = _labelController.text.isNotEmpty;
+      if (hasText != _labelHasText) {
+        setState(() => _labelHasText = hasText);
+      }
+    });
+    _labelFocusNode = FocusNode();
+    _labelFocusNode.addListener(() {
+      if (_labelFocusNode.hasFocus) {
+        // Move cursor to end of text when focused
+        _labelController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _labelController.text.length),
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
     _labelController.dispose();
+    _labelFocusNode.dispose();
     super.dispose();
   }
 
@@ -170,14 +188,33 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           child: Expanded(
             child: TextField(
               controller: _labelController,
+              focusNode: _labelFocusNode,
               textAlign: TextAlign.right,
               style: const TextStyle(color: _kTextDark, fontSize: 15),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: '선택사항',
-                hintStyle: TextStyle(color: _kTextHint, fontSize: 15),
+                hintStyle: const TextStyle(color: _kTextHint, fontSize: 15),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
+                suffixIcon: _labelHasText
+                    ? GestureDetector(
+                        onTap: () {
+                          _labelController.clear();
+                          ref
+                              .read(alarmFormProvider(alarmId: widget.alarmId)
+                                  .notifier)
+                              .setLabel('');
+                        },
+                        child: const Icon(
+                          Icons.cancel,
+                          size: 18,
+                          color: _kTextHint,
+                        ),
+                      )
+                    : null,
+                suffixIconConstraints:
+                    const BoxConstraints(minWidth: 24, minHeight: 24),
               ),
               onChanged: (value) {
                 ref

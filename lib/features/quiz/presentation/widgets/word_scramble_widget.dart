@@ -60,19 +60,34 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
 
     if (_isWordMode) {
       _scrambledPieces = List.from(words);
-      final rng = Random();
-      do {
-        _scrambledPieces.shuffle(rng);
-      } while (_scrambledPieces.join(' ') == answer && words.length > 1);
+      _shuffleUntilDifferent(_scrambledPieces, answer, true);
     } else {
       final word = answer.toUpperCase();
       _scrambledPieces = word.split('');
-      final rng = Random();
-      do {
-        _scrambledPieces.shuffle(rng);
-      } while (_scrambledPieces.join() == word && word.length > 1);
+      _shuffleUntilDifferent(_scrambledPieces, word, false);
     }
     _usedIndices = List.filled(_scrambledPieces.length, false);
+  }
+
+  /// Shuffle list until the joined result differs from the original.
+  /// Tries up to 20 times, then forces a swap as a fallback.
+  void _shuffleUntilDifferent(
+      List<String> pieces, String original, bool useSpaces) {
+    if (pieces.length <= 1) return;
+    final rng = Random();
+    final joiner = useSpaces ? ' ' : '';
+    var attempts = 0;
+    do {
+      pieces.shuffle(rng);
+      attempts++;
+    } while (pieces.join(joiner) == original && attempts < 20);
+
+    // Fallback: if still identical after 20 attempts (e.g. "aaa"), force swap
+    if (pieces.join(joiner) == original && pieces.length >= 2) {
+      final tmp = pieces[0];
+      pieces[0] = pieces[pieces.length - 1];
+      pieces[pieces.length - 1] = tmp;
+    }
   }
 
   void _addPiece(int index) {

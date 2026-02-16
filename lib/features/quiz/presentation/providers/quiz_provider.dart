@@ -80,6 +80,40 @@ class QuizSession extends _$QuizSession {
       difficulty: alarm.quizDifficulty.name,
     );
 
+    // Filter out answers too short for word scramble (< 5 chars for single words)
+    questions = questions.where((q) {
+      final answer = q.correctAnswer.trim();
+      final isSingleWord = !answer.contains(' ');
+      return !isSingleWord || answer.length >= 5;
+    }).toList();
+
+    // If filtering removed too many, re-fetch without filter
+    if (questions.length < alarm.quizCount) {
+      final extra = await quizRepo.getRandomQuestions(
+        count: alarm.quizCount * 3,
+        difficulty: alarm.quizDifficulty.name,
+      );
+      final filtered = extra.where((q) {
+        final answer = q.correctAnswer.trim();
+        final isSingleWord = !answer.contains(' ');
+        return !isSingleWord || answer.length >= 5;
+      }).toList();
+      // Merge, deduplicate, take what we need
+      final ids = questions.map((q) => q.id).toSet();
+      for (final q in filtered) {
+        if (!ids.contains(q.id)) {
+          questions.add(q);
+          ids.add(q.id);
+        }
+        if (questions.length >= alarm.quizCount) break;
+      }
+    }
+
+    // Take only what we need
+    if (questions.length > alarm.quizCount) {
+      questions = questions.sublist(0, alarm.quizCount);
+    }
+
     // Convert all questions to word scramble format
     questions = questions.map((q) => q.copyWith(
       type: QuizType.wordScramble,
