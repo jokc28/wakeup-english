@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -512,30 +514,105 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     );
   }
 
-  Future<void> _selectTime(BuildContext context, AlarmEntity form) async {
-    final time = await showTimePicker(
+  void _selectTime(BuildContext context, AlarmEntity form) {
+    var selectedTime = DateTime(
+      2026, 1, 1,
+      form.time.hour,
+      form.time.minute,
+    );
+
+    showModalBottomSheet(
       context: context,
-      initialTime: form.time,
-      initialEntryMode: TimePickerEntryMode.input,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            timePickerTheme: TimePickerThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          height: 340,
+          decoration: BoxDecoration(
+            color: AppColors.backgroundLight,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          child: child!,
+          child: Column(
+            children: [
+              // Toolbar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(sheetContext),
+                      child: Text(
+                        '취소',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '알람 시간 설정',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimaryLight,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        ref
+                            .read(alarmFormProvider(alarmId: widget.alarmId)
+                                .notifier)
+                            .setTime(TimeOfDay(
+                              hour: selectedTime.hour,
+                              minute: selectedTime.minute,
+                            ));
+                        Navigator.pop(sheetContext);
+                      },
+                      child: Text(
+                        '완료',
+                        style: TextStyle(
+                          color: AppColors.action,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Cupertino Picker with Korean locale
+              Expanded(
+                child: Localizations.override(
+                  context: sheetContext,
+                  locale: const Locale('ko', 'KR'),
+                  delegates: const [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    initialDateTime: selectedTime,
+                    use24hFormat: false,
+                    onDateTimeChanged: (DateTime newTime) {
+                      selectedTime = newTime;
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
-
-    if (time != null) {
-      ref
-          .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-          .setTime(time);
-    }
   }
 
   Future<void> _saveAlarm() async {
