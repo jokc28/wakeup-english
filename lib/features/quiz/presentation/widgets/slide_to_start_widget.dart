@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 /// Custom "Slide to Start Mission" slider widget
 class SlideToStartWidget extends StatefulWidget {
@@ -83,6 +84,7 @@ class _SlideToStartWidgetState extends State<SlideToStartWidget>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return LayoutBuilder(
       builder: (context, constraints) {
         final trackWidth = constraints.maxWidth;
@@ -102,9 +104,9 @@ class _SlideToStartWidgetState extends State<SlideToStartWidget>
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 200),
                   opacity: (1.0 - _dragPosition * 2).clamp(0.0, 1.0),
-                  child: const Text(
-                    '미션 시작하기',
-                    style: TextStyle(
+                  child: Text(
+                    l10n.startMissionSlide,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

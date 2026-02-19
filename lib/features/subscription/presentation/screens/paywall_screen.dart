@@ -7,6 +7,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/services/subscription_provider.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
@@ -41,6 +42,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final subState = ref.watch(subscriptionProvider);
 
     return Scaffold(
@@ -90,7 +92,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
                     // Title in Jua font
                     Text(
-                      '프리미엄 잠금 해제',
+                      l10n.unlockPremium,
                       style: GoogleFonts.jua(
                         fontSize: 28,
                         color: AppColors.textPrimaryLight,
@@ -98,7 +100,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '영어 알람의 모든 기능을 이용해 보세요',
+                      l10n.premiumSubtitle,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: AppColors.textSecondaryLight,
                       ),
@@ -109,23 +111,23 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     // Value props with green checkmark circles
                     _buildFeatureItem(
                       context,
-                      '120개 퀴즈 문제',
-                      '모든 카테고리와 난이도의 전체 라이브러리',
+                      l10n.feature1Title,
+                      l10n.feature1Desc,
                     ),
                     _buildFeatureItem(
                       context,
-                      '10가지 알람 소리',
-                      '파도 소리, 피아노, 재즈 등 프리미엄 사운드',
+                      l10n.feature2Title,
+                      l10n.feature2Desc,
                     ),
                     _buildFeatureItem(
                       context,
-                      '고급 학습 기능',
-                      '취약 부분에 집중하는 맞춤형 퀴즈',
+                      l10n.feature3Title,
+                      l10n.feature3Desc,
                     ),
                     _buildFeatureItem(
                       context,
-                      '새로운 콘텐츠 업데이트',
-                      '정기적인 새 문제 및 소리 추가',
+                      l10n.feature4Title,
+                      l10n.feature4Desc,
                     ),
                     const SizedBox(height: 32),
 
@@ -160,8 +162,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                               )
                             : Text(
                                 subState.isTrialActive
-                                    ? '지금 구독하기'
-                                    : '무료 체험 시작',
+                                    ? l10n.subscribeNowButton
+                                    : l10n.startTrialButton,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -185,13 +187,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     // Restore purchases
                     TextButton(
                       onPressed: _isPurchasing ? null : _handleRestore,
-                      child: const Text('구매 복원'),
+                      child: Text(l10n.restorePurchasesLabel),
                     ),
                     const SizedBox(height: 16),
 
                     // Terms & privacy footer
                     Text(
-                      '구독은 현재 기간 종료 최소 24시간 전에 해지하지 않으면 자동으로 갱신됩니다. 기기 설정에서 구독을 관리할 수 있습니다.',
+                      l10n.subscriptionTerms,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondaryLight,
                       ),
@@ -206,7 +208,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                             // TODO: Open terms URL
                           },
                           child: Text(
-                            '이용약관',
+                            l10n.termsOfService,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: AppColors.primary,
                             ),
@@ -218,7 +220,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                             // TODO: Open privacy URL
                           },
                           child: Text(
-                            '개인정보 처리방침',
+                            l10n.privacyPolicy,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: AppColors.primary,
                             ),
@@ -285,11 +287,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
   Widget _buildPriceSection(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final offering = _offerings?.current;
     final monthlyPackage = offering?.monthly;
 
     final priceText =
-        monthlyPackage != null ? '${monthlyPackage.storeProduct.priceString}/월' : '가격 정보 없음';
+        monthlyPackage != null ? l10n.premiumMonthlyPrice(monthlyPackage.storeProduct.priceString) : '--';
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -307,7 +310,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       child: Column(
         children: [
           Text(
-            '프리미엄 월간',
+            l10n.premiumMonthlyPlan,
             style: GoogleFonts.jua(
               fontSize: 18,
               color: Colors.white.withValues(alpha: 0.9),
@@ -328,9 +331,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               color: Colors.white.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              '7일 무료 체험 포함',
-              style: TextStyle(
+            child: Text(
+              l10n.trialIncluded,
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -356,8 +359,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       if (success) {
         ref.read(subscriptionProvider.notifier).refresh();
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('프리미엄에 오신 것을 환영합니다!')),
+            SnackBar(content: Text(l10n.welcomeToPremium)),
           );
           context.pop();
         }
@@ -377,15 +381,16 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       final success = await service.restorePurchases();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         if (success) {
           ref.read(subscriptionProvider.notifier).refresh();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('구매가 복원되었습니다!')),
+            SnackBar(content: Text(l10n.purchasesRestored)),
           );
           context.pop();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('복원할 구매 내역이 없습니다')),
+            SnackBar(content: Text(l10n.noPurchasesToRestore)),
           );
         }
       }

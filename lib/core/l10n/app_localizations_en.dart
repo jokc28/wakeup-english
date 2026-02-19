@@ -128,4 +128,442 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quizCount => 'Number of Questions';
+
+  @override
+  String get errorRestartApp => 'Please restart the app';
+
+  @override
+  String get errorTemporaryIssue => 'A temporary error occurred.';
+
+  @override
+  String get errorLoadingAlarms => 'Error loading alarms';
+
+  @override
+  String alarmDeletedMessage(String label) {
+    return '\"$label\" deleted';
+  }
+
+  @override
+  String get alarmDeletedGeneric => 'Alarm deleted';
+
+  @override
+  String get undoAction => 'Undo';
+
+  @override
+  String get confirmDeleteAlarm => 'Delete this alarm?';
+
+  @override
+  String confirmDeleteAlarmWithLabel(String label) {
+    return 'Delete \"$label\" alarm?';
+  }
+
+  @override
+  String confirmDeleteAlarmWithTime(String time) {
+    return 'Delete $time alarm?';
+  }
+
+  @override
+  String get alarmUpdated => 'Alarm updated';
+
+  @override
+  String get alarmCreated => 'Alarm created';
+
+  @override
+  String get deleteButton => 'Delete';
+
+  @override
+  String get timePickerTapHint => 'Tap to change time';
+
+  @override
+  String get alarmNameLabel => 'Alarm Name';
+
+  @override
+  String get optionalLabel => 'Optional';
+
+  @override
+  String get wakeMissionLabel => 'Wake-up Mission';
+
+  @override
+  String get difficultyLabel => 'Difficulty';
+
+  @override
+  String get alarmSoundLabel => 'Alarm Sound';
+
+  @override
+  String get soundLabel => 'Sound';
+
+  @override
+  String get gradualVolumeLabel => 'Gradual Volume';
+
+  @override
+  String get volumeLabel => 'Volume';
+
+  @override
+  String get snoozeLabel => 'Snooze';
+
+  @override
+  String get snoozeIntervalLabel => 'Interval';
+
+  @override
+  String get maxSnoozesLabel => 'Max Count';
+
+  @override
+  String maxSnoozesFormat(int count) {
+    return '$count times';
+  }
+
+  @override
+  String get setAlarmTimeTitle => 'Set Alarm Time';
+
+  @override
+  String get doneButton => 'Done';
+
+  @override
+  String get repeatOnce => 'Once';
+
+  @override
+  String get repeatDaily => 'Daily';
+
+  @override
+  String get repeatWeekdays => 'Weekdays';
+
+  @override
+  String get repeatWeekends => 'Weekends';
+
+  @override
+  String get goodMorningGreeting => 'Good morning!';
+
+  @override
+  String get loadingQuiz => 'Loading quiz...';
+
+  @override
+  String get explanationLabel => 'Explanation';
+
+  @override
+  String get quizCompleteButton => 'Complete Quiz';
+
+  @override
+  String get nextQuestionButton => 'Next Question';
+
+  @override
+  String scoreDisplay(int correct, int total) {
+    return '$correct/$total correct!';
+  }
+
+  @override
+  String get quizCompletedMessage => 'Quiz complete!';
+
+  @override
+  String get dismissAlarmButton => 'Dismiss Alarm';
+
+  @override
+  String get trialExpiredTitle => 'Free Trial Ended';
+
+  @override
+  String get trialExpiredMessage =>
+      'Your free trial (7 days) has expired.\nPlease subscribe to continue using the app.';
+
+  @override
+  String get restorePurchasesDebug => 'Restore Purchases (Debug)';
+
+  @override
+  String get subscribeButton => 'Subscribe';
+
+  @override
+  String get correctAnswerLabel => 'Answer: ';
+
+  @override
+  String hintLabel(String hint) {
+    return 'Hint: $hint';
+  }
+
+  @override
+  String get enterAnswerPlaceholder => 'Enter your answer...';
+
+  @override
+  String get startMissionSlide => 'Start Mission';
+
+  @override
+  String get speakInstructions => 'Speak the sentence below in English';
+
+  @override
+  String get recognizedTextLabel => 'Recognized text:';
+
+  @override
+  String similarityPercentage(String percent) {
+    return 'Similarity: $percent%';
+  }
+
+  @override
+  String get micNotAvailableMessage =>
+      'Microphone is not available. Please type your answer instead.';
+
+  @override
+  String get enterEnglishPlaceholder => 'Type in English...';
+
+  @override
+  String get holdToSpeak => 'Hold to speak';
+
+  @override
+  String get typeInsteadButton => 'Type instead';
+
+  @override
+  String get listeningMessage => 'Listening...';
+
+  @override
+  String get wordScrambleInstruction => 'Unscramble the word';
+
+  @override
+  String get speakingChallengeInstruction =>
+      'Speak the following sentence in English';
+
+  @override
+  String get noAlarmsSubtitle =>
+      'Tap the button below to create an English quiz alarm';
+
+  @override
+  String quizInfoFormat(String difficulty, int count) {
+    return '$difficulty $count questions';
+  }
+
+  @override
+  String get alarmSoundTitle => 'Alarm Sound';
+
+  @override
+  String get soundPickerHint => 'Tap to preview, long press to select';
+
+  @override
+  String get defaultAlarmSettings => 'Default Alarm Settings';
+
+  @override
+  String get defaultQuizCount => 'Default Quiz Count';
+
+  @override
+  String get defaultDifficulty => 'Default Difficulty';
+
+  @override
+  String get defaultSnoozeTime => 'Default Snooze Time';
+
+  @override
+  String get missionTypeHeader => 'Mission Type';
+
+  @override
+  String get wordScrambleMission => 'Word Scramble';
+
+  @override
+  String get wordScrambleDescription => 'Unscramble letters to complete words';
+
+  @override
+  String get speakingChallengeMission => 'Speaking Challenge';
+
+  @override
+  String get speakingChallengeDescription => 'Say English sentences aloud';
+
+  @override
+  String get soundVibrationHeader => 'Sound & Vibration';
+
+  @override
+  String get vibrationDescription => 'Vibrate when alarm rings';
+
+  @override
+  String get gradualVolumeDescription => 'Gradually increase alarm volume';
+
+  @override
+  String get subscriptionHeader => 'Subscription';
+
+  @override
+  String get upgradeToPremium => 'Upgrade to Premium';
+
+  @override
+  String get unlockAllContent => 'Unlock all sounds and questions';
+
+  @override
+  String get restorePurchasesLabel => 'Restore Purchases';
+
+  @override
+  String get restorePurchasesDescription => 'Restore previous purchases';
+
+  @override
+  String get debugPremiumMode => '[Debug] Premium Mode';
+
+  @override
+  String get debugPremiumEnabled => 'Enabled - tap to disable';
+
+  @override
+  String get debugPremiumDisabled => 'Disabled - tap to enable';
+
+  @override
+  String get aboutHeader => 'About';
+
+  @override
+  String get versionLabel => 'Version';
+
+  @override
+  String get licensesLabel => 'Open Source Licenses';
+
+  @override
+  String get licensesDescription => 'View open source licenses';
+
+  @override
+  String get dataHeader => 'Data';
+
+  @override
+  String get clearProgressLabel => 'Clear Quiz Progress';
+
+  @override
+  String get clearProgressDescription => 'Reset all learning progress';
+
+  @override
+  String get selectLanguageDialog => 'Select Language';
+
+  @override
+  String get selectQuizCountDialog => 'Default Quiz Count';
+
+  @override
+  String quizCountFormat(int count) {
+    return '$count questions';
+  }
+
+  @override
+  String get selectDifficultyDialog => 'Default Difficulty';
+
+  @override
+  String get easyDifficultyDesc => 'Basic vocabulary and grammar';
+
+  @override
+  String get mediumDifficultyDesc => 'Intermediate level';
+
+  @override
+  String get hardDifficultyDesc => 'Advanced vocabulary and idioms';
+
+  @override
+  String get selectSnoozeDialog => 'Default Snooze Time';
+
+  @override
+  String get clearProgressDialog => 'Clear Progress';
+
+  @override
+  String get clearProgressWarning =>
+      'All quiz learning progress will be cleared. This action cannot be undone.';
+
+  @override
+  String get progressClearedSnackbar => 'Progress has been cleared';
+
+  @override
+  String get resetButton => 'Reset';
+
+  @override
+  String get purchasesRestoredSnackbar => 'Purchases restored!';
+
+  @override
+  String get noPurchasesToRestore => 'No purchases to restore';
+
+  @override
+  String get unlockPremium => 'Unlock Premium';
+
+  @override
+  String get premiumSubtitle => 'Unlock all features of WakeUp English';
+
+  @override
+  String get feature1Title => '120 Quiz Questions';
+
+  @override
+  String get feature1Desc =>
+      'Full library across all categories and difficulties';
+
+  @override
+  String get feature2Title => '10 Alarm Sounds';
+
+  @override
+  String get feature2Desc => 'Premium sounds: ocean waves, piano, jazz & more';
+
+  @override
+  String get feature3Title => 'Advanced Learning';
+
+  @override
+  String get feature3Desc => 'Personalized quizzes focused on your weak areas';
+
+  @override
+  String get feature4Title => 'New Content Updates';
+
+  @override
+  String get feature4Desc => 'Regular new questions and sound additions';
+
+  @override
+  String get subscribeNowButton => 'Subscribe Now';
+
+  @override
+  String get startTrialButton => 'Start Free Trial';
+
+  @override
+  String get subscriptionTerms =>
+      'Subscription automatically renews unless canceled at least 24 hours before the end of the current period. You can manage your subscription in device settings.';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get premiumMonthlyPlan => 'Premium Monthly';
+
+  @override
+  String premiumMonthlyPrice(String price) {
+    return '$price/mo';
+  }
+
+  @override
+  String get trialIncluded => 'Includes 7-day free trial';
+
+  @override
+  String get welcomeToPremium => 'Welcome to Premium!';
+
+  @override
+  String get purchasesRestored => 'Purchases restored!';
+
+  @override
+  String get morningStreak => 'Morning Streak';
+
+  @override
+  String streakDays(int count) {
+    return '$count-Day Streak!';
+  }
+
+  @override
+  String streakRecord(int count) {
+    return 'Record: $count';
+  }
+
+  @override
+  String get streakNewRecord => 'New Record!';
+
+  @override
+  String get streakStart => 'Start your streak!';
+
+  @override
+  String get completedToday => 'Completed today';
+
+  @override
+  String get premiumStatus => 'Premium';
+
+  @override
+  String get premiumAllContent => 'All content available';
+
+  @override
+  String get freeTrialStatus => 'Free Trial';
+
+  @override
+  String trialDaysRemaining(int count) {
+    return '$count days remaining';
+  }
+
+  @override
+  String get freePlanStatus => 'Free Plan';
+
+  @override
+  String get freePlanLimits => '30 questions, 3 sounds';
+
+  @override
+  String get upgradeButton => 'Upgrade';
 }

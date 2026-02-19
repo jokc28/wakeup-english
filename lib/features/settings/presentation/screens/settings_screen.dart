@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/mission_type_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
@@ -15,12 +16,13 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final subState = ref.watch(subscriptionProvider);
     final missionState = ref.watch(missionTypeProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('설정'),
+        title: Text(l10n.settings),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -34,48 +36,48 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Language Section
-          _buildSectionHeader(context, '언어'),
+          _buildSectionHeader(context, l10n.language),
           _buildSettingsTile(
             context,
             icon: Icons.language,
-            title: '언어',
-            subtitle: '한국어',
+            title: l10n.language,
+            subtitle: l10n.korean,
             onTap: () => _showLanguageDialog(context),
           ),
           const SizedBox(height: 24),
 
           // Default Alarm Settings
-          _buildSectionHeader(context, '기본 알람 설정'),
+          _buildSectionHeader(context, l10n.defaultAlarmSettings),
           _buildSettingsTile(
             context,
             icon: Icons.quiz_outlined,
-            title: '기본 문제 수',
-            subtitle: '3문제',
+            title: l10n.defaultQuizCount,
+            subtitle: l10n.quizCountFormat(3),
             onTap: () => _showQuizCountDialog(context),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.speed_outlined,
-            title: '기본 난이도',
-            subtitle: '보통',
+            title: l10n.defaultDifficulty,
+            subtitle: l10n.difficultyMedium,
             onTap: () => _showDifficultyDialog(context),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.snooze_outlined,
-            title: '기본 미루기 시간',
-            subtitle: '5분',
+            title: l10n.defaultSnoozeTime,
+            subtitle: l10n.minutes(5),
             onTap: () => _showSnoozeDialog(context),
           ),
           const SizedBox(height: 24),
 
           // Mission Type Selector
-          _buildSectionHeader(context, '미션 유형'),
+          _buildSectionHeader(context, l10n.missionTypeHeader),
           _buildSwitchTile(
             context,
             icon: Icons.shuffle,
-            title: '철자 맞추기',
-            subtitle: '영어 단어의 철자를 맞추는 미션',
+            title: l10n.wordScrambleMission,
+            subtitle: l10n.wordScrambleDescription,
             value: missionState.wordScrambleEnabled,
             onChanged: (value) {
               ref.read(missionTypeProvider.notifier).toggleWordScramble(value);
@@ -84,8 +86,8 @@ class SettingsScreen extends ConsumerWidget {
           _buildSwitchTile(
             context,
             icon: Icons.mic,
-            title: '말하기 도전',
-            subtitle: '영어 문장을 소리 내어 말하는 미션',
+            title: l10n.speakingChallengeMission,
+            subtitle: l10n.speakingChallengeDescription,
             value: missionState.speakingChallengeEnabled,
             onChanged: (value) {
               ref.read(missionTypeProvider.notifier).toggleSpeakingChallenge(value);
@@ -94,12 +96,12 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Sound Settings
-          _buildSectionHeader(context, '소리 및 진동'),
+          _buildSectionHeader(context, l10n.soundVibrationHeader),
           _buildSwitchTile(
             context,
             icon: Icons.vibration,
-            title: '진동',
-            subtitle: '알람 울릴 때 진동',
+            title: l10n.vibration,
+            subtitle: l10n.vibrationDescription,
             value: true,
             onChanged: (value) {
               // TODO: Implement preference saving
@@ -108,8 +110,8 @@ class SettingsScreen extends ConsumerWidget {
           _buildSwitchTile(
             context,
             icon: Icons.volume_up_outlined,
-            title: '점진적 볼륨',
-            subtitle: '알람 볼륨을 점진적으로 높이기',
+            title: l10n.gradualVolumeLabel,
+            subtitle: l10n.gradualVolumeDescription,
             value: false,
             onChanged: (value) {
               // TODO: Implement preference saving
@@ -118,28 +120,28 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Subscription Section
-          _buildSectionHeader(context, '구독'),
+          _buildSectionHeader(context, l10n.subscriptionHeader),
           if (!subState.isPremium)
             _buildSettingsTile(
               context,
               icon: Icons.workspace_premium,
-              title: '프리미엄으로 업그레이드',
-              subtitle: '모든 소리 및 문제 잠금 해제',
+              title: l10n.upgradeToPremium,
+              subtitle: l10n.unlockAllContent,
               onTap: () => AppRouter.navigateToPaywall(),
             ),
           _buildSettingsTile(
             context,
             icon: Icons.restore,
-            title: '구매 복원',
-            subtitle: '이전 구매 내역 복원',
+            title: l10n.restorePurchasesLabel,
+            subtitle: l10n.restorePurchasesDescription,
             onTap: () => _handleRestore(context, ref),
           ),
           if (kDebugMode)
             _buildSettingsTile(
               context,
               icon: subState.isPremium ? Icons.toggle_on : Icons.toggle_off,
-              title: '[Debug] 프리미엄 모드',
-              subtitle: subState.isPremium ? '활성화됨 - 탭하여 해제' : '비활성화됨 - 탭하여 활성화',
+              title: l10n.debugPremiumMode,
+              subtitle: subState.isPremium ? l10n.debugPremiumEnabled : l10n.debugPremiumDisabled,
               titleColor: Colors.deepOrange,
               onTap: () {
                 ref.read(subscriptionProvider.notifier).debugTogglePremium();
@@ -147,8 +149,8 @@ class SettingsScreen extends ConsumerWidget {
                   SnackBar(
                     content: Text(
                       subState.isPremium
-                          ? '프리미엄 모드 해제됨'
-                          : '프리미엄 모드 활성화됨',
+                          ? l10n.debugPremiumDisabled
+                          : l10n.debugPremiumEnabled,
                     ),
                   ),
                 );
@@ -157,30 +159,30 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // About Section
-          _buildSectionHeader(context, '정보'),
+          _buildSectionHeader(context, l10n.aboutHeader),
           _buildSettingsTile(
             context,
             icon: Icons.info_outline,
-            title: '버전',
+            title: l10n.versionLabel,
             subtitle: '1.0.0',
             onTap: null,
           ),
           _buildSettingsTile(
             context,
             icon: Icons.description_outlined,
-            title: '오픈소스 라이선스',
-            subtitle: '사용된 오픈소스 라이선스',
+            title: l10n.licensesLabel,
+            subtitle: l10n.licensesDescription,
             onTap: () => _showLicenses(context),
           ),
           const SizedBox(height: 24),
 
           // Danger Zone
-          _buildSectionHeader(context, '데이터'),
+          _buildSectionHeader(context, l10n.dataHeader),
           _buildSettingsTile(
             context,
             icon: Icons.delete_outline,
-            title: '퀴즈 진행 기록 초기화',
-            subtitle: '모든 학습 기록 초기화',
+            title: l10n.clearProgressLabel,
+            subtitle: l10n.clearProgressDescription,
             titleColor: AppColors.error,
             onTap: () => _showClearProgressDialog(context),
           ),
@@ -273,6 +275,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildSubscriptionCard(BuildContext context, SubscriptionState subState) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     String statusText;
     String subtitleText;
@@ -280,18 +283,18 @@ class SettingsScreen extends ConsumerWidget {
     Color statusColor;
 
     if (subState.isPremium) {
-      statusText = '프리미엄';
-      subtitleText = '모든 콘텐츠 이용 가능';
+      statusText = l10n.premiumStatus;
+      subtitleText = l10n.premiumAllContent;
       statusIcon = Icons.workspace_premium;
       statusColor = AppColors.accent;
     } else if (subState.isTrialActive) {
-      statusText = '무료 체험';
-      subtitleText = '${subState.daysRemaining}일 남음';
+      statusText = l10n.freeTrialStatus;
+      subtitleText = l10n.trialDaysRemaining(subState.daysRemaining);
       statusIcon = Icons.timer;
       statusColor = AppColors.warning;
     } else {
-      statusText = '무료 플랜';
-      subtitleText = '30문제, 3개 소리';
+      statusText = l10n.freePlanStatus;
+      subtitleText = l10n.freePlanLimits;
       statusIcon = Icons.lock_outline;
       statusColor = theme.colorScheme.onSurfaceVariant;
     }
@@ -345,7 +348,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   minimumSize: const Size(0, 36),
                 ),
-                child: const Text('업그레이드'),
+                child: Text(l10n.upgradeButton),
               ),
           ],
         ),
@@ -354,6 +357,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _handleRestore(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final service = ref.read(subscriptionServiceProvider);
     final success = await service.restorePurchases();
 
@@ -361,21 +365,22 @@ class SettingsScreen extends ConsumerWidget {
       if (success) {
         ref.read(subscriptionProvider.notifier).refresh();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구매가 복원되었습니다!')),
+          SnackBar(content: Text(l10n.purchasesRestoredSnackbar)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('복원할 구매 내역이 없습니다')),
+          SnackBar(content: Text(l10n.noPurchasesToRestore)),
         );
       }
     }
   }
 
   void _showLanguageDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('언어 선택'),
+        title: Text(l10n.selectLanguageDialog),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -390,7 +395,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Text('🇰🇷'),
-              title: const Text('한국어'),
+              title: Text(l10n.korean),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Change language
@@ -403,15 +408,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showQuizCountDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('기본 문제 수'),
+        title: Text(l10n.selectQuizCountDialog),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [1, 3, 5, 7, 10].map((count) {
             return ListTile(
-              title: Text('$count문제'),
+              title: Text(l10n.quizCountFormat(count)),
               trailing: count == 3
                   ? const Icon(Icons.check, color: AppColors.action)
                   : null,
@@ -427,31 +433,32 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showDifficultyDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('기본 난이도'),
+        title: Text(l10n.selectDifficultyDialog),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: const Text('쉬움'),
-              subtitle: const Text('기본 어휘 및 문법'),
+              title: Text(l10n.difficultyEasy),
+              subtitle: Text(l10n.easyDifficultyDesc),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              title: const Text('보통'),
+              title: Text(l10n.difficultyMedium),
               trailing: const Icon(Icons.check, color: AppColors.action),
-              subtitle: const Text('중급 수준'),
+              subtitle: Text(l10n.mediumDifficultyDesc),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              title: const Text('어려움'),
-              subtitle: const Text('고급 어휘 및 관용어'),
+              title: Text(l10n.difficultyHard),
+              subtitle: Text(l10n.hardDifficultyDesc),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -463,15 +470,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showSnoozeDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('기본 미루기 시간'),
+        title: Text(l10n.selectSnoozeDialog),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [5, 10, 15, 20, 30].map((minutes) {
             return ListTile(
-              title: Text('$minutes분'),
+              title: Text(l10n.minutes(minutes)),
               trailing: minutes == 5
                   ? const Icon(Icons.check, color: AppColors.action)
                   : null,
@@ -486,36 +494,38 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showLicenses(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showLicensePage(
       context: context,
-      applicationName: '영어 알람',
+      applicationName: l10n.appTitle,
       applicationVersion: '1.0.0',
     );
   }
 
   void _showClearProgressDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('진행 기록 초기화'),
-        content: const Text(
-          '모든 퀴즈 학습 기록이 초기화됩니다. 이 작업은 되돌릴 수 없습니다.',
+        title: Text(l10n.clearProgressDialog),
+        content: Text(
+          l10n.clearProgressWarning,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               // TODO: Clear progress
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('기록이 초기화되었습니다')),
+                SnackBar(content: Text(l10n.progressClearedSnackbar)),
               );
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('초기화'),
+            child: Text(l10n.resetButton),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/constants/app_gradients.dart';
 import '../../domain/entities/quiz_question.dart';
 
@@ -189,6 +190,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -209,7 +211,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                   color: AppColors.primary, size: 32),
               const SizedBox(height: 8),
               Text(
-                '아래 문장을 영어로 말해 보세요',
+                l10n.speakInstructions,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.primary,
                 ),
@@ -262,7 +264,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
             child: Column(
               children: [
                 Text(
-                  '인식된 텍스트:',
+                  l10n.recognizedTextLabel,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondaryLight,
                   ),
@@ -283,7 +285,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                 if (widget.showResult) ...[
                   const SizedBox(height: 4),
                   Text(
-                    '일치도: ${(_calculateSimilarity(_recognizedText, widget.question.correctAnswer) * 100).round()}%',
+                    l10n.similarityPercentage((_calculateSimilarity(_recognizedText, widget.question.correctAnswer) * 100).round().toString()),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: widget.isCorrect
                           ? AppColors.quizCorrect
@@ -308,7 +310,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                '마이크를 사용할 수 없습니다. 답을 직접 입력해 주세요.',
+                l10n.micNotAvailableMessage,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.warning,
                 ),
@@ -322,7 +324,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _submit(_textController.text),
               decoration: InputDecoration(
-                hintText: '영어로 입력하세요...',
+                hintText: l10n.enterEnglishPlaceholder,
                 filled: true,
                 fillColor: AppColors.quizOption,
                 border: OutlineInputBorder(
@@ -344,8 +346,8 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text('제출',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              child: Text(l10n.submit,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             ),
           ] else ...[
             // Gradient mic button
@@ -387,7 +389,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
             ),
             const SizedBox(height: 12),
             Text(
-              _isListening ? '듣고 있습니다...' : '길게 눌러 말하기',
+              _isListening ? l10n.listeningMessage : l10n.holdToSpeak,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: _isListening
                     ? AppColors.primary
@@ -400,7 +402,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
             TextButton(
               onPressed: () => setState(() => _showTypingFallback = true),
               child: Text(
-                '직접 입력하기',
+                l10n.typeInsteadButton,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.primary,
                 ),
@@ -427,7 +429,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                     text: TextSpan(
                       style: theme.textTheme.bodyMedium,
                       children: [
-                        const TextSpan(text: '정답: '),
+                        TextSpan(text: l10n.correctAnswerLabel),
                         TextSpan(
                           text: widget.question.correctAnswer,
                           style: const TextStyle(

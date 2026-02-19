@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 
 import '../../../../core/constants/alarm_sounds.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/subscription_provider.dart';
 
@@ -61,6 +62,7 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final hasFullAccess = ref.watch(hasFullAccessProvider);
 
     return Container(
@@ -84,7 +86,7 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              '알람 소리',
+              l10n.alarmSoundTitle,
               style: theme.textTheme.titleLarge,
             ),
           ),
@@ -154,7 +156,7 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Text(
-              '탭하여 미리 듣기, 길게 눌러 선택',
+              l10n.soundPickerHint,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

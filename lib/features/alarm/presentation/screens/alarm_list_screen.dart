@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/services/streak_provider.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
 import '../widgets/alarm_tile.dart';
@@ -15,11 +19,12 @@ class AlarmListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final alarmsAsync = ref.watch(alarmsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('영어 알람'),
+        title: Text(l10n.appTitle),
         centerTitle: true,
         actions: [
           IconButton(
@@ -49,7 +54,7 @@ class AlarmListScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                '알람 불러오기 오류',
+                l10n.errorLoadingAlarms,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -67,12 +72,13 @@ class AlarmListScreen extends ConsumerWidget {
         backgroundColor: AppColors.action,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
-        label: const Text('알람 추가'),
+        label: Text(l10n.addAlarm),
       ),
     );
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -86,14 +92,14 @@ class AlarmListScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              '설정된 알람 없음',
+              l10n.noAlarms,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              '아래 버튼을 눌러 영어 퀴즈 알람을 만들어 보세요',
+              l10n.noAlarmsSubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context)
                         .colorScheme
@@ -108,42 +114,105 @@ class AlarmListScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildStreakCard(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final streak = ref.watch(streakProvider);
+
+    if (streak.currentStreak < 1) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.quizStreak.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.quizStreak.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          const Text('🔥', style: TextStyle(fontSize: 28)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.streakDays(streak.currentStreak),
+                  style: GoogleFonts.jua(
+                    fontSize: 18,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+                if (streak.completedToday)
+                  Text(
+                    l10n.completedToday,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondaryLight,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Text(
+            l10n.streakRecord(streak.maxStreak),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textSecondaryLight,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAlarmList(
     BuildContext context,
     WidgetRef ref,
     List<AlarmEntity> alarms,
   ) {
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-      itemCount: alarms.length,
-      itemBuilder: (context, index) {
-        final alarm = alarms[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: AlarmTile(
-            alarm: alarm,
-            onTap: () => context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
-            onDelete: () {
-              ref.read(alarmOperationsProvider.notifier).deleteAlarm(alarm.id!);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    alarm.label.isNotEmpty
-                        ? '"${alarm.label}" 삭제됨'
-                        : '알람이 삭제되었습니다',
-                  ),
-                  action: SnackBarAction(
-                    label: '되돌리기',
-                    onPressed: () {
-                      // TODO: Implement undo
-                    },
-                  ),
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      children: [
+        _buildStreakCard(context, ref),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+            itemCount: alarms.length,
+            itemBuilder: (context, index) {
+              final alarm = alarms[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: AlarmTile(
+                  alarm: alarm,
+                  onTap: () => context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
+                  onDelete: () {
+                    ref.read(alarmOperationsProvider.notifier).deleteAlarm(alarm.id!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          alarm.label.isNotEmpty
+                              ? l10n.alarmDeletedMessage(alarm.label)
+                              : l10n.alarmDeletedGeneric,
+                        ),
+                        action: SnackBarAction(
+                          label: l10n.undoAction,
+                          onPressed: () {
+                            // TODO: Implement undo
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
               );
             },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

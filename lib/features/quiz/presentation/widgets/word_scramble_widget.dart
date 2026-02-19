@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/quiz_question.dart';
 
 /// Widget for word scramble quiz type
@@ -129,6 +130,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final correctDisplay = _isWordMode
         ? widget.question.correctAnswer
         : widget.question.correctAnswer.toUpperCase();
@@ -252,7 +254,7 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
                     text: TextSpan(
                       style: theme.textTheme.bodyMedium,
                       children: [
-                        const TextSpan(text: '정답: '),
+                        TextSpan(text: l10n.correctAnswerLabel),
                         TextSpan(
                           text: correctDisplay,
                           style: const TextStyle(
@@ -282,9 +284,9 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: const Text(
-              '제출',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            child: Text(
+              l10n.submit,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         ],

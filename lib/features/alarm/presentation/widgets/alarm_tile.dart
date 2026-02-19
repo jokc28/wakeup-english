@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
+import '../utils/alarm_display_helpers.dart';
 
 /// A tile widget displaying alarm information
 class AlarmTile extends ConsumerWidget {
@@ -22,6 +24,7 @@ class AlarmTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isEnabled = alarm.isEnabled;
 
     return Dismissible(
@@ -115,7 +118,7 @@ class AlarmTile extends ConsumerWidget {
                             const SizedBox(width: 8),
                           ],
                           Text(
-                            alarm.repeatDaysDisplay,
+                            localizedRepeatDaysDisplay(l10n, alarm),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: isEnabled
                                   ? theme.colorScheme.onSurfaceVariant
@@ -138,7 +141,7 @@ class AlarmTile extends ConsumerWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${alarm.quizDifficulty.displayName} ${alarm.quizCount}문제',
+                            l10n.quizInfoFormat(localizedDifficultyName(l10n, alarm.quizDifficulty), alarm.quizCount),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isEnabled
                                   ? AppColors.primary
@@ -170,26 +173,27 @@ class AlarmTile extends ConsumerWidget {
   }
 
   Future<bool> _showDeleteConfirmation(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     return await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('알람 삭제'),
+            title: Text(l10n.deleteAlarm),
             content: Text(
               alarm.label.isNotEmpty
-                  ? '"${alarm.label}" 알람을 삭제하시겠습니까?'
-                  : '${alarm.timeDisplay} 알람을 삭제하시겠습니까?',
+                  ? l10n.confirmDeleteAlarmWithLabel(alarm.label)
+                  : l10n.confirmDeleteAlarmWithTime(alarm.timeDisplay),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('취소'),
+                child: Text(l10n.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.error,
                 ),
-                child: const Text('삭제'),
+                child: Text(l10n.deleteButton),
               ),
             ],
           ),

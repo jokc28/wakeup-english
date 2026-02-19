@@ -9,7 +9,9 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
 import '../../../../core/services/subscription_service.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
@@ -203,7 +205,10 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
           child: child,
         );
       },
-      child: SafeArea(
+      child: Builder(
+        builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
@@ -212,7 +217,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               const Spacer(flex: 2),
               // Greeting
               Text(
-                '좋은 아침이에요!',
+                l10n.goodMorningGreeting,
                 style: GoogleFonts.jua(
                   fontSize: 28,
                   color: Colors.white.withValues(alpha: 0.9),
@@ -231,20 +236,23 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
             ],
           ),
         ),
+        );
+        },
       ),
     );
   }
 
   Widget _buildLoading() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       color: AppColors.backgroundLight,
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: AppColors.primary),
-            SizedBox(height: 16),
-            Text('퀴즈 불러오는 중...'),
+            const CircularProgressIndicator(color: AppColors.primary),
+            const SizedBox(height: 16),
+            Text(l10n.loadingQuiz),
           ],
         ),
       ),
@@ -455,6 +463,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
 
   Widget _buildExplanation(QuizQuestion question) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -474,7 +483,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               ),
               const SizedBox(width: 8),
               Text(
-                '해설',
+                l10n.explanationLabel,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -501,6 +510,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   }
 
   Widget _buildNextButton(QuizSessionState session) {
+    final l10n = AppLocalizations.of(context)!;
     final isLastQuestion =
         session.currentIndex >= session.questions.length - 1;
 
@@ -521,7 +531,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
             ),
           ),
           child: Text(
-            isLastQuestion ? '퀴즈 완료' : '다음 문제',
+            isLastQuestion ? l10n.quizCompleteButton : l10n.nextQuestionButton,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
         ),
@@ -531,6 +541,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
 
   // --- Completed Phase ---
   Widget _buildCompletedPhase(QuizSessionState session) {
+    final l10n = AppLocalizations.of(context)!;
     final correctCount = session.correctCount;
     final totalCount = session.questions.length;
 
@@ -568,7 +579,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               const SizedBox(height: 32),
               // Score display
               Text(
-                '$correctCount/$totalCount 정답!',
+                l10n.scoreDisplay(correctCount, totalCount),
                 style: GoogleFonts.jua(
                   fontSize: 36,
                   color: AppColors.textPrimaryLight,
@@ -576,12 +587,44 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               ).animate().fadeIn(delay: 300.ms),
               const SizedBox(height: 8),
               Text(
-                '퀴즈 완료!',
+                l10n.quizCompletedMessage,
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColors.textSecondaryLight,
                 ),
               ).animate().fadeIn(delay: 500.ms),
+              const SizedBox(height: 24),
+              // Streak badge
+              Consumer(
+                builder: (context, ref, _) {
+                  final streak = ref.watch(streakProvider);
+                  if (streak.currentStreak < 1) return const SizedBox();
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.quizStreak.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('🔥', style: TextStyle(fontSize: 24)),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.streakDays(streak.currentStreak),
+                          style: GoogleFonts.jua(
+                            fontSize: 18,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: 600.ms).scale(
+                    begin: const Offset(0.8, 0.8),
+                    end: const Offset(1.0, 1.0),
+                  );
+                },
+              ),
               const Spacer(),
               // Dismiss button
               FilledButton(
@@ -593,9 +636,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text(
-                  '알람 해제',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                child: Text(
+                  l10n.dismissAlarmButton,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.2, end: 0),
               const SizedBox(height: 16),
@@ -616,6 +659,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       }
     }
 
+    // Record streak completion
+    await ref.read(streakProvider.notifier).recordCompletion();
+
     await ref.read(alarmOperationsProvider.notifier).stopAlarm(widget.alarmId);
 
     if (mounted) {
@@ -624,13 +670,14 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   }
 
   void _showTrialExpiredPaywall() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text(
-          '무료 체험 종료',
-          style: TextStyle(fontWeight: FontWeight.w700),
+        title: Text(
+          l10n.trialExpiredTitle,
+          style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -649,10 +696,10 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              '무료 체험 기간(7일)이 만료되었습니다.\n계속 이용하려면 구독해주세요.',
+            Text(
+              l10n.trialExpiredMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15),
             ),
           ],
         ),
@@ -668,14 +715,14 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                   _dismissAlarm();
                 }
               },
-              child: const Text('구매 복원 (Debug)'),
+              child: Text(l10n.restorePurchasesDebug),
             ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               AppRouter.navigateToPaywall();
             },
-            child: const Text('구독하기'),
+            child: Text(l10n.subscribeButton),
           ),
         ],
       ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'core/constants/app_colors.dart';
+import 'core/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/services/alarm_service.dart';
 import 'core/services/subscription_service.dart';
@@ -55,18 +55,11 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: '영어 알람',
+          title: 'WakeUp English',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en'),
-            Locale('ko'),
-          ],
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
           themeMode: ThemeMode.system,

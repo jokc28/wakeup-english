@@ -96,7 +96,7 @@ List<QuizQuestion> applyMissionTypes(
         q.correctAnswer.length <= 12) {
       result.add(q.copyWith(
         type: QuizType.wordScramble,
-        question: 'Unscramble the word / 글자를 맞춰 단어를 완성하세요',
+        question: 'Unscramble the word',
         options: [],
       ));
       wordScrambleCount++;
@@ -110,7 +110,7 @@ List<QuizQuestion> applyMissionTypes(
         q.correctAnswer.split(' ').length >= 2) {
       result.add(q.copyWith(
         type: QuizType.speakingChallenge,
-        question: '다음 문장을 영어로 말해 보세요',
+        question: 'Speak the following sentence in English',
         options: [],
       ));
       speakingCount++;

@@ -23,6 +23,9 @@ abstract class AppStrings {
   static const String prefTrialStartDate = 'trial_start_date';
   static const String prefEnabledMissionTypes = 'pref_enabled_mission_types';
   static const String prefInstallDate = 'install_date';
+  static const String prefStreakCurrent = 'pref_streak_current';
+  static const String prefStreakLastDate = 'pref_streak_last_date';
+  static const String prefStreakMax = 'pref_streak_max';
 
   // Notification channels
   static const String alarmChannelId = 'alarm_channel';

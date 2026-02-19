@@ -144,5 +144,250 @@
   "quizCount": "Number of Questions",
   "@quizCount": {
     "description": "Label for number of quiz questions"
-  }
+  },
+
+  "errorRestartApp": "Please restart the app",
+  "errorTemporaryIssue": "A temporary error occurred.",
+  "errorLoadingAlarms": "Error loading alarms",
+
+  "alarmDeletedMessage": "\"{label}\" deleted",
+  "@alarmDeletedMessage": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "alarmDeletedGeneric": "Alarm deleted",
+  "undoAction": "Undo",
+  "confirmDeleteAlarm": "Delete this alarm?",
+  "confirmDeleteAlarmWithLabel": "Delete \"{label}\" alarm?",
+  "@confirmDeleteAlarmWithLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteAlarmWithTime": "Delete {time} alarm?",
+  "@confirmDeleteAlarmWithTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "alarmUpdated": "Alarm updated",
+  "alarmCreated": "Alarm created",
+  "deleteButton": "Delete",
+
+  "timePickerTapHint": "Tap to change time",
+  "alarmNameLabel": "Alarm Name",
+  "optionalLabel": "Optional",
+  "wakeMissionLabel": "Wake-up Mission",
+  "difficultyLabel": "Difficulty",
+  "alarmSoundLabel": "Alarm Sound",
+  "soundLabel": "Sound",
+  "gradualVolumeLabel": "Gradual Volume",
+  "volumeLabel": "Volume",
+  "snoozeLabel": "Snooze",
+  "snoozeIntervalLabel": "Interval",
+  "maxSnoozesLabel": "Max Count",
+  "maxSnoozesFormat": "{count} times",
+  "@maxSnoozesFormat": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setAlarmTimeTitle": "Set Alarm Time",
+  "doneButton": "Done",
+
+  "repeatOnce": "Once",
+  "repeatDaily": "Daily",
+  "repeatWeekdays": "Weekdays",
+  "repeatWeekends": "Weekends",
+
+  "goodMorningGreeting": "Good morning!",
+  "loadingQuiz": "Loading quiz...",
+  "explanationLabel": "Explanation",
+  "quizCompleteButton": "Complete Quiz",
+  "nextQuestionButton": "Next Question",
+  "scoreDisplay": "{correct}/{total} correct!",
+  "@scoreDisplay": {
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "quizCompletedMessage": "Quiz complete!",
+  "dismissAlarmButton": "Dismiss Alarm",
+  "trialExpiredTitle": "Free Trial Ended",
+  "trialExpiredMessage": "Your free trial (7 days) has expired.\nPlease subscribe to continue using the app.",
+  "restorePurchasesDebug": "Restore Purchases (Debug)",
+  "subscribeButton": "Subscribe",
+
+  "correctAnswerLabel": "Answer: ",
+  "hintLabel": "Hint: {hint}",
+  "@hintLabel": {
+    "placeholders": {
+      "hint": {
+        "type": "String"
+      }
+    }
+  },
+  "enterAnswerPlaceholder": "Enter your answer...",
+  "startMissionSlide": "Start Mission",
+  "speakInstructions": "Speak the sentence below in English",
+  "recognizedTextLabel": "Recognized text:",
+  "similarityPercentage": "Similarity: {percent}%",
+  "@similarityPercentage": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "micNotAvailableMessage": "Microphone is not available. Please type your answer instead.",
+  "enterEnglishPlaceholder": "Type in English...",
+  "holdToSpeak": "Hold to speak",
+  "typeInsteadButton": "Type instead",
+  "listeningMessage": "Listening...",
+  "wordScrambleInstruction": "Unscramble the word",
+  "speakingChallengeInstruction": "Speak the following sentence in English",
+
+  "noAlarmsSubtitle": "Tap the button below to create an English quiz alarm",
+
+  "quizInfoFormat": "{difficulty} {count} questions",
+  "@quizInfoFormat": {
+    "placeholders": {
+      "difficulty": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "alarmSoundTitle": "Alarm Sound",
+  "soundPickerHint": "Tap to preview, long press to select",
+
+  "defaultAlarmSettings": "Default Alarm Settings",
+  "defaultQuizCount": "Default Quiz Count",
+  "defaultDifficulty": "Default Difficulty",
+  "defaultSnoozeTime": "Default Snooze Time",
+  "missionTypeHeader": "Mission Type",
+  "wordScrambleMission": "Word Scramble",
+  "wordScrambleDescription": "Unscramble letters to complete words",
+  "speakingChallengeMission": "Speaking Challenge",
+  "speakingChallengeDescription": "Say English sentences aloud",
+  "soundVibrationHeader": "Sound & Vibration",
+  "vibrationDescription": "Vibrate when alarm rings",
+  "gradualVolumeDescription": "Gradually increase alarm volume",
+  "subscriptionHeader": "Subscription",
+  "upgradeToPremium": "Upgrade to Premium",
+  "unlockAllContent": "Unlock all sounds and questions",
+  "restorePurchasesLabel": "Restore Purchases",
+  "restorePurchasesDescription": "Restore previous purchases",
+  "debugPremiumMode": "[Debug] Premium Mode",
+  "debugPremiumEnabled": "Enabled - tap to disable",
+  "debugPremiumDisabled": "Disabled - tap to enable",
+  "aboutHeader": "About",
+  "versionLabel": "Version",
+  "licensesLabel": "Open Source Licenses",
+  "licensesDescription": "View open source licenses",
+  "dataHeader": "Data",
+  "clearProgressLabel": "Clear Quiz Progress",
+  "clearProgressDescription": "Reset all learning progress",
+  "selectLanguageDialog": "Select Language",
+  "selectQuizCountDialog": "Default Quiz Count",
+  "quizCountFormat": "{count} questions",
+  "@quizCountFormat": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectDifficultyDialog": "Default Difficulty",
+  "easyDifficultyDesc": "Basic vocabulary and grammar",
+  "mediumDifficultyDesc": "Intermediate level",
+  "hardDifficultyDesc": "Advanced vocabulary and idioms",
+  "selectSnoozeDialog": "Default Snooze Time",
+  "clearProgressDialog": "Clear Progress",
+  "clearProgressWarning": "All quiz learning progress will be cleared. This action cannot be undone.",
+  "progressClearedSnackbar": "Progress has been cleared",
+  "resetButton": "Reset",
+  "purchasesRestoredSnackbar": "Purchases restored!",
+  "noPurchasesToRestore": "No purchases to restore",
+
+  "unlockPremium": "Unlock Premium",
+  "premiumSubtitle": "Unlock all features of WakeUp English",
+  "feature1Title": "120 Quiz Questions",
+  "feature1Desc": "Full library across all categories and difficulties",
+  "feature2Title": "10 Alarm Sounds",
+  "feature2Desc": "Premium sounds: ocean waves, piano, jazz & more",
+  "feature3Title": "Advanced Learning",
+  "feature3Desc": "Personalized quizzes focused on your weak areas",
+  "feature4Title": "New Content Updates",
+  "feature4Desc": "Regular new questions and sound additions",
+  "subscribeNowButton": "Subscribe Now",
+  "startTrialButton": "Start Free Trial",
+  "subscriptionTerms": "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. You can manage your subscription in device settings.",
+  "termsOfService": "Terms of Service",
+  "privacyPolicy": "Privacy Policy",
+  "premiumMonthlyPlan": "Premium Monthly",
+  "premiumMonthlyPrice": "{price}/mo",
+  "@premiumMonthlyPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "trialIncluded": "Includes 7-day free trial",
+  "welcomeToPremium": "Welcome to Premium!",
+  "purchasesRestored": "Purchases restored!",
+
+  "morningStreak": "Morning Streak",
+  "streakDays": "{count}-Day Streak!",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakRecord": "Record: {count}",
+  "@streakRecord": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakNewRecord": "New Record!",
+  "streakStart": "Start your streak!",
+  "completedToday": "Completed today",
+
+  "premiumStatus": "Premium",
+  "premiumAllContent": "All content available",
+  "freeTrialStatus": "Free Trial",
+  "trialDaysRemaining": "{count} days remaining",
+  "@trialDaysRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "freePlanStatus": "Free Plan",
+  "freePlanLimits": "30 questions, 3 sounds",
+  "upgradeButton": "Upgrade"
 }

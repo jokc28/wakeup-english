@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/quiz_question.dart';
 
 /// Widget for text input quiz answers (fill in the blank, translation)
@@ -66,6 +67,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,7 +93,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '힌트: ${widget.question.hint}',
+                    l10n.hintLabel(widget.question.hint ?? ''),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface,
                     ),
@@ -131,7 +133,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                   : null,
             ),
             decoration: InputDecoration(
-              hintText: '답을 입력하세요...',
+              hintText: l10n.enterAnswerPlaceholder,
               filled: true,
               fillColor: widget.showResult
                   ? (widget.isCorrect
@@ -183,7 +185,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                     text: TextSpan(
                       style: theme.textTheme.bodyMedium,
                       children: [
-                        const TextSpan(text: '정답: '),
+                        TextSpan(text: l10n.correctAnswerLabel),
                         TextSpan(
                           text: widget.question.correctAnswer,
                           style: const TextStyle(
@@ -212,9 +214,9 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: const Text(
-              '제출',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            child: Text(
+              l10n.submit,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         ],

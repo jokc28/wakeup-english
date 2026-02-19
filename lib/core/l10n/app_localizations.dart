@@ -331,6 +331,816 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number of Questions'**
   String get quizCount;
+
+  /// No description provided for @errorRestartApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Please restart the app'**
+  String get errorRestartApp;
+
+  /// No description provided for @errorTemporaryIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'A temporary error occurred.'**
+  String get errorTemporaryIssue;
+
+  /// No description provided for @errorLoadingAlarms.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading alarms'**
+  String get errorLoadingAlarms;
+
+  /// No description provided for @alarmDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{label}\" deleted'**
+  String alarmDeletedMessage(String label);
+
+  /// No description provided for @alarmDeletedGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm deleted'**
+  String get alarmDeletedGeneric;
+
+  /// No description provided for @undoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoAction;
+
+  /// No description provided for @confirmDeleteAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this alarm?'**
+  String get confirmDeleteAlarm;
+
+  /// No description provided for @confirmDeleteAlarmWithLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{label}\" alarm?'**
+  String confirmDeleteAlarmWithLabel(String label);
+
+  /// No description provided for @confirmDeleteAlarmWithTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {time} alarm?'**
+  String confirmDeleteAlarmWithTime(String time);
+
+  /// No description provided for @alarmUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm updated'**
+  String get alarmUpdated;
+
+  /// No description provided for @alarmCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm created'**
+  String get alarmCreated;
+
+  /// No description provided for @deleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteButton;
+
+  /// No description provided for @timePickerTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change time'**
+  String get timePickerTapHint;
+
+  /// No description provided for @alarmNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Name'**
+  String get alarmNameLabel;
+
+  /// No description provided for @optionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optionalLabel;
+
+  /// No description provided for @wakeMissionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wake-up Mission'**
+  String get wakeMissionLabel;
+
+  /// No description provided for @difficultyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get difficultyLabel;
+
+  /// No description provided for @alarmSoundLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Sound'**
+  String get alarmSoundLabel;
+
+  /// No description provided for @soundLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get soundLabel;
+
+  /// No description provided for @gradualVolumeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gradual Volume'**
+  String get gradualVolumeLabel;
+
+  /// No description provided for @volumeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get volumeLabel;
+
+  /// No description provided for @snoozeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Snooze'**
+  String get snoozeLabel;
+
+  /// No description provided for @snoozeIntervalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval'**
+  String get snoozeIntervalLabel;
+
+  /// No description provided for @maxSnoozesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Count'**
+  String get maxSnoozesLabel;
+
+  /// No description provided for @maxSnoozesFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} times'**
+  String maxSnoozesFormat(int count);
+
+  /// No description provided for @setAlarmTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Alarm Time'**
+  String get setAlarmTimeTitle;
+
+  /// No description provided for @doneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneButton;
+
+  /// No description provided for @repeatOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Once'**
+  String get repeatOnce;
+
+  /// No description provided for @repeatDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get repeatDaily;
+
+  /// No description provided for @repeatWeekdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekdays'**
+  String get repeatWeekdays;
+
+  /// No description provided for @repeatWeekends.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekends'**
+  String get repeatWeekends;
+
+  /// No description provided for @goodMorningGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning!'**
+  String get goodMorningGreeting;
+
+  /// No description provided for @loadingQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading quiz...'**
+  String get loadingQuiz;
+
+  /// No description provided for @explanationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get explanationLabel;
+
+  /// No description provided for @quizCompleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Quiz'**
+  String get quizCompleteButton;
+
+  /// No description provided for @nextQuestionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Question'**
+  String get nextQuestionButton;
+
+  /// No description provided for @scoreDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'{correct}/{total} correct!'**
+  String scoreDisplay(int correct, int total);
+
+  /// No description provided for @quizCompletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz complete!'**
+  String get quizCompletedMessage;
+
+  /// No description provided for @dismissAlarmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss Alarm'**
+  String get dismissAlarmButton;
+
+  /// No description provided for @trialExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Trial Ended'**
+  String get trialExpiredTitle;
+
+  /// No description provided for @trialExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free trial (7 days) has expired.\nPlease subscribe to continue using the app.'**
+  String get trialExpiredMessage;
+
+  /// No description provided for @restorePurchasesDebug.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases (Debug)'**
+  String get restorePurchasesDebug;
+
+  /// No description provided for @subscribeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get subscribeButton;
+
+  /// No description provided for @correctAnswerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer: '**
+  String get correctAnswerLabel;
+
+  /// No description provided for @hintLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint: {hint}'**
+  String hintLabel(String hint);
+
+  /// No description provided for @enterAnswerPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your answer...'**
+  String get enterAnswerPlaceholder;
+
+  /// No description provided for @startMissionSlide.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Mission'**
+  String get startMissionSlide;
+
+  /// No description provided for @speakInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak the sentence below in English'**
+  String get speakInstructions;
+
+  /// No description provided for @recognizedTextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognized text:'**
+  String get recognizedTextLabel;
+
+  /// No description provided for @similarityPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarity: {percent}%'**
+  String similarityPercentage(String percent);
+
+  /// No description provided for @micNotAvailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone is not available. Please type your answer instead.'**
+  String get micNotAvailableMessage;
+
+  /// No description provided for @enterEnglishPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Type in English...'**
+  String get enterEnglishPlaceholder;
+
+  /// No description provided for @holdToSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to speak'**
+  String get holdToSpeak;
+
+  /// No description provided for @typeInsteadButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Type instead'**
+  String get typeInsteadButton;
+
+  /// No description provided for @listeningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get listeningMessage;
+
+  /// No description provided for @wordScrambleInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unscramble the word'**
+  String get wordScrambleInstruction;
+
+  /// No description provided for @speakingChallengeInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak the following sentence in English'**
+  String get speakingChallengeInstruction;
+
+  /// No description provided for @noAlarmsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the button below to create an English quiz alarm'**
+  String get noAlarmsSubtitle;
+
+  /// No description provided for @quizInfoFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{difficulty} {count} questions'**
+  String quizInfoFormat(String difficulty, int count);
+
+  /// No description provided for @alarmSoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Sound'**
+  String get alarmSoundTitle;
+
+  /// No description provided for @soundPickerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to preview, long press to select'**
+  String get soundPickerHint;
+
+  /// No description provided for @defaultAlarmSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Alarm Settings'**
+  String get defaultAlarmSettings;
+
+  /// No description provided for @defaultQuizCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Quiz Count'**
+  String get defaultQuizCount;
+
+  /// No description provided for @defaultDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Difficulty'**
+  String get defaultDifficulty;
+
+  /// No description provided for @defaultSnoozeTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Snooze Time'**
+  String get defaultSnoozeTime;
+
+  /// No description provided for @missionTypeHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission Type'**
+  String get missionTypeHeader;
+
+  /// No description provided for @wordScrambleMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Word Scramble'**
+  String get wordScrambleMission;
+
+  /// No description provided for @wordScrambleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unscramble letters to complete words'**
+  String get wordScrambleDescription;
+
+  /// No description provided for @speakingChallengeMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Challenge'**
+  String get speakingChallengeMission;
+
+  /// No description provided for @speakingChallengeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Say English sentences aloud'**
+  String get speakingChallengeDescription;
+
+  /// No description provided for @soundVibrationHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound & Vibration'**
+  String get soundVibrationHeader;
+
+  /// No description provided for @vibrationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibrate when alarm rings'**
+  String get vibrationDescription;
+
+  /// No description provided for @gradualVolumeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Gradually increase alarm volume'**
+  String get gradualVolumeDescription;
+
+  /// No description provided for @subscriptionHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get subscriptionHeader;
+
+  /// No description provided for @upgradeToPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium'**
+  String get upgradeToPremium;
+
+  /// No description provided for @unlockAllContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock all sounds and questions'**
+  String get unlockAllContent;
+
+  /// No description provided for @restorePurchasesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases'**
+  String get restorePurchasesLabel;
+
+  /// No description provided for @restorePurchasesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore previous purchases'**
+  String get restorePurchasesDescription;
+
+  /// No description provided for @debugPremiumMode.
+  ///
+  /// In en, this message translates to:
+  /// **'[Debug] Premium Mode'**
+  String get debugPremiumMode;
+
+  /// No description provided for @debugPremiumEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled - tap to disable'**
+  String get debugPremiumEnabled;
+
+  /// No description provided for @debugPremiumDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled - tap to enable'**
+  String get debugPremiumDisabled;
+
+  /// No description provided for @aboutHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutHeader;
+
+  /// No description provided for @versionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get versionLabel;
+
+  /// No description provided for @licensesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Licenses'**
+  String get licensesLabel;
+
+  /// No description provided for @licensesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View open source licenses'**
+  String get licensesDescription;
+
+  /// No description provided for @dataHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Data'**
+  String get dataHeader;
+
+  /// No description provided for @clearProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Quiz Progress'**
+  String get clearProgressLabel;
+
+  /// No description provided for @clearProgressDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset all learning progress'**
+  String get clearProgressDescription;
+
+  /// No description provided for @selectLanguageDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguageDialog;
+
+  /// No description provided for @selectQuizCountDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Quiz Count'**
+  String get selectQuizCountDialog;
+
+  /// No description provided for @quizCountFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions'**
+  String quizCountFormat(int count);
+
+  /// No description provided for @selectDifficultyDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Difficulty'**
+  String get selectDifficultyDialog;
+
+  /// No description provided for @easyDifficultyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic vocabulary and grammar'**
+  String get easyDifficultyDesc;
+
+  /// No description provided for @mediumDifficultyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate level'**
+  String get mediumDifficultyDesc;
+
+  /// No description provided for @hardDifficultyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced vocabulary and idioms'**
+  String get hardDifficultyDesc;
+
+  /// No description provided for @selectSnoozeDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Snooze Time'**
+  String get selectSnoozeDialog;
+
+  /// No description provided for @clearProgressDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Progress'**
+  String get clearProgressDialog;
+
+  /// No description provided for @clearProgressWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'All quiz learning progress will be cleared. This action cannot be undone.'**
+  String get clearProgressWarning;
+
+  /// No description provided for @progressClearedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress has been cleared'**
+  String get progressClearedSnackbar;
+
+  /// No description provided for @resetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get resetButton;
+
+  /// No description provided for @purchasesRestoredSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases restored!'**
+  String get purchasesRestoredSnackbar;
+
+  /// No description provided for @noPurchasesToRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchases to restore'**
+  String get noPurchasesToRestore;
+
+  /// No description provided for @unlockPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Premium'**
+  String get unlockPremium;
+
+  /// No description provided for @premiumSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock all features of WakeUp English'**
+  String get premiumSubtitle;
+
+  /// No description provided for @feature1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'120 Quiz Questions'**
+  String get feature1Title;
+
+  /// No description provided for @feature1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Full library across all categories and difficulties'**
+  String get feature1Desc;
+
+  /// No description provided for @feature2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'10 Alarm Sounds'**
+  String get feature2Title;
+
+  /// No description provided for @feature2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium sounds: ocean waves, piano, jazz & more'**
+  String get feature2Desc;
+
+  /// No description provided for @feature3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Learning'**
+  String get feature3Title;
+
+  /// No description provided for @feature3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized quizzes focused on your weak areas'**
+  String get feature3Desc;
+
+  /// No description provided for @feature4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'New Content Updates'**
+  String get feature4Title;
+
+  /// No description provided for @feature4Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular new questions and sound additions'**
+  String get feature4Desc;
+
+  /// No description provided for @subscribeNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe Now'**
+  String get subscribeNowButton;
+
+  /// No description provided for @startTrialButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Free Trial'**
+  String get startTrialButton;
+
+  /// No description provided for @subscriptionTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription automatically renews unless canceled at least 24 hours before the end of the current period. You can manage your subscription in device settings.'**
+  String get subscriptionTerms;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @premiumMonthlyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Monthly'**
+  String get premiumMonthlyPlan;
+
+  /// No description provided for @premiumMonthlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/mo'**
+  String premiumMonthlyPrice(String price);
+
+  /// No description provided for @trialIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes 7-day free trial'**
+  String get trialIncluded;
+
+  /// No description provided for @welcomeToPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Premium!'**
+  String get welcomeToPremium;
+
+  /// No description provided for @purchasesRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases restored!'**
+  String get purchasesRestored;
+
+  /// No description provided for @morningStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Streak'**
+  String get morningStreak;
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}-Day Streak!'**
+  String streakDays(int count);
+
+  /// No description provided for @streakRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record: {count}'**
+  String streakRecord(int count);
+
+  /// No description provided for @streakNewRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'New Record!'**
+  String get streakNewRecord;
+
+  /// No description provided for @streakStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your streak!'**
+  String get streakStart;
+
+  /// No description provided for @completedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed today'**
+  String get completedToday;
+
+  /// No description provided for @premiumStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premiumStatus;
+
+  /// No description provided for @premiumAllContent.
+  ///
+  /// In en, this message translates to:
+  /// **'All content available'**
+  String get premiumAllContent;
+
+  /// No description provided for @freeTrialStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Trial'**
+  String get freeTrialStatus;
+
+  /// No description provided for @trialDaysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days remaining'**
+  String trialDaysRemaining(int count);
+
+  /// No description provided for @freePlanStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Plan'**
+  String get freePlanStatus;
+
+  /// No description provided for @freePlanLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'30 questions, 3 sounds'**
+  String get freePlanLimits;
+
+  /// No description provided for @upgradeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get upgradeButton;
 }
 
 class _AppLocalizationsDelegate

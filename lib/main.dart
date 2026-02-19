@@ -44,12 +44,12 @@ void main() async {
                       size: 64, color: Color(0xFFFF8C00)),
                   const SizedBox(height: 16),
                   const Text(
-                    '앱을 다시 시작해 주세요',
+                    'Please restart the app',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '일시적인 오류가 발생했습니다.',
+                    'A temporary error occurred.',
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],

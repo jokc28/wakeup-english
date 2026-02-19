@@ -7,8 +7,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/alarm_sounds.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
+import '../utils/alarm_display_helpers.dart';
 import '../widgets/sound_picker_sheet.dart';
 
 // --- Design constants ---
@@ -67,6 +69,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   @override
   Widget build(BuildContext context) {
     final form = ref.watch(alarmFormProvider(alarmId: widget.alarmId));
+    final l10n = AppLocalizations.of(context)!;
 
     if (_labelController.text != form.label) {
       _labelController.text = form.label;
@@ -80,7 +83,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         scrolledUnderElevation: 0,
         centerTitle: true,
         title: Text(
-          isEditing ? '알람 수정' : '알람 추가',
+          isEditing ? l10n.editAlarm : l10n.addAlarm,
           style: const TextStyle(
             color: _kTextDark,
             fontSize: 17,
@@ -89,9 +92,9 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         ),
         leading: TextButton(
           onPressed: () => context.pop(),
-          child: const Text(
-            '취소',
-            style: TextStyle(color: _kTextHint, fontSize: 16),
+          child: Text(
+            l10n.cancel,
+            style: const TextStyle(color: _kTextHint, fontSize: 16),
           ),
         ),
         leadingWidth: 80,
@@ -111,7 +114,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : Text(
-                    '저장',
+                    l10n.saveAlarm,
                     style: TextStyle(
                       color: AppColors.primary,
                       fontSize: 16,
@@ -148,6 +151,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Time Display ───────────────────────────────────────────
 
   Widget _buildTimePicker(BuildContext context, AlarmEntity form) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -167,9 +171,9 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              '탭하여 시간 변경',
-              style: TextStyle(color: _kTextHint, fontSize: 13),
+            Text(
+              l10n.timePickerTapHint,
+              style: const TextStyle(color: _kTextHint, fontSize: 13),
             ),
           ],
         ),
@@ -180,11 +184,12 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Label Card ─────────────────────────────────────────────
 
   Widget _buildLabelCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return _SettingsCard(
       children: [
         _SettingsRow(
           icon: Icons.label_outline,
-          label: '알람 이름',
+          label: l10n.alarmNameLabel,
           child: Expanded(
             child: TextField(
               controller: _labelController,
@@ -192,7 +197,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               textAlign: TextAlign.right,
               style: const TextStyle(color: _kTextDark, fontSize: 15),
               decoration: InputDecoration(
-                hintText: '선택사항',
+                hintText: l10n.optionalLabel,
                 hintStyle: const TextStyle(color: _kTextHint, fontSize: 15),
                 border: InputBorder.none,
                 isDense: true,
@@ -231,11 +236,12 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Repeat Card ────────────────────────────────────────────
 
   Widget _buildRepeatCard(BuildContext context, AlarmEntity form) {
-    const days = ['월', '화', '수', '목', '금', '토', '일'];
+    final l10n = AppLocalizations.of(context)!;
+    final days = [l10n.monday, l10n.tuesday, l10n.wednesday, l10n.thursday, l10n.friday, l10n.saturday, l10n.sunday];
 
     return _SettingsCard(
       children: [
-        const _SectionHeader(icon: Icons.repeat, label: '반복'),
+        _SectionHeader(icon: Icons.repeat, label: l10n.repeatDays),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,7 +281,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         ),
         const SizedBox(height: 10),
         Text(
-          form.repeatDaysDisplay,
+          localizedRepeatDaysDisplay(l10n, form),
           style: const TextStyle(color: _kTextHint, fontSize: 13),
         ),
       ],
@@ -285,19 +291,20 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Mission (Quiz) Card ────────────────────────────────────
 
   Widget _buildMissionCard(BuildContext context, AlarmEntity form) {
+    final l10n = AppLocalizations.of(context)!;
     return _SettingsCard(
       children: [
-        const _SectionHeader(icon: Icons.extension_outlined, label: '기상 미션'),
+        _SectionHeader(icon: Icons.extension_outlined, label: l10n.wakeMissionLabel),
         const SizedBox(height: 14),
         // Difficulty
         Row(
           children: [
-            const Text('난이도', style: TextStyle(color: _kTextDark, fontSize: 15)),
+            Text(l10n.difficultyLabel, style: const TextStyle(color: _kTextDark, fontSize: 15)),
             const Spacer(),
             _MiniSegment<QuizDifficulty>(
               values: QuizDifficulty.values,
               selected: form.quizDifficulty,
-              labelOf: (d) => d.displayName,
+              labelOf: (d) => localizedDifficultyName(l10n, d),
               onChanged: (d) {
                 HapticFeedback.lightImpact();
                 ref
@@ -311,7 +318,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         // Question count
         Row(
           children: [
-            const Text('문제 수', style: TextStyle(color: _kTextDark, fontSize: 15)),
+            Text(l10n.quizCount, style: const TextStyle(color: _kTextDark, fontSize: 15)),
             const Spacer(),
             _StepperControl(
               value: form.quizCount,
@@ -333,13 +340,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Sound Card ─────────────────────────────────────────────
 
   Widget _buildSoundCard(BuildContext context, AlarmEntity form) {
+    final l10n = AppLocalizations.of(context)!;
     return _SettingsCard(
       children: [
-        const _SectionHeader(icon: Icons.music_note_outlined, label: '알람음'),
+        _SectionHeader(icon: Icons.music_note_outlined, label: l10n.alarmSoundLabel),
         const _ThinDivider(),
         // Sound selector
         _SettingsRow(
-          label: '소리',
+          label: l10n.soundLabel,
           onTap: () => _showSoundPicker(context, form),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -357,7 +365,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         const _ThinDivider(),
         // Vibration
         _ToggleRow(
-          label: '진동',
+          label: l10n.vibration,
           value: form.vibrationEnabled,
           onChanged: (v) {
             ref
@@ -368,7 +376,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         const _ThinDivider(),
         // Gradual volume
         _ToggleRow(
-          label: '점진적 볼륨',
+          label: l10n.gradualVolumeLabel,
           value: form.gradualVolume,
           onChanged: (v) {
             ref
@@ -380,7 +388,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         // Volume slider
         Row(
           children: [
-            const Text('볼륨', style: TextStyle(color: _kTextDark, fontSize: 15)),
+            Text(l10n.volumeLabel, style: const TextStyle(color: _kTextDark, fontSize: 15)),
             const SizedBox(width: 16),
             Expanded(
               child: SliderTheme(
@@ -422,13 +430,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Snooze Card ────────────────────────────────────────────
 
   Widget _buildSnoozeCard(BuildContext context, AlarmEntity form) {
+    final l10n = AppLocalizations.of(context)!;
     final snoozeEnabled = form.snoozeDuration > 0;
 
     return _SettingsCard(
       children: [
         _ToggleRow(
           icon: Icons.snooze_outlined,
-          label: '다시 알림',
+          label: l10n.snoozeLabel,
           value: snoozeEnabled,
           onChanged: (v) {
             ref
@@ -439,11 +448,11 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         if (snoozeEnabled) ...[
           const _ThinDivider(),
           _SettingsRow(
-            label: '간격',
+            label: l10n.snoozeIntervalLabel,
             child: _PillSelector<int>(
               values: const [5, 10, 15, 20, 30],
               selected: form.snoozeDuration,
-              labelOf: (v) => '$v분',
+              labelOf: (v) => l10n.minutes(v),
               onChanged: (v) {
                 HapticFeedback.lightImpact();
                 ref
@@ -454,11 +463,11 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
           ),
           const _ThinDivider(),
           _SettingsRow(
-            label: '최대 횟수',
+            label: l10n.maxSnoozesLabel,
             child: _PillSelector<int>(
               values: const [1, 2, 3, 5, 10],
               selected: form.maxSnoozes,
-              labelOf: (v) => '$v회',
+              labelOf: (v) => l10n.maxSnoozesFormat(v),
               onChanged: (v) {
                 HapticFeedback.lightImpact();
                 ref
@@ -496,6 +505,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   }
 
   void _selectTime(BuildContext context, AlarmEntity form) {
+    final l10n = AppLocalizations.of(context)!;
     var selectedTime = DateTime(
       2026, 1, 1,
       form.time.hour,
@@ -530,14 +540,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(sheetContext),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(color: _kTextHint, fontSize: 16),
+                      child: Text(
+                        l10n.cancel,
+                        style: const TextStyle(color: _kTextHint, fontSize: 16),
                       ),
                     ),
-                    const Text(
-                      '알람 시간 설정',
-                      style: TextStyle(
+                    Text(
+                      l10n.setAlarmTimeTitle,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: _kTextDark,
@@ -556,7 +566,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                         Navigator.pop(sheetContext);
                       },
                       child: Text(
-                        '완료',
+                        l10n.doneButton,
                         style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 16,
@@ -595,6 +605,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   }
 
   Future<void> _saveAlarm() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isLoading = true);
 
     try {
@@ -606,7 +617,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
+                Text(isEditing ? l10n.alarmUpdated : l10n.alarmCreated),
           ),
         );
         context.pop();
@@ -617,7 +628,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text(isEditing ? '알람이 업데이트되었습니다' : '알람이 생성되었습니다'),
+                Text(isEditing ? l10n.alarmUpdated : l10n.alarmCreated),
           ),
         );
         context.pop();
@@ -630,20 +641,21 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   }
 
   Future<void> _showDeleteConfirmation() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('알람 삭제'),
-        content: const Text('이 알람을 삭제하시겠습니까?'),
+        title: Text(l10n.deleteAlarm),
+        content: Text(l10n.confirmDeleteAlarm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('삭제'),
+            child: Text(l10n.deleteButton),
           ),
         ],
       ),
