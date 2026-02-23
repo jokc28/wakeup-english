@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => 'WakeUp English';
+  String get appTitle => '옥모닝';
 
   @override
   String get alarms => '알람';
@@ -231,7 +231,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeatWeekends => '주말';
 
   @override
-  String get goodMorningGreeting => '좋은 아침이에요!';
+  String get goodMorningGreeting => '오늘도 상쾌한 옥모닝!';
 
   @override
   String get loadingQuiz => '퀴즈 불러오는 중...';
@@ -316,6 +316,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get noAlarmsSubtitle => '아래 버튼을 눌러 영어 퀴즈 알람을 만들어 보세요';
+
+  @override
+  String get homeWelcome => '오늘도 상쾌한 옥모닝!';
 
   @override
   String quizInfoFormat(String difficulty, int count) {
@@ -457,7 +460,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get unlockPremium => '프리미엄 잠금 해제';
 
   @override
-  String get premiumSubtitle => '영어 알람의 모든 기능을 이용해 보세요';
+  String get premiumSubtitle => '옥모닝 프로로 더 완벽한 아침을 만드세요';
 
   @override
   String get feature1Title => '120개 퀴즈 문제';

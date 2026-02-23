@@ -84,7 +84,7 @@ void main() async {
   // Run app with Riverpod
   runApp(
     const ProviderScope(
-      child: WakeUpEnglishApp(),
+      child: OkMorningApp(),
     ),
   );
 }

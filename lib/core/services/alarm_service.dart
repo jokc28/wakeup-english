@@ -108,7 +108,7 @@ class AlarmService {
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
       notificationSettings: alarm_pkg.NotificationSettings(
-        title: alarm.label.isEmpty ? 'WakeUp English' : alarm.label,
+        title: alarm.label.isEmpty ? 'OK-Morning' : alarm.label,
         body: 'Time to wake up! Solve the quiz to dismiss.',
         stopButton: null, // No stop button - must solve quiz
         icon: 'notification_icon',
@@ -205,7 +205,7 @@ class AlarmService {
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
       notificationSettings: alarm_pkg.NotificationSettings(
-        title: 'Snoozed: ${alarm.label.isEmpty ? 'WakeUp English' : alarm.label}',
+        title: 'Snoozed: ${alarm.label.isEmpty ? 'OK-Morning' : alarm.label}',
         body: 'Time to wake up! Solve the quiz to dismiss.',
         stopButton: null,
         icon: 'notification_icon',

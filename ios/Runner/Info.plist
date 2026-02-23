@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>WakeUp English</string>
+	<string>옥모닝</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>wakeup_english</string>
+	<string>OK-Morning</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -52,7 +52,7 @@
 
 	<!-- Notification permission description -->
 	<key>NSUserNotificationUsageDescription</key>
-	<string>WakeUp English needs notification permission to alert you when alarms fire.</string>
+	<string>OK-Morning needs notification permission to alert you when alarms fire.</string>
 
 	<!-- Required for iOS 14+ -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>

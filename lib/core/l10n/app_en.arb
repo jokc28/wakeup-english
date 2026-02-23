@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "WakeUp English",
+  "appTitle": "OK-Morning",
   "@appTitle": {
     "description": "The title of the application"
   },
@@ -262,6 +262,7 @@
   "speakingChallengeInstruction": "Speak the following sentence in English",
 
   "noAlarmsSubtitle": "Tap the button below to create an English quiz alarm",
+  "homeWelcome": "Another fresh OK-Morning!",
 
   "quizInfoFormat": "{difficulty} {count} questions",
   "@quizInfoFormat": {
@@ -328,7 +329,7 @@
   "noPurchasesToRestore": "No purchases to restore",
 
   "unlockPremium": "Unlock Premium",
-  "premiumSubtitle": "Unlock all features of WakeUp English",
+  "premiumSubtitle": "Make your morning perfect with OK-Morning Pro",
   "feature1Title": "120 Quiz Questions",
   "feature1Desc": "Full library across all categories and difficulties",
   "feature2Title": "10 Alarm Sounds",

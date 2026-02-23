@@ -10,14 +10,14 @@ import 'core/services/alarm_service.dart';
 import 'core/services/subscription_service.dart';
 
 /// Main app widget
-class WakeUpEnglishApp extends ConsumerStatefulWidget {
-  const WakeUpEnglishApp({super.key});
+class OkMorningApp extends ConsumerStatefulWidget {
+  const OkMorningApp({super.key});
 
   @override
-  ConsumerState<WakeUpEnglishApp> createState() => _WakeUpEnglishAppState();
+  ConsumerState<OkMorningApp> createState() => _OkMorningAppState();
 }
 
-class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
+class _OkMorningAppState extends ConsumerState<OkMorningApp> {
   @override
   void initState() {
     super.initState();
@@ -55,7 +55,7 @@ class _WakeUpEnglishAppState extends ConsumerState<WakeUpEnglishApp> {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: 'WakeUp English',
+          title: 'OK-Morning',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
           localizationsDelegates: AppLocalizations.localizationsDelegates,

@@ -1,6 +1,6 @@
 {
   "@@locale": "ko",
-  "appTitle": "WakeUp English",
+  "appTitle": "옥모닝",
   "alarms": "알람",
   "settings": "설정",
   "addAlarm": "알람 추가",
@@ -75,7 +75,7 @@
   "repeatWeekdays": "주중",
   "repeatWeekends": "주말",
 
-  "goodMorningGreeting": "좋은 아침이에요!",
+  "goodMorningGreeting": "오늘도 상쾌한 옥모닝!",
   "loadingQuiz": "퀴즈 불러오는 중...",
   "explanationLabel": "해설",
   "quizCompleteButton": "퀴즈 완료",
@@ -104,6 +104,7 @@
   "speakingChallengeInstruction": "다음 문장을 영어로 말해 보세요",
 
   "noAlarmsSubtitle": "아래 버튼을 눌러 영어 퀴즈 알람을 만들어 보세요",
+  "homeWelcome": "오늘도 상쾌한 옥모닝!",
 
   "quizInfoFormat": "{difficulty} {count}문제",
 
@@ -153,7 +154,7 @@
   "noPurchasesToRestore": "복원할 구매 내역이 없습니다",
 
   "unlockPremium": "프리미엄 잠금 해제",
-  "premiumSubtitle": "영어 알람의 모든 기능을 이용해 보세요",
+  "premiumSubtitle": "옥모닝 프로로 더 완벽한 아침을 만드세요",
   "feature1Title": "120개 퀴즈 문제",
   "feature1Desc": "모든 카테고리와 난이도의 전체 라이브러리",
   "feature2Title": "10가지 알람 소리",

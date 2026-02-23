@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'WakeUp English';
+  String get appTitle => 'OK-Morning';
 
   @override
   String get alarms => 'Alarms';
@@ -322,6 +322,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap the button below to create an English quiz alarm';
 
   @override
+  String get homeWelcome => 'Another fresh OK-Morning!';
+
+  @override
   String quizInfoFormat(String difficulty, int count) {
     return '$difficulty $count questions';
   }
@@ -462,7 +465,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unlockPremium => 'Unlock Premium';
 
   @override
-  String get premiumSubtitle => 'Unlock all features of WakeUp English';
+  String get premiumSubtitle => 'Make your morning perfect with OK-Morning Pro';
 
   @override
   String get feature1Title => '120 Quiz Questions';

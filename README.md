@@ -1,12 +1,13 @@
-# WakeUp English
+# 옥모닝 (OK-Morning)
 
-A mission alarm clock app where users must solve English quizzes to dismiss alarms. Inspired by Alarmy.
+An energetic English mission alarm for a successful morning. Solve English quizzes to dismiss alarms and start your day with learning!
 
 ## Features
 
 - **Mission Alarms**: Set alarms that require solving English quizzes to dismiss
-- **Quiz Types**: Multiple choice, fill-in-the-blank, and translation questions
+- **Quiz Types**: Multiple choice, fill-in-the-blank, translation, word scramble, and speaking challenge
 - **Difficulty Levels**: Easy, Medium, and Hard quiz difficulties
+- **Morning Streak**: Track your consecutive wake-up streak for motivation
 - **Repeat Alarms**: Support for daily, weekday, weekend, or custom day schedules
 - **Snooze Control**: Configurable snooze duration and maximum snoozes
 - **Bilingual Support**: English and Korean localization
@@ -61,7 +62,7 @@ lib/
 │   ├── constants/           # Colors and strings
 │   ├── database/            # Drift database setup
 │   ├── router/              # go_router configuration
-│   ├── services/            # AlarmService
+│   ├── services/            # AlarmService, StreakService
 │   ├── utils/               # Extensions and helpers
 │   └── l10n/               # Localization files (ARB)
 ├── features/
@@ -73,7 +74,8 @@ lib/
 │   │   ├── data/
 │   │   ├── domain/
 │   │   └── presentation/
-│   └── settings/           # Settings feature
+│   ├── settings/           # Settings feature
+│   └── subscription/       # Subscription/paywall feature
 └── shared/
     └── widgets/            # Common widgets
 ```

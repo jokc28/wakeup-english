@@ -13,13 +13,13 @@ void main() {
   group('Full App Flow Test', () {
     testWidgets('Complete user journey', (tester) async {
       await AlarmService.initialize();
-      await tester.pumpWidget(const ProviderScope(child: WakeUpEnglishApp()));
+      await tester.pumpWidget(const ProviderScope(child: OkMorningApp()));
       await tester.pumpAndSettle();
 
       // =============================
       // STEP 1: Home screen (empty)
       // =============================
-      expect(find.text('WakeUp English'), findsOneWidget);
+      expect(find.text('OK-Morning'), findsOneWidget);
       expect(find.text('Add Alarm'), findsOneWidget);
       expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
       print('PASS [1/6] Home screen renders correctly');
@@ -63,7 +63,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Back on alarm list with the new alarm
-      expect(find.text('WakeUp English'), findsOneWidget);
+      expect(find.text('OK-Morning'), findsOneWidget);
       expect(find.text('Once'), findsWidgets);
       expect(find.textContaining('Medium questions'), findsWidgets);
       print('PASS [3/6] Alarm created and visible in list');
@@ -193,7 +193,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should navigate back to alarm list
-        expect(find.text('WakeUp English'), findsOneWidget);
+        expect(find.text('OK-Morning'), findsOneWidget);
         print('  -> Alarm dismissed, returned to home');
       } else {
         print('PASS [6/6] Quiz flow tested (completion screen not reached in test)');

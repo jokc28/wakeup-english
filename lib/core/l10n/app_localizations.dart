@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// The title of the application
   ///
   /// In en, this message translates to:
-  /// **'WakeUp English'**
+  /// **'OK-Morning'**
   String get appTitle;
 
   /// Label for alarms tab
@@ -680,6 +680,12 @@ abstract class AppLocalizations {
   /// **'Tap the button below to create an English quiz alarm'**
   String get noAlarmsSubtitle;
 
+  /// No description provided for @homeWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Another fresh OK-Morning!'**
+  String get homeWelcome;
+
   /// No description provided for @quizInfoFormat.
   ///
   /// In en, this message translates to:
@@ -953,7 +959,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock all features of WakeUp English'**
+  /// **'Make your morning perfect with OK-Morning Pro'**
   String get premiumSubtitle;
 
   /// No description provided for @feature1Title.
