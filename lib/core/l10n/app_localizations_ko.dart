@@ -563,4 +563,34 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get upgradeButton => '업그레이드';
+
+  @override
+  String xpEarned(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String levelLabel(int level) {
+    return '레벨 $level';
+  }
+
+  @override
+  String xpToNext(int xp) {
+    return '다음 레벨까지 $xp XP';
+  }
+
+  @override
+  String totalXpLabel(int xp) {
+    return '총 $xp XP';
+  }
+
+  @override
+  String levelUpMessage(int level) {
+    return '레벨 업! Lv.$level';
+  }
+
+  @override
+  String masteredCount(int count) {
+    return '$count개 완벽 습득';
+  }
 }

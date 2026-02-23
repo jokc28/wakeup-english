@@ -16,6 +16,7 @@ import '../../../../core/services/subscription_provider.dart';
 import '../../../../core/services/subscription_service.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
+import '../providers/level_progress_provider.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/animated_clock_widget.dart';
 import '../widgets/multiple_choice_widget.dart';
@@ -47,6 +48,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   // Feedback overlay state
   bool _showCorrectOverlay = false;
   bool _showWrongShake = false;
+
+  // XP award result (set after quiz completion)
+  XpAwardResult? _xpResult;
 
   @override
   void initState() {
@@ -123,6 +127,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       if (next.isCompleted && _phase != LockScreenPhase.completed) {
         setState(() => _phase = LockScreenPhase.completed);
         _confettiController.play();
+        _awardXpOnCompletion(next);
       }
     });
 
@@ -556,15 +561,15 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               const Spacer(),
               // Green checkmark circle
               Container(
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 decoration: const BoxDecoration(
                   color: AppColors.action,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.check_rounded,
-                  size: 72,
+                  size: 60,
                   color: Colors.white,
                 ),
               )
@@ -576,7 +581,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                     curve: Curves.easeOutBack,
                   )
                   .fadeIn(),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               // Score display
               Text(
                 l10n.scoreDisplay(correctCount, totalCount),
@@ -593,7 +598,49 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                   color: AppColors.textSecondaryLight,
                 ),
               ).animate().fadeIn(delay: 500.ms),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+              // XP earned display
+              if (_xpResult != null) ...[
+                _buildXpDisplay(),
+                const SizedBox(height: 16),
+              ],
+              // Level progress bar
+              Consumer(
+                builder: (context, ref, _) {
+                  final levelState = ref.watch(levelProgressProvider);
+                  return _buildLevelProgressBar(levelState);
+                },
+              ),
+              const SizedBox(height: 16),
+              // Level-up celebration
+              if (_xpResult?.leveledUp == true)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.levelUpMessage(_xpResult!.newLevel!),
+                        style: GoogleFonts.jua(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(delay: 800.ms).scale(
+                  begin: const Offset(0.8, 0.8),
+                  end: const Offset(1.0, 1.0),
+                ),
+              const SizedBox(height: 12),
               // Streak badge
               Consumer(
                 builder: (context, ref, _) {
@@ -647,6 +694,89 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
         ),
       ),
     );
+  }
+
+  Widget _buildXpDisplay() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.bolt_rounded, color: AppColors.primary, size: 24),
+          const SizedBox(width: 8),
+          Text(
+            l10n.xpEarned(_xpResult!.xpEarned),
+            style: GoogleFonts.jua(
+              fontSize: 20,
+              color: AppColors.primary,
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 400.ms).scale(
+      begin: const Offset(0.8, 0.8),
+      end: const Offset(1.0, 1.0),
+    );
+  }
+
+  Widget _buildLevelProgressBar(LevelProgressState levelState) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              l10n.levelLabel(levelState.currentLevel),
+              style: GoogleFonts.jua(
+                fontSize: 16,
+                color: AppColors.textPrimaryLight,
+              ),
+            ),
+            Text(
+              l10n.xpToNext(levelState.xpToNextLevel),
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondaryLight,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        LinearPercentIndicator(
+          lineHeight: 14,
+          percent: levelState.progressInLevel.clamp(0.0, 1.0),
+          backgroundColor: AppColors.quizOption,
+          progressColor: AppColors.primary,
+          barRadius: const Radius.circular(7),
+          padding: EdgeInsets.zero,
+          animation: true,
+          animationDuration: 800,
+          animateFromLastPercent: true,
+        ),
+      ],
+    ).animate().fadeIn(delay: 500.ms);
+  }
+
+  Future<void> _awardXpOnCompletion(QuizSessionState session) async {
+    final streak = ref.read(streakProvider);
+    final result = await ref.read(levelProgressProvider.notifier).awardXp(
+          correctCount: session.correctCount,
+          totalCount: session.questions.length,
+          newMasteryCount: session.newMasteryCount,
+          streakDays: streak.currentStreak,
+        );
+    if (mounted) {
+      setState(() => _xpResult = result);
+      if (result.leveledUp) {
+        _confettiController.play();
+      }
+    }
   }
 
   Future<void> _dismissAlarm() async {

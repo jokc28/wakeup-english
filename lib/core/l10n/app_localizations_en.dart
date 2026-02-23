@@ -569,4 +569,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upgradeButton => 'Upgrade';
+
+  @override
+  String xpEarned(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String levelLabel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String xpToNext(int xp) {
+    return '$xp XP to next level';
+  }
+
+  @override
+  String totalXpLabel(int xp) {
+    return '$xp XP total';
+  }
+
+  @override
+  String levelUpMessage(int level) {
+    return 'Level Up! Lv.$level';
+  }
+
+  @override
+  String masteredCount(int count) {
+    return '$count mastered';
+  }
 }

@@ -1742,18 +1742,1915 @@ class AlarmHistoryCompanion extends UpdateCompanion<AlarmHistoryData> {
   }
 }
 
+class $VocabularyItemsTable extends VocabularyItems
+    with TableInfo<$VocabularyItemsTable, VocabularyItem> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VocabularyItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _questionIdMeta =
+      const VerificationMeta('questionId');
+  @override
+  late final GeneratedColumn<String> questionId = GeneratedColumn<String>(
+      'question_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+      'type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _difficultyMeta =
+      const VerificationMeta('difficulty');
+  @override
+  late final GeneratedColumn<String> difficulty = GeneratedColumn<String>(
+      'difficulty', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _questionMeta =
+      const VerificationMeta('question');
+  @override
+  late final GeneratedColumn<String> question = GeneratedColumn<String>(
+      'question', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _questionKoMeta =
+      const VerificationMeta('questionKo');
+  @override
+  late final GeneratedColumn<String> questionKo = GeneratedColumn<String>(
+      'question_ko', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _optionsMeta =
+      const VerificationMeta('options');
+  @override
+  late final GeneratedColumn<String> options = GeneratedColumn<String>(
+      'options', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _correctAnswerMeta =
+      const VerificationMeta('correctAnswer');
+  @override
+  late final GeneratedColumn<String> correctAnswer = GeneratedColumn<String>(
+      'correct_answer', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _hintMeta = const VerificationMeta('hint');
+  @override
+  late final GeneratedColumn<String> hint = GeneratedColumn<String>(
+      'hint', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _explanationMeta =
+      const VerificationMeta('explanation');
+  @override
+  late final GeneratedColumn<String> explanation = GeneratedColumn<String>(
+      'explanation', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _explanationKoMeta =
+      const VerificationMeta('explanationKo');
+  @override
+  late final GeneratedColumn<String> explanationKo = GeneratedColumn<String>(
+      'explanation_ko', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _timesPresentedMeta =
+      const VerificationMeta('timesPresented');
+  @override
+  late final GeneratedColumn<int> timesPresented = GeneratedColumn<int>(
+      'times_presented', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _timesCorrectFirstAttemptMeta =
+      const VerificationMeta('timesCorrectFirstAttempt');
+  @override
+  late final GeneratedColumn<int> timesCorrectFirstAttempt =
+      GeneratedColumn<int>('times_correct_first_attempt', aliasedName, false,
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0));
+  static const VerificationMeta _timesIncorrectMeta =
+      const VerificationMeta('timesIncorrect');
+  @override
+  late final GeneratedColumn<int> timesIncorrect = GeneratedColumn<int>(
+      'times_incorrect', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _isMasteredMeta =
+      const VerificationMeta('isMastered');
+  @override
+  late final GeneratedColumn<bool> isMastered = GeneratedColumn<bool>(
+      'is_mastered', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_mastered" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _lastPresentedAtMeta =
+      const VerificationMeta('lastPresentedAt');
+  @override
+  late final GeneratedColumn<DateTime> lastPresentedAt =
+      GeneratedColumn<DateTime>('last_presented_at', aliasedName, true,
+          type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _masteredAtMeta =
+      const VerificationMeta('masteredAt');
+  @override
+  late final GeneratedColumn<DateTime> masteredAt = GeneratedColumn<DateTime>(
+      'mastered_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _isFreeMeta = const VerificationMeta('isFree');
+  @override
+  late final GeneratedColumn<bool> isFree = GeneratedColumn<bool>(
+      'is_free', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_free" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _unlockLevelMeta =
+      const VerificationMeta('unlockLevel');
+  @override
+  late final GeneratedColumn<int> unlockLevel = GeneratedColumn<int>(
+      'unlock_level', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        questionId,
+        type,
+        category,
+        difficulty,
+        question,
+        questionKo,
+        options,
+        correctAnswer,
+        hint,
+        explanation,
+        explanationKo,
+        timesPresented,
+        timesCorrectFirstAttempt,
+        timesIncorrect,
+        isMastered,
+        lastPresentedAt,
+        masteredAt,
+        isFree,
+        unlockLevel,
+        createdAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'vocabulary_items';
+  @override
+  VerificationContext validateIntegrity(Insertable<VocabularyItem> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('question_id')) {
+      context.handle(
+          _questionIdMeta,
+          questionId.isAcceptableOrUnknown(
+              data['question_id']!, _questionIdMeta));
+    } else if (isInserting) {
+      context.missing(_questionIdMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('difficulty')) {
+      context.handle(
+          _difficultyMeta,
+          difficulty.isAcceptableOrUnknown(
+              data['difficulty']!, _difficultyMeta));
+    } else if (isInserting) {
+      context.missing(_difficultyMeta);
+    }
+    if (data.containsKey('question')) {
+      context.handle(_questionMeta,
+          question.isAcceptableOrUnknown(data['question']!, _questionMeta));
+    } else if (isInserting) {
+      context.missing(_questionMeta);
+    }
+    if (data.containsKey('question_ko')) {
+      context.handle(
+          _questionKoMeta,
+          questionKo.isAcceptableOrUnknown(
+              data['question_ko']!, _questionKoMeta));
+    } else if (isInserting) {
+      context.missing(_questionKoMeta);
+    }
+    if (data.containsKey('options')) {
+      context.handle(_optionsMeta,
+          options.isAcceptableOrUnknown(data['options']!, _optionsMeta));
+    } else if (isInserting) {
+      context.missing(_optionsMeta);
+    }
+    if (data.containsKey('correct_answer')) {
+      context.handle(
+          _correctAnswerMeta,
+          correctAnswer.isAcceptableOrUnknown(
+              data['correct_answer']!, _correctAnswerMeta));
+    } else if (isInserting) {
+      context.missing(_correctAnswerMeta);
+    }
+    if (data.containsKey('hint')) {
+      context.handle(
+          _hintMeta, hint.isAcceptableOrUnknown(data['hint']!, _hintMeta));
+    }
+    if (data.containsKey('explanation')) {
+      context.handle(
+          _explanationMeta,
+          explanation.isAcceptableOrUnknown(
+              data['explanation']!, _explanationMeta));
+    }
+    if (data.containsKey('explanation_ko')) {
+      context.handle(
+          _explanationKoMeta,
+          explanationKo.isAcceptableOrUnknown(
+              data['explanation_ko']!, _explanationKoMeta));
+    }
+    if (data.containsKey('times_presented')) {
+      context.handle(
+          _timesPresentedMeta,
+          timesPresented.isAcceptableOrUnknown(
+              data['times_presented']!, _timesPresentedMeta));
+    }
+    if (data.containsKey('times_correct_first_attempt')) {
+      context.handle(
+          _timesCorrectFirstAttemptMeta,
+          timesCorrectFirstAttempt.isAcceptableOrUnknown(
+              data['times_correct_first_attempt']!,
+              _timesCorrectFirstAttemptMeta));
+    }
+    if (data.containsKey('times_incorrect')) {
+      context.handle(
+          _timesIncorrectMeta,
+          timesIncorrect.isAcceptableOrUnknown(
+              data['times_incorrect']!, _timesIncorrectMeta));
+    }
+    if (data.containsKey('is_mastered')) {
+      context.handle(
+          _isMasteredMeta,
+          isMastered.isAcceptableOrUnknown(
+              data['is_mastered']!, _isMasteredMeta));
+    }
+    if (data.containsKey('last_presented_at')) {
+      context.handle(
+          _lastPresentedAtMeta,
+          lastPresentedAt.isAcceptableOrUnknown(
+              data['last_presented_at']!, _lastPresentedAtMeta));
+    }
+    if (data.containsKey('mastered_at')) {
+      context.handle(
+          _masteredAtMeta,
+          masteredAt.isAcceptableOrUnknown(
+              data['mastered_at']!, _masteredAtMeta));
+    }
+    if (data.containsKey('is_free')) {
+      context.handle(_isFreeMeta,
+          isFree.isAcceptableOrUnknown(data['is_free']!, _isFreeMeta));
+    }
+    if (data.containsKey('unlock_level')) {
+      context.handle(
+          _unlockLevelMeta,
+          unlockLevel.isAcceptableOrUnknown(
+              data['unlock_level']!, _unlockLevelMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  VocabularyItem map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VocabularyItem(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      questionId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}question_id'])!,
+      type: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+      difficulty: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}difficulty'])!,
+      question: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}question'])!,
+      questionKo: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}question_ko'])!,
+      options: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}options'])!,
+      correctAnswer: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}correct_answer'])!,
+      hint: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hint']),
+      explanation: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}explanation']),
+      explanationKo: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}explanation_ko']),
+      timesPresented: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}times_presented'])!,
+      timesCorrectFirstAttempt: attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}times_correct_first_attempt'])!,
+      timesIncorrect: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}times_incorrect'])!,
+      isMastered: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_mastered'])!,
+      lastPresentedAt: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}last_presented_at']),
+      masteredAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}mastered_at']),
+      isFree: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_free'])!,
+      unlockLevel: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}unlock_level'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $VocabularyItemsTable createAlias(String alias) {
+    return $VocabularyItemsTable(attachedDatabase, alias);
+  }
+}
+
+class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
+  final int id;
+
+  /// Original ID from JSON (e.g., "vocab_easy_1")
+  final String questionId;
+
+  /// 'multiple_choice', 'fill_in_blank', 'translation', 'word_scramble'
+  final String type;
+
+  /// 'vocabulary', 'grammar', 'reading', 'idioms', 'daily_expression', 'phrases', 'pronunciation'
+  final String category;
+
+  /// 'easy', 'medium', 'hard'
+  final String difficulty;
+
+  /// English question text
+  final String question;
+
+  /// Korean question text
+  final String questionKo;
+
+  /// JSON-encoded array of options
+  final String options;
+
+  /// Correct answer string
+  final String correctAnswer;
+
+  /// Optional hint
+  final String? hint;
+
+  /// English explanation
+  final String? explanation;
+
+  /// Korean explanation
+  final String? explanationKo;
+
+  /// Total presentations
+  final int timesPresented;
+
+  /// Correct on first attempt count
+  final int timesCorrectFirstAttempt;
+
+  /// Incorrect count
+  final int timesIncorrect;
+
+  /// Mastery achieved flag
+  final bool isMastered;
+
+  /// Last shown timestamp
+  final DateTime? lastPresentedAt;
+
+  /// When mastery was achieved
+  final DateTime? masteredAt;
+
+  /// Available in free tier
+  final bool isFree;
+
+  /// Minimum level to access
+  final int unlockLevel;
+
+  /// Row creation timestamp
+  final DateTime createdAt;
+  const VocabularyItem(
+      {required this.id,
+      required this.questionId,
+      required this.type,
+      required this.category,
+      required this.difficulty,
+      required this.question,
+      required this.questionKo,
+      required this.options,
+      required this.correctAnswer,
+      this.hint,
+      this.explanation,
+      this.explanationKo,
+      required this.timesPresented,
+      required this.timesCorrectFirstAttempt,
+      required this.timesIncorrect,
+      required this.isMastered,
+      this.lastPresentedAt,
+      this.masteredAt,
+      required this.isFree,
+      required this.unlockLevel,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['question_id'] = Variable<String>(questionId);
+    map['type'] = Variable<String>(type);
+    map['category'] = Variable<String>(category);
+    map['difficulty'] = Variable<String>(difficulty);
+    map['question'] = Variable<String>(question);
+    map['question_ko'] = Variable<String>(questionKo);
+    map['options'] = Variable<String>(options);
+    map['correct_answer'] = Variable<String>(correctAnswer);
+    if (!nullToAbsent || hint != null) {
+      map['hint'] = Variable<String>(hint);
+    }
+    if (!nullToAbsent || explanation != null) {
+      map['explanation'] = Variable<String>(explanation);
+    }
+    if (!nullToAbsent || explanationKo != null) {
+      map['explanation_ko'] = Variable<String>(explanationKo);
+    }
+    map['times_presented'] = Variable<int>(timesPresented);
+    map['times_correct_first_attempt'] =
+        Variable<int>(timesCorrectFirstAttempt);
+    map['times_incorrect'] = Variable<int>(timesIncorrect);
+    map['is_mastered'] = Variable<bool>(isMastered);
+    if (!nullToAbsent || lastPresentedAt != null) {
+      map['last_presented_at'] = Variable<DateTime>(lastPresentedAt);
+    }
+    if (!nullToAbsent || masteredAt != null) {
+      map['mastered_at'] = Variable<DateTime>(masteredAt);
+    }
+    map['is_free'] = Variable<bool>(isFree);
+    map['unlock_level'] = Variable<int>(unlockLevel);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  VocabularyItemsCompanion toCompanion(bool nullToAbsent) {
+    return VocabularyItemsCompanion(
+      id: Value(id),
+      questionId: Value(questionId),
+      type: Value(type),
+      category: Value(category),
+      difficulty: Value(difficulty),
+      question: Value(question),
+      questionKo: Value(questionKo),
+      options: Value(options),
+      correctAnswer: Value(correctAnswer),
+      hint: hint == null && nullToAbsent ? const Value.absent() : Value(hint),
+      explanation: explanation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(explanation),
+      explanationKo: explanationKo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(explanationKo),
+      timesPresented: Value(timesPresented),
+      timesCorrectFirstAttempt: Value(timesCorrectFirstAttempt),
+      timesIncorrect: Value(timesIncorrect),
+      isMastered: Value(isMastered),
+      lastPresentedAt: lastPresentedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastPresentedAt),
+      masteredAt: masteredAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(masteredAt),
+      isFree: Value(isFree),
+      unlockLevel: Value(unlockLevel),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory VocabularyItem.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VocabularyItem(
+      id: serializer.fromJson<int>(json['id']),
+      questionId: serializer.fromJson<String>(json['questionId']),
+      type: serializer.fromJson<String>(json['type']),
+      category: serializer.fromJson<String>(json['category']),
+      difficulty: serializer.fromJson<String>(json['difficulty']),
+      question: serializer.fromJson<String>(json['question']),
+      questionKo: serializer.fromJson<String>(json['questionKo']),
+      options: serializer.fromJson<String>(json['options']),
+      correctAnswer: serializer.fromJson<String>(json['correctAnswer']),
+      hint: serializer.fromJson<String?>(json['hint']),
+      explanation: serializer.fromJson<String?>(json['explanation']),
+      explanationKo: serializer.fromJson<String?>(json['explanationKo']),
+      timesPresented: serializer.fromJson<int>(json['timesPresented']),
+      timesCorrectFirstAttempt:
+          serializer.fromJson<int>(json['timesCorrectFirstAttempt']),
+      timesIncorrect: serializer.fromJson<int>(json['timesIncorrect']),
+      isMastered: serializer.fromJson<bool>(json['isMastered']),
+      lastPresentedAt: serializer.fromJson<DateTime?>(json['lastPresentedAt']),
+      masteredAt: serializer.fromJson<DateTime?>(json['masteredAt']),
+      isFree: serializer.fromJson<bool>(json['isFree']),
+      unlockLevel: serializer.fromJson<int>(json['unlockLevel']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'questionId': serializer.toJson<String>(questionId),
+      'type': serializer.toJson<String>(type),
+      'category': serializer.toJson<String>(category),
+      'difficulty': serializer.toJson<String>(difficulty),
+      'question': serializer.toJson<String>(question),
+      'questionKo': serializer.toJson<String>(questionKo),
+      'options': serializer.toJson<String>(options),
+      'correctAnswer': serializer.toJson<String>(correctAnswer),
+      'hint': serializer.toJson<String?>(hint),
+      'explanation': serializer.toJson<String?>(explanation),
+      'explanationKo': serializer.toJson<String?>(explanationKo),
+      'timesPresented': serializer.toJson<int>(timesPresented),
+      'timesCorrectFirstAttempt':
+          serializer.toJson<int>(timesCorrectFirstAttempt),
+      'timesIncorrect': serializer.toJson<int>(timesIncorrect),
+      'isMastered': serializer.toJson<bool>(isMastered),
+      'lastPresentedAt': serializer.toJson<DateTime?>(lastPresentedAt),
+      'masteredAt': serializer.toJson<DateTime?>(masteredAt),
+      'isFree': serializer.toJson<bool>(isFree),
+      'unlockLevel': serializer.toJson<int>(unlockLevel),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  VocabularyItem copyWith(
+          {int? id,
+          String? questionId,
+          String? type,
+          String? category,
+          String? difficulty,
+          String? question,
+          String? questionKo,
+          String? options,
+          String? correctAnswer,
+          Value<String?> hint = const Value.absent(),
+          Value<String?> explanation = const Value.absent(),
+          Value<String?> explanationKo = const Value.absent(),
+          int? timesPresented,
+          int? timesCorrectFirstAttempt,
+          int? timesIncorrect,
+          bool? isMastered,
+          Value<DateTime?> lastPresentedAt = const Value.absent(),
+          Value<DateTime?> masteredAt = const Value.absent(),
+          bool? isFree,
+          int? unlockLevel,
+          DateTime? createdAt}) =>
+      VocabularyItem(
+        id: id ?? this.id,
+        questionId: questionId ?? this.questionId,
+        type: type ?? this.type,
+        category: category ?? this.category,
+        difficulty: difficulty ?? this.difficulty,
+        question: question ?? this.question,
+        questionKo: questionKo ?? this.questionKo,
+        options: options ?? this.options,
+        correctAnswer: correctAnswer ?? this.correctAnswer,
+        hint: hint.present ? hint.value : this.hint,
+        explanation: explanation.present ? explanation.value : this.explanation,
+        explanationKo:
+            explanationKo.present ? explanationKo.value : this.explanationKo,
+        timesPresented: timesPresented ?? this.timesPresented,
+        timesCorrectFirstAttempt:
+            timesCorrectFirstAttempt ?? this.timesCorrectFirstAttempt,
+        timesIncorrect: timesIncorrect ?? this.timesIncorrect,
+        isMastered: isMastered ?? this.isMastered,
+        lastPresentedAt: lastPresentedAt.present
+            ? lastPresentedAt.value
+            : this.lastPresentedAt,
+        masteredAt: masteredAt.present ? masteredAt.value : this.masteredAt,
+        isFree: isFree ?? this.isFree,
+        unlockLevel: unlockLevel ?? this.unlockLevel,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  VocabularyItem copyWithCompanion(VocabularyItemsCompanion data) {
+    return VocabularyItem(
+      id: data.id.present ? data.id.value : this.id,
+      questionId:
+          data.questionId.present ? data.questionId.value : this.questionId,
+      type: data.type.present ? data.type.value : this.type,
+      category: data.category.present ? data.category.value : this.category,
+      difficulty:
+          data.difficulty.present ? data.difficulty.value : this.difficulty,
+      question: data.question.present ? data.question.value : this.question,
+      questionKo:
+          data.questionKo.present ? data.questionKo.value : this.questionKo,
+      options: data.options.present ? data.options.value : this.options,
+      correctAnswer: data.correctAnswer.present
+          ? data.correctAnswer.value
+          : this.correctAnswer,
+      hint: data.hint.present ? data.hint.value : this.hint,
+      explanation:
+          data.explanation.present ? data.explanation.value : this.explanation,
+      explanationKo: data.explanationKo.present
+          ? data.explanationKo.value
+          : this.explanationKo,
+      timesPresented: data.timesPresented.present
+          ? data.timesPresented.value
+          : this.timesPresented,
+      timesCorrectFirstAttempt: data.timesCorrectFirstAttempt.present
+          ? data.timesCorrectFirstAttempt.value
+          : this.timesCorrectFirstAttempt,
+      timesIncorrect: data.timesIncorrect.present
+          ? data.timesIncorrect.value
+          : this.timesIncorrect,
+      isMastered:
+          data.isMastered.present ? data.isMastered.value : this.isMastered,
+      lastPresentedAt: data.lastPresentedAt.present
+          ? data.lastPresentedAt.value
+          : this.lastPresentedAt,
+      masteredAt:
+          data.masteredAt.present ? data.masteredAt.value : this.masteredAt,
+      isFree: data.isFree.present ? data.isFree.value : this.isFree,
+      unlockLevel:
+          data.unlockLevel.present ? data.unlockLevel.value : this.unlockLevel,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VocabularyItem(')
+          ..write('id: $id, ')
+          ..write('questionId: $questionId, ')
+          ..write('type: $type, ')
+          ..write('category: $category, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('question: $question, ')
+          ..write('questionKo: $questionKo, ')
+          ..write('options: $options, ')
+          ..write('correctAnswer: $correctAnswer, ')
+          ..write('hint: $hint, ')
+          ..write('explanation: $explanation, ')
+          ..write('explanationKo: $explanationKo, ')
+          ..write('timesPresented: $timesPresented, ')
+          ..write('timesCorrectFirstAttempt: $timesCorrectFirstAttempt, ')
+          ..write('timesIncorrect: $timesIncorrect, ')
+          ..write('isMastered: $isMastered, ')
+          ..write('lastPresentedAt: $lastPresentedAt, ')
+          ..write('masteredAt: $masteredAt, ')
+          ..write('isFree: $isFree, ')
+          ..write('unlockLevel: $unlockLevel, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+        id,
+        questionId,
+        type,
+        category,
+        difficulty,
+        question,
+        questionKo,
+        options,
+        correctAnswer,
+        hint,
+        explanation,
+        explanationKo,
+        timesPresented,
+        timesCorrectFirstAttempt,
+        timesIncorrect,
+        isMastered,
+        lastPresentedAt,
+        masteredAt,
+        isFree,
+        unlockLevel,
+        createdAt
+      ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VocabularyItem &&
+          other.id == this.id &&
+          other.questionId == this.questionId &&
+          other.type == this.type &&
+          other.category == this.category &&
+          other.difficulty == this.difficulty &&
+          other.question == this.question &&
+          other.questionKo == this.questionKo &&
+          other.options == this.options &&
+          other.correctAnswer == this.correctAnswer &&
+          other.hint == this.hint &&
+          other.explanation == this.explanation &&
+          other.explanationKo == this.explanationKo &&
+          other.timesPresented == this.timesPresented &&
+          other.timesCorrectFirstAttempt == this.timesCorrectFirstAttempt &&
+          other.timesIncorrect == this.timesIncorrect &&
+          other.isMastered == this.isMastered &&
+          other.lastPresentedAt == this.lastPresentedAt &&
+          other.masteredAt == this.masteredAt &&
+          other.isFree == this.isFree &&
+          other.unlockLevel == this.unlockLevel &&
+          other.createdAt == this.createdAt);
+}
+
+class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
+  final Value<int> id;
+  final Value<String> questionId;
+  final Value<String> type;
+  final Value<String> category;
+  final Value<String> difficulty;
+  final Value<String> question;
+  final Value<String> questionKo;
+  final Value<String> options;
+  final Value<String> correctAnswer;
+  final Value<String?> hint;
+  final Value<String?> explanation;
+  final Value<String?> explanationKo;
+  final Value<int> timesPresented;
+  final Value<int> timesCorrectFirstAttempt;
+  final Value<int> timesIncorrect;
+  final Value<bool> isMastered;
+  final Value<DateTime?> lastPresentedAt;
+  final Value<DateTime?> masteredAt;
+  final Value<bool> isFree;
+  final Value<int> unlockLevel;
+  final Value<DateTime> createdAt;
+  const VocabularyItemsCompanion({
+    this.id = const Value.absent(),
+    this.questionId = const Value.absent(),
+    this.type = const Value.absent(),
+    this.category = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.question = const Value.absent(),
+    this.questionKo = const Value.absent(),
+    this.options = const Value.absent(),
+    this.correctAnswer = const Value.absent(),
+    this.hint = const Value.absent(),
+    this.explanation = const Value.absent(),
+    this.explanationKo = const Value.absent(),
+    this.timesPresented = const Value.absent(),
+    this.timesCorrectFirstAttempt = const Value.absent(),
+    this.timesIncorrect = const Value.absent(),
+    this.isMastered = const Value.absent(),
+    this.lastPresentedAt = const Value.absent(),
+    this.masteredAt = const Value.absent(),
+    this.isFree = const Value.absent(),
+    this.unlockLevel = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  VocabularyItemsCompanion.insert({
+    this.id = const Value.absent(),
+    required String questionId,
+    required String type,
+    required String category,
+    required String difficulty,
+    required String question,
+    required String questionKo,
+    required String options,
+    required String correctAnswer,
+    this.hint = const Value.absent(),
+    this.explanation = const Value.absent(),
+    this.explanationKo = const Value.absent(),
+    this.timesPresented = const Value.absent(),
+    this.timesCorrectFirstAttempt = const Value.absent(),
+    this.timesIncorrect = const Value.absent(),
+    this.isMastered = const Value.absent(),
+    this.lastPresentedAt = const Value.absent(),
+    this.masteredAt = const Value.absent(),
+    this.isFree = const Value.absent(),
+    this.unlockLevel = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  })  : questionId = Value(questionId),
+        type = Value(type),
+        category = Value(category),
+        difficulty = Value(difficulty),
+        question = Value(question),
+        questionKo = Value(questionKo),
+        options = Value(options),
+        correctAnswer = Value(correctAnswer);
+  static Insertable<VocabularyItem> custom({
+    Expression<int>? id,
+    Expression<String>? questionId,
+    Expression<String>? type,
+    Expression<String>? category,
+    Expression<String>? difficulty,
+    Expression<String>? question,
+    Expression<String>? questionKo,
+    Expression<String>? options,
+    Expression<String>? correctAnswer,
+    Expression<String>? hint,
+    Expression<String>? explanation,
+    Expression<String>? explanationKo,
+    Expression<int>? timesPresented,
+    Expression<int>? timesCorrectFirstAttempt,
+    Expression<int>? timesIncorrect,
+    Expression<bool>? isMastered,
+    Expression<DateTime>? lastPresentedAt,
+    Expression<DateTime>? masteredAt,
+    Expression<bool>? isFree,
+    Expression<int>? unlockLevel,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (questionId != null) 'question_id': questionId,
+      if (type != null) 'type': type,
+      if (category != null) 'category': category,
+      if (difficulty != null) 'difficulty': difficulty,
+      if (question != null) 'question': question,
+      if (questionKo != null) 'question_ko': questionKo,
+      if (options != null) 'options': options,
+      if (correctAnswer != null) 'correct_answer': correctAnswer,
+      if (hint != null) 'hint': hint,
+      if (explanation != null) 'explanation': explanation,
+      if (explanationKo != null) 'explanation_ko': explanationKo,
+      if (timesPresented != null) 'times_presented': timesPresented,
+      if (timesCorrectFirstAttempt != null)
+        'times_correct_first_attempt': timesCorrectFirstAttempt,
+      if (timesIncorrect != null) 'times_incorrect': timesIncorrect,
+      if (isMastered != null) 'is_mastered': isMastered,
+      if (lastPresentedAt != null) 'last_presented_at': lastPresentedAt,
+      if (masteredAt != null) 'mastered_at': masteredAt,
+      if (isFree != null) 'is_free': isFree,
+      if (unlockLevel != null) 'unlock_level': unlockLevel,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  VocabularyItemsCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? questionId,
+      Value<String>? type,
+      Value<String>? category,
+      Value<String>? difficulty,
+      Value<String>? question,
+      Value<String>? questionKo,
+      Value<String>? options,
+      Value<String>? correctAnswer,
+      Value<String?>? hint,
+      Value<String?>? explanation,
+      Value<String?>? explanationKo,
+      Value<int>? timesPresented,
+      Value<int>? timesCorrectFirstAttempt,
+      Value<int>? timesIncorrect,
+      Value<bool>? isMastered,
+      Value<DateTime?>? lastPresentedAt,
+      Value<DateTime?>? masteredAt,
+      Value<bool>? isFree,
+      Value<int>? unlockLevel,
+      Value<DateTime>? createdAt}) {
+    return VocabularyItemsCompanion(
+      id: id ?? this.id,
+      questionId: questionId ?? this.questionId,
+      type: type ?? this.type,
+      category: category ?? this.category,
+      difficulty: difficulty ?? this.difficulty,
+      question: question ?? this.question,
+      questionKo: questionKo ?? this.questionKo,
+      options: options ?? this.options,
+      correctAnswer: correctAnswer ?? this.correctAnswer,
+      hint: hint ?? this.hint,
+      explanation: explanation ?? this.explanation,
+      explanationKo: explanationKo ?? this.explanationKo,
+      timesPresented: timesPresented ?? this.timesPresented,
+      timesCorrectFirstAttempt:
+          timesCorrectFirstAttempt ?? this.timesCorrectFirstAttempt,
+      timesIncorrect: timesIncorrect ?? this.timesIncorrect,
+      isMastered: isMastered ?? this.isMastered,
+      lastPresentedAt: lastPresentedAt ?? this.lastPresentedAt,
+      masteredAt: masteredAt ?? this.masteredAt,
+      isFree: isFree ?? this.isFree,
+      unlockLevel: unlockLevel ?? this.unlockLevel,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (questionId.present) {
+      map['question_id'] = Variable<String>(questionId.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (difficulty.present) {
+      map['difficulty'] = Variable<String>(difficulty.value);
+    }
+    if (question.present) {
+      map['question'] = Variable<String>(question.value);
+    }
+    if (questionKo.present) {
+      map['question_ko'] = Variable<String>(questionKo.value);
+    }
+    if (options.present) {
+      map['options'] = Variable<String>(options.value);
+    }
+    if (correctAnswer.present) {
+      map['correct_answer'] = Variable<String>(correctAnswer.value);
+    }
+    if (hint.present) {
+      map['hint'] = Variable<String>(hint.value);
+    }
+    if (explanation.present) {
+      map['explanation'] = Variable<String>(explanation.value);
+    }
+    if (explanationKo.present) {
+      map['explanation_ko'] = Variable<String>(explanationKo.value);
+    }
+    if (timesPresented.present) {
+      map['times_presented'] = Variable<int>(timesPresented.value);
+    }
+    if (timesCorrectFirstAttempt.present) {
+      map['times_correct_first_attempt'] =
+          Variable<int>(timesCorrectFirstAttempt.value);
+    }
+    if (timesIncorrect.present) {
+      map['times_incorrect'] = Variable<int>(timesIncorrect.value);
+    }
+    if (isMastered.present) {
+      map['is_mastered'] = Variable<bool>(isMastered.value);
+    }
+    if (lastPresentedAt.present) {
+      map['last_presented_at'] = Variable<DateTime>(lastPresentedAt.value);
+    }
+    if (masteredAt.present) {
+      map['mastered_at'] = Variable<DateTime>(masteredAt.value);
+    }
+    if (isFree.present) {
+      map['is_free'] = Variable<bool>(isFree.value);
+    }
+    if (unlockLevel.present) {
+      map['unlock_level'] = Variable<int>(unlockLevel.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VocabularyItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('questionId: $questionId, ')
+          ..write('type: $type, ')
+          ..write('category: $category, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('question: $question, ')
+          ..write('questionKo: $questionKo, ')
+          ..write('options: $options, ')
+          ..write('correctAnswer: $correctAnswer, ')
+          ..write('hint: $hint, ')
+          ..write('explanation: $explanation, ')
+          ..write('explanationKo: $explanationKo, ')
+          ..write('timesPresented: $timesPresented, ')
+          ..write('timesCorrectFirstAttempt: $timesCorrectFirstAttempt, ')
+          ..write('timesIncorrect: $timesIncorrect, ')
+          ..write('isMastered: $isMastered, ')
+          ..write('lastPresentedAt: $lastPresentedAt, ')
+          ..write('masteredAt: $masteredAt, ')
+          ..write('isFree: $isFree, ')
+          ..write('unlockLevel: $unlockLevel, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $UserLevelProgressTable extends UserLevelProgress
+    with TableInfo<$UserLevelProgressTable, UserLevelProgressData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserLevelProgressTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  static const VerificationMeta _currentLevelMeta =
+      const VerificationMeta('currentLevel');
+  @override
+  late final GeneratedColumn<int> currentLevel = GeneratedColumn<int>(
+      'current_level', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  static const VerificationMeta _totalXpMeta =
+      const VerificationMeta('totalXp');
+  @override
+  late final GeneratedColumn<int> totalXp = GeneratedColumn<int>(
+      'total_xp', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _dailyXpMeta =
+      const VerificationMeta('dailyXp');
+  @override
+  late final GeneratedColumn<int> dailyXp = GeneratedColumn<int>(
+      'daily_xp', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _lastXpDateMeta =
+      const VerificationMeta('lastXpDate');
+  @override
+  late final GeneratedColumn<DateTime> lastXpDate = GeneratedColumn<DateTime>(
+      'last_xp_date', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _totalQuizzesCompletedMeta =
+      const VerificationMeta('totalQuizzesCompleted');
+  @override
+  late final GeneratedColumn<int> totalQuizzesCompleted = GeneratedColumn<int>(
+      'total_quizzes_completed', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _totalCorrectAnswersMeta =
+      const VerificationMeta('totalCorrectAnswers');
+  @override
+  late final GeneratedColumn<int> totalCorrectAnswers = GeneratedColumn<int>(
+      'total_correct_answers', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _totalItemsMasteredMeta =
+      const VerificationMeta('totalItemsMastered');
+  @override
+  late final GeneratedColumn<int> totalItemsMastered = GeneratedColumn<int>(
+      'total_items_mastered', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        currentLevel,
+        totalXp,
+        dailyXp,
+        lastXpDate,
+        totalQuizzesCompleted,
+        totalCorrectAnswers,
+        totalItemsMastered,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_level_progress';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<UserLevelProgressData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('current_level')) {
+      context.handle(
+          _currentLevelMeta,
+          currentLevel.isAcceptableOrUnknown(
+              data['current_level']!, _currentLevelMeta));
+    }
+    if (data.containsKey('total_xp')) {
+      context.handle(_totalXpMeta,
+          totalXp.isAcceptableOrUnknown(data['total_xp']!, _totalXpMeta));
+    }
+    if (data.containsKey('daily_xp')) {
+      context.handle(_dailyXpMeta,
+          dailyXp.isAcceptableOrUnknown(data['daily_xp']!, _dailyXpMeta));
+    }
+    if (data.containsKey('last_xp_date')) {
+      context.handle(
+          _lastXpDateMeta,
+          lastXpDate.isAcceptableOrUnknown(
+              data['last_xp_date']!, _lastXpDateMeta));
+    }
+    if (data.containsKey('total_quizzes_completed')) {
+      context.handle(
+          _totalQuizzesCompletedMeta,
+          totalQuizzesCompleted.isAcceptableOrUnknown(
+              data['total_quizzes_completed']!, _totalQuizzesCompletedMeta));
+    }
+    if (data.containsKey('total_correct_answers')) {
+      context.handle(
+          _totalCorrectAnswersMeta,
+          totalCorrectAnswers.isAcceptableOrUnknown(
+              data['total_correct_answers']!, _totalCorrectAnswersMeta));
+    }
+    if (data.containsKey('total_items_mastered')) {
+      context.handle(
+          _totalItemsMasteredMeta,
+          totalItemsMastered.isAcceptableOrUnknown(
+              data['total_items_mastered']!, _totalItemsMasteredMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UserLevelProgressData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserLevelProgressData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      currentLevel: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}current_level'])!,
+      totalXp: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_xp'])!,
+      dailyXp: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}daily_xp'])!,
+      lastXpDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}last_xp_date']),
+      totalQuizzesCompleted: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}total_quizzes_completed'])!,
+      totalCorrectAnswers: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}total_correct_answers'])!,
+      totalItemsMastered: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}total_items_mastered'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $UserLevelProgressTable createAlias(String alias) {
+    return $UserLevelProgressTable(attachedDatabase, alias);
+  }
+}
+
+class UserLevelProgressData extends DataClass
+    implements Insertable<UserLevelProgressData> {
+  /// Singleton (always row 1)
+  final int id;
+
+  /// Current level 1-50
+  final int currentLevel;
+
+  /// Lifetime accumulated XP
+  final int totalXp;
+
+  /// XP earned today (resets daily)
+  final int dailyXp;
+
+  /// For daily reset detection
+  final DateTime? lastXpDate;
+
+  /// Lifetime quiz count
+  final int totalQuizzesCompleted;
+
+  /// Lifetime correct count
+  final int totalCorrectAnswers;
+
+  /// Total mastered items
+  final int totalItemsMastered;
+
+  /// Last update timestamp
+  final DateTime updatedAt;
+  const UserLevelProgressData(
+      {required this.id,
+      required this.currentLevel,
+      required this.totalXp,
+      required this.dailyXp,
+      this.lastXpDate,
+      required this.totalQuizzesCompleted,
+      required this.totalCorrectAnswers,
+      required this.totalItemsMastered,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['current_level'] = Variable<int>(currentLevel);
+    map['total_xp'] = Variable<int>(totalXp);
+    map['daily_xp'] = Variable<int>(dailyXp);
+    if (!nullToAbsent || lastXpDate != null) {
+      map['last_xp_date'] = Variable<DateTime>(lastXpDate);
+    }
+    map['total_quizzes_completed'] = Variable<int>(totalQuizzesCompleted);
+    map['total_correct_answers'] = Variable<int>(totalCorrectAnswers);
+    map['total_items_mastered'] = Variable<int>(totalItemsMastered);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  UserLevelProgressCompanion toCompanion(bool nullToAbsent) {
+    return UserLevelProgressCompanion(
+      id: Value(id),
+      currentLevel: Value(currentLevel),
+      totalXp: Value(totalXp),
+      dailyXp: Value(dailyXp),
+      lastXpDate: lastXpDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastXpDate),
+      totalQuizzesCompleted: Value(totalQuizzesCompleted),
+      totalCorrectAnswers: Value(totalCorrectAnswers),
+      totalItemsMastered: Value(totalItemsMastered),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory UserLevelProgressData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserLevelProgressData(
+      id: serializer.fromJson<int>(json['id']),
+      currentLevel: serializer.fromJson<int>(json['currentLevel']),
+      totalXp: serializer.fromJson<int>(json['totalXp']),
+      dailyXp: serializer.fromJson<int>(json['dailyXp']),
+      lastXpDate: serializer.fromJson<DateTime?>(json['lastXpDate']),
+      totalQuizzesCompleted:
+          serializer.fromJson<int>(json['totalQuizzesCompleted']),
+      totalCorrectAnswers:
+          serializer.fromJson<int>(json['totalCorrectAnswers']),
+      totalItemsMastered: serializer.fromJson<int>(json['totalItemsMastered']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'currentLevel': serializer.toJson<int>(currentLevel),
+      'totalXp': serializer.toJson<int>(totalXp),
+      'dailyXp': serializer.toJson<int>(dailyXp),
+      'lastXpDate': serializer.toJson<DateTime?>(lastXpDate),
+      'totalQuizzesCompleted': serializer.toJson<int>(totalQuizzesCompleted),
+      'totalCorrectAnswers': serializer.toJson<int>(totalCorrectAnswers),
+      'totalItemsMastered': serializer.toJson<int>(totalItemsMastered),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  UserLevelProgressData copyWith(
+          {int? id,
+          int? currentLevel,
+          int? totalXp,
+          int? dailyXp,
+          Value<DateTime?> lastXpDate = const Value.absent(),
+          int? totalQuizzesCompleted,
+          int? totalCorrectAnswers,
+          int? totalItemsMastered,
+          DateTime? updatedAt}) =>
+      UserLevelProgressData(
+        id: id ?? this.id,
+        currentLevel: currentLevel ?? this.currentLevel,
+        totalXp: totalXp ?? this.totalXp,
+        dailyXp: dailyXp ?? this.dailyXp,
+        lastXpDate: lastXpDate.present ? lastXpDate.value : this.lastXpDate,
+        totalQuizzesCompleted:
+            totalQuizzesCompleted ?? this.totalQuizzesCompleted,
+        totalCorrectAnswers: totalCorrectAnswers ?? this.totalCorrectAnswers,
+        totalItemsMastered: totalItemsMastered ?? this.totalItemsMastered,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  UserLevelProgressData copyWithCompanion(UserLevelProgressCompanion data) {
+    return UserLevelProgressData(
+      id: data.id.present ? data.id.value : this.id,
+      currentLevel: data.currentLevel.present
+          ? data.currentLevel.value
+          : this.currentLevel,
+      totalXp: data.totalXp.present ? data.totalXp.value : this.totalXp,
+      dailyXp: data.dailyXp.present ? data.dailyXp.value : this.dailyXp,
+      lastXpDate:
+          data.lastXpDate.present ? data.lastXpDate.value : this.lastXpDate,
+      totalQuizzesCompleted: data.totalQuizzesCompleted.present
+          ? data.totalQuizzesCompleted.value
+          : this.totalQuizzesCompleted,
+      totalCorrectAnswers: data.totalCorrectAnswers.present
+          ? data.totalCorrectAnswers.value
+          : this.totalCorrectAnswers,
+      totalItemsMastered: data.totalItemsMastered.present
+          ? data.totalItemsMastered.value
+          : this.totalItemsMastered,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserLevelProgressData(')
+          ..write('id: $id, ')
+          ..write('currentLevel: $currentLevel, ')
+          ..write('totalXp: $totalXp, ')
+          ..write('dailyXp: $dailyXp, ')
+          ..write('lastXpDate: $lastXpDate, ')
+          ..write('totalQuizzesCompleted: $totalQuizzesCompleted, ')
+          ..write('totalCorrectAnswers: $totalCorrectAnswers, ')
+          ..write('totalItemsMastered: $totalItemsMastered, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      currentLevel,
+      totalXp,
+      dailyXp,
+      lastXpDate,
+      totalQuizzesCompleted,
+      totalCorrectAnswers,
+      totalItemsMastered,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserLevelProgressData &&
+          other.id == this.id &&
+          other.currentLevel == this.currentLevel &&
+          other.totalXp == this.totalXp &&
+          other.dailyXp == this.dailyXp &&
+          other.lastXpDate == this.lastXpDate &&
+          other.totalQuizzesCompleted == this.totalQuizzesCompleted &&
+          other.totalCorrectAnswers == this.totalCorrectAnswers &&
+          other.totalItemsMastered == this.totalItemsMastered &&
+          other.updatedAt == this.updatedAt);
+}
+
+class UserLevelProgressCompanion
+    extends UpdateCompanion<UserLevelProgressData> {
+  final Value<int> id;
+  final Value<int> currentLevel;
+  final Value<int> totalXp;
+  final Value<int> dailyXp;
+  final Value<DateTime?> lastXpDate;
+  final Value<int> totalQuizzesCompleted;
+  final Value<int> totalCorrectAnswers;
+  final Value<int> totalItemsMastered;
+  final Value<DateTime> updatedAt;
+  const UserLevelProgressCompanion({
+    this.id = const Value.absent(),
+    this.currentLevel = const Value.absent(),
+    this.totalXp = const Value.absent(),
+    this.dailyXp = const Value.absent(),
+    this.lastXpDate = const Value.absent(),
+    this.totalQuizzesCompleted = const Value.absent(),
+    this.totalCorrectAnswers = const Value.absent(),
+    this.totalItemsMastered = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  UserLevelProgressCompanion.insert({
+    this.id = const Value.absent(),
+    this.currentLevel = const Value.absent(),
+    this.totalXp = const Value.absent(),
+    this.dailyXp = const Value.absent(),
+    this.lastXpDate = const Value.absent(),
+    this.totalQuizzesCompleted = const Value.absent(),
+    this.totalCorrectAnswers = const Value.absent(),
+    this.totalItemsMastered = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  static Insertable<UserLevelProgressData> custom({
+    Expression<int>? id,
+    Expression<int>? currentLevel,
+    Expression<int>? totalXp,
+    Expression<int>? dailyXp,
+    Expression<DateTime>? lastXpDate,
+    Expression<int>? totalQuizzesCompleted,
+    Expression<int>? totalCorrectAnswers,
+    Expression<int>? totalItemsMastered,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (currentLevel != null) 'current_level': currentLevel,
+      if (totalXp != null) 'total_xp': totalXp,
+      if (dailyXp != null) 'daily_xp': dailyXp,
+      if (lastXpDate != null) 'last_xp_date': lastXpDate,
+      if (totalQuizzesCompleted != null)
+        'total_quizzes_completed': totalQuizzesCompleted,
+      if (totalCorrectAnswers != null)
+        'total_correct_answers': totalCorrectAnswers,
+      if (totalItemsMastered != null)
+        'total_items_mastered': totalItemsMastered,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  UserLevelProgressCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? currentLevel,
+      Value<int>? totalXp,
+      Value<int>? dailyXp,
+      Value<DateTime?>? lastXpDate,
+      Value<int>? totalQuizzesCompleted,
+      Value<int>? totalCorrectAnswers,
+      Value<int>? totalItemsMastered,
+      Value<DateTime>? updatedAt}) {
+    return UserLevelProgressCompanion(
+      id: id ?? this.id,
+      currentLevel: currentLevel ?? this.currentLevel,
+      totalXp: totalXp ?? this.totalXp,
+      dailyXp: dailyXp ?? this.dailyXp,
+      lastXpDate: lastXpDate ?? this.lastXpDate,
+      totalQuizzesCompleted:
+          totalQuizzesCompleted ?? this.totalQuizzesCompleted,
+      totalCorrectAnswers: totalCorrectAnswers ?? this.totalCorrectAnswers,
+      totalItemsMastered: totalItemsMastered ?? this.totalItemsMastered,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (currentLevel.present) {
+      map['current_level'] = Variable<int>(currentLevel.value);
+    }
+    if (totalXp.present) {
+      map['total_xp'] = Variable<int>(totalXp.value);
+    }
+    if (dailyXp.present) {
+      map['daily_xp'] = Variable<int>(dailyXp.value);
+    }
+    if (lastXpDate.present) {
+      map['last_xp_date'] = Variable<DateTime>(lastXpDate.value);
+    }
+    if (totalQuizzesCompleted.present) {
+      map['total_quizzes_completed'] =
+          Variable<int>(totalQuizzesCompleted.value);
+    }
+    if (totalCorrectAnswers.present) {
+      map['total_correct_answers'] = Variable<int>(totalCorrectAnswers.value);
+    }
+    if (totalItemsMastered.present) {
+      map['total_items_mastered'] = Variable<int>(totalItemsMastered.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserLevelProgressCompanion(')
+          ..write('id: $id, ')
+          ..write('currentLevel: $currentLevel, ')
+          ..write('totalXp: $totalXp, ')
+          ..write('dailyXp: $dailyXp, ')
+          ..write('lastXpDate: $lastXpDate, ')
+          ..write('totalQuizzesCompleted: $totalQuizzesCompleted, ')
+          ..write('totalCorrectAnswers: $totalCorrectAnswers, ')
+          ..write('totalItemsMastered: $totalItemsMastered, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $XpTransactionsTable extends XpTransactions
+    with TableInfo<$XpTransactionsTable, XpTransaction> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $XpTransactionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+      'amount', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+      'source', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _referenceIdMeta =
+      const VerificationMeta('referenceId');
+  @override
+  late final GeneratedColumn<String> referenceId = GeneratedColumn<String>(
+      'reference_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _levelAtTimeMeta =
+      const VerificationMeta('levelAtTime');
+  @override
+  late final GeneratedColumn<int> levelAtTime = GeneratedColumn<int>(
+      'level_at_time', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _earnedAtMeta =
+      const VerificationMeta('earnedAt');
+  @override
+  late final GeneratedColumn<DateTime> earnedAt = GeneratedColumn<DateTime>(
+      'earned_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, amount, source, referenceId, levelAtTime, earnedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'xp_transactions';
+  @override
+  VerificationContext validateIntegrity(Insertable<XpTransaction> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('amount')) {
+      context.handle(_amountMeta,
+          amount.isAcceptableOrUnknown(data['amount']!, _amountMeta));
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(_sourceMeta,
+          source.isAcceptableOrUnknown(data['source']!, _sourceMeta));
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('reference_id')) {
+      context.handle(
+          _referenceIdMeta,
+          referenceId.isAcceptableOrUnknown(
+              data['reference_id']!, _referenceIdMeta));
+    }
+    if (data.containsKey('level_at_time')) {
+      context.handle(
+          _levelAtTimeMeta,
+          levelAtTime.isAcceptableOrUnknown(
+              data['level_at_time']!, _levelAtTimeMeta));
+    } else if (isInserting) {
+      context.missing(_levelAtTimeMeta);
+    }
+    if (data.containsKey('earned_at')) {
+      context.handle(_earnedAtMeta,
+          earnedAt.isAcceptableOrUnknown(data['earned_at']!, _earnedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  XpTransaction map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return XpTransaction(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      amount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}amount'])!,
+      source: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source'])!,
+      referenceId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}reference_id']),
+      levelAtTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}level_at_time'])!,
+      earnedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}earned_at'])!,
+    );
+  }
+
+  @override
+  $XpTransactionsTable createAlias(String alias) {
+    return $XpTransactionsTable(attachedDatabase, alias);
+  }
+}
+
+class XpTransaction extends DataClass implements Insertable<XpTransaction> {
+  final int id;
+
+  /// XP awarded
+  final int amount;
+
+  /// 'quiz_complete', 'perfect_quiz', 'mastery_bonus', 'streak_bonus'
+  final String source;
+
+  /// Optional quiz/question reference
+  final String? referenceId;
+
+  /// User level when earned
+  final int levelAtTime;
+
+  /// Timestamp
+  final DateTime earnedAt;
+  const XpTransaction(
+      {required this.id,
+      required this.amount,
+      required this.source,
+      this.referenceId,
+      required this.levelAtTime,
+      required this.earnedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['amount'] = Variable<int>(amount);
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || referenceId != null) {
+      map['reference_id'] = Variable<String>(referenceId);
+    }
+    map['level_at_time'] = Variable<int>(levelAtTime);
+    map['earned_at'] = Variable<DateTime>(earnedAt);
+    return map;
+  }
+
+  XpTransactionsCompanion toCompanion(bool nullToAbsent) {
+    return XpTransactionsCompanion(
+      id: Value(id),
+      amount: Value(amount),
+      source: Value(source),
+      referenceId: referenceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(referenceId),
+      levelAtTime: Value(levelAtTime),
+      earnedAt: Value(earnedAt),
+    );
+  }
+
+  factory XpTransaction.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return XpTransaction(
+      id: serializer.fromJson<int>(json['id']),
+      amount: serializer.fromJson<int>(json['amount']),
+      source: serializer.fromJson<String>(json['source']),
+      referenceId: serializer.fromJson<String?>(json['referenceId']),
+      levelAtTime: serializer.fromJson<int>(json['levelAtTime']),
+      earnedAt: serializer.fromJson<DateTime>(json['earnedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'amount': serializer.toJson<int>(amount),
+      'source': serializer.toJson<String>(source),
+      'referenceId': serializer.toJson<String?>(referenceId),
+      'levelAtTime': serializer.toJson<int>(levelAtTime),
+      'earnedAt': serializer.toJson<DateTime>(earnedAt),
+    };
+  }
+
+  XpTransaction copyWith(
+          {int? id,
+          int? amount,
+          String? source,
+          Value<String?> referenceId = const Value.absent(),
+          int? levelAtTime,
+          DateTime? earnedAt}) =>
+      XpTransaction(
+        id: id ?? this.id,
+        amount: amount ?? this.amount,
+        source: source ?? this.source,
+        referenceId: referenceId.present ? referenceId.value : this.referenceId,
+        levelAtTime: levelAtTime ?? this.levelAtTime,
+        earnedAt: earnedAt ?? this.earnedAt,
+      );
+  XpTransaction copyWithCompanion(XpTransactionsCompanion data) {
+    return XpTransaction(
+      id: data.id.present ? data.id.value : this.id,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      source: data.source.present ? data.source.value : this.source,
+      referenceId:
+          data.referenceId.present ? data.referenceId.value : this.referenceId,
+      levelAtTime:
+          data.levelAtTime.present ? data.levelAtTime.value : this.levelAtTime,
+      earnedAt: data.earnedAt.present ? data.earnedAt.value : this.earnedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('XpTransaction(')
+          ..write('id: $id, ')
+          ..write('amount: $amount, ')
+          ..write('source: $source, ')
+          ..write('referenceId: $referenceId, ')
+          ..write('levelAtTime: $levelAtTime, ')
+          ..write('earnedAt: $earnedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, amount, source, referenceId, levelAtTime, earnedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is XpTransaction &&
+          other.id == this.id &&
+          other.amount == this.amount &&
+          other.source == this.source &&
+          other.referenceId == this.referenceId &&
+          other.levelAtTime == this.levelAtTime &&
+          other.earnedAt == this.earnedAt);
+}
+
+class XpTransactionsCompanion extends UpdateCompanion<XpTransaction> {
+  final Value<int> id;
+  final Value<int> amount;
+  final Value<String> source;
+  final Value<String?> referenceId;
+  final Value<int> levelAtTime;
+  final Value<DateTime> earnedAt;
+  const XpTransactionsCompanion({
+    this.id = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.source = const Value.absent(),
+    this.referenceId = const Value.absent(),
+    this.levelAtTime = const Value.absent(),
+    this.earnedAt = const Value.absent(),
+  });
+  XpTransactionsCompanion.insert({
+    this.id = const Value.absent(),
+    required int amount,
+    required String source,
+    this.referenceId = const Value.absent(),
+    required int levelAtTime,
+    this.earnedAt = const Value.absent(),
+  })  : amount = Value(amount),
+        source = Value(source),
+        levelAtTime = Value(levelAtTime);
+  static Insertable<XpTransaction> custom({
+    Expression<int>? id,
+    Expression<int>? amount,
+    Expression<String>? source,
+    Expression<String>? referenceId,
+    Expression<int>? levelAtTime,
+    Expression<DateTime>? earnedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (amount != null) 'amount': amount,
+      if (source != null) 'source': source,
+      if (referenceId != null) 'reference_id': referenceId,
+      if (levelAtTime != null) 'level_at_time': levelAtTime,
+      if (earnedAt != null) 'earned_at': earnedAt,
+    });
+  }
+
+  XpTransactionsCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? amount,
+      Value<String>? source,
+      Value<String?>? referenceId,
+      Value<int>? levelAtTime,
+      Value<DateTime>? earnedAt}) {
+    return XpTransactionsCompanion(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      source: source ?? this.source,
+      referenceId: referenceId ?? this.referenceId,
+      levelAtTime: levelAtTime ?? this.levelAtTime,
+      earnedAt: earnedAt ?? this.earnedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (referenceId.present) {
+      map['reference_id'] = Variable<String>(referenceId.value);
+    }
+    if (levelAtTime.present) {
+      map['level_at_time'] = Variable<int>(levelAtTime.value);
+    }
+    if (earnedAt.present) {
+      map['earned_at'] = Variable<DateTime>(earnedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('XpTransactionsCompanion(')
+          ..write('id: $id, ')
+          ..write('amount: $amount, ')
+          ..write('source: $source, ')
+          ..write('referenceId: $referenceId, ')
+          ..write('levelAtTime: $levelAtTime, ')
+          ..write('earnedAt: $earnedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AlarmsTable alarms = $AlarmsTable(this);
   late final $QuizProgressTable quizProgress = $QuizProgressTable(this);
   late final $AlarmHistoryTable alarmHistory = $AlarmHistoryTable(this);
+  late final $VocabularyItemsTable vocabularyItems =
+      $VocabularyItemsTable(this);
+  late final $UserLevelProgressTable userLevelProgress =
+      $UserLevelProgressTable(this);
+  late final $XpTransactionsTable xpTransactions = $XpTransactionsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [alarms, quizProgress, alarmHistory];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        alarms,
+        quizProgress,
+        alarmHistory,
+        vocabularyItems,
+        userLevelProgress,
+        xpTransactions
+      ];
 }
 
 typedef $$AlarmsTableCreateCompanionBuilder = AlarmsCompanion Function({
@@ -2539,6 +4436,845 @@ typedef $$AlarmHistoryTableProcessedTableManager = ProcessedTableManager<
     ),
     AlarmHistoryData,
     PrefetchHooks Function()>;
+typedef $$VocabularyItemsTableCreateCompanionBuilder = VocabularyItemsCompanion
+    Function({
+  Value<int> id,
+  required String questionId,
+  required String type,
+  required String category,
+  required String difficulty,
+  required String question,
+  required String questionKo,
+  required String options,
+  required String correctAnswer,
+  Value<String?> hint,
+  Value<String?> explanation,
+  Value<String?> explanationKo,
+  Value<int> timesPresented,
+  Value<int> timesCorrectFirstAttempt,
+  Value<int> timesIncorrect,
+  Value<bool> isMastered,
+  Value<DateTime?> lastPresentedAt,
+  Value<DateTime?> masteredAt,
+  Value<bool> isFree,
+  Value<int> unlockLevel,
+  Value<DateTime> createdAt,
+});
+typedef $$VocabularyItemsTableUpdateCompanionBuilder = VocabularyItemsCompanion
+    Function({
+  Value<int> id,
+  Value<String> questionId,
+  Value<String> type,
+  Value<String> category,
+  Value<String> difficulty,
+  Value<String> question,
+  Value<String> questionKo,
+  Value<String> options,
+  Value<String> correctAnswer,
+  Value<String?> hint,
+  Value<String?> explanation,
+  Value<String?> explanationKo,
+  Value<int> timesPresented,
+  Value<int> timesCorrectFirstAttempt,
+  Value<int> timesIncorrect,
+  Value<bool> isMastered,
+  Value<DateTime?> lastPresentedAt,
+  Value<DateTime?> masteredAt,
+  Value<bool> isFree,
+  Value<int> unlockLevel,
+  Value<DateTime> createdAt,
+});
+
+class $$VocabularyItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $VocabularyItemsTable> {
+  $$VocabularyItemsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get questionId => $composableBuilder(
+      column: $table.questionId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get category => $composableBuilder(
+      column: $table.category, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get question => $composableBuilder(
+      column: $table.question, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get questionKo => $composableBuilder(
+      column: $table.questionKo, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get options => $composableBuilder(
+      column: $table.options, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get correctAnswer => $composableBuilder(
+      column: $table.correctAnswer, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get hint => $composableBuilder(
+      column: $table.hint, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get explanation => $composableBuilder(
+      column: $table.explanation, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get explanationKo => $composableBuilder(
+      column: $table.explanationKo, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get timesPresented => $composableBuilder(
+      column: $table.timesPresented,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get timesCorrectFirstAttempt => $composableBuilder(
+      column: $table.timesCorrectFirstAttempt,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get timesIncorrect => $composableBuilder(
+      column: $table.timesIncorrect,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isMastered => $composableBuilder(
+      column: $table.isMastered, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastPresentedAt => $composableBuilder(
+      column: $table.lastPresentedAt,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get masteredAt => $composableBuilder(
+      column: $table.masteredAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isFree => $composableBuilder(
+      column: $table.isFree, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get unlockLevel => $composableBuilder(
+      column: $table.unlockLevel, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$VocabularyItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $VocabularyItemsTable> {
+  $$VocabularyItemsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get questionId => $composableBuilder(
+      column: $table.questionId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get category => $composableBuilder(
+      column: $table.category, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get question => $composableBuilder(
+      column: $table.question, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get questionKo => $composableBuilder(
+      column: $table.questionKo, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get options => $composableBuilder(
+      column: $table.options, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get correctAnswer => $composableBuilder(
+      column: $table.correctAnswer,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get hint => $composableBuilder(
+      column: $table.hint, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get explanation => $composableBuilder(
+      column: $table.explanation, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get explanationKo => $composableBuilder(
+      column: $table.explanationKo,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get timesPresented => $composableBuilder(
+      column: $table.timesPresented,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get timesCorrectFirstAttempt => $composableBuilder(
+      column: $table.timesCorrectFirstAttempt,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get timesIncorrect => $composableBuilder(
+      column: $table.timesIncorrect,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isMastered => $composableBuilder(
+      column: $table.isMastered, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastPresentedAt => $composableBuilder(
+      column: $table.lastPresentedAt,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get masteredAt => $composableBuilder(
+      column: $table.masteredAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isFree => $composableBuilder(
+      column: $table.isFree, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get unlockLevel => $composableBuilder(
+      column: $table.unlockLevel, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$VocabularyItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VocabularyItemsTable> {
+  $$VocabularyItemsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get questionId => $composableBuilder(
+      column: $table.questionId, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => column);
+
+  GeneratedColumn<String> get question =>
+      $composableBuilder(column: $table.question, builder: (column) => column);
+
+  GeneratedColumn<String> get questionKo => $composableBuilder(
+      column: $table.questionKo, builder: (column) => column);
+
+  GeneratedColumn<String> get options =>
+      $composableBuilder(column: $table.options, builder: (column) => column);
+
+  GeneratedColumn<String> get correctAnswer => $composableBuilder(
+      column: $table.correctAnswer, builder: (column) => column);
+
+  GeneratedColumn<String> get hint =>
+      $composableBuilder(column: $table.hint, builder: (column) => column);
+
+  GeneratedColumn<String> get explanation => $composableBuilder(
+      column: $table.explanation, builder: (column) => column);
+
+  GeneratedColumn<String> get explanationKo => $composableBuilder(
+      column: $table.explanationKo, builder: (column) => column);
+
+  GeneratedColumn<int> get timesPresented => $composableBuilder(
+      column: $table.timesPresented, builder: (column) => column);
+
+  GeneratedColumn<int> get timesCorrectFirstAttempt => $composableBuilder(
+      column: $table.timesCorrectFirstAttempt, builder: (column) => column);
+
+  GeneratedColumn<int> get timesIncorrect => $composableBuilder(
+      column: $table.timesIncorrect, builder: (column) => column);
+
+  GeneratedColumn<bool> get isMastered => $composableBuilder(
+      column: $table.isMastered, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastPresentedAt => $composableBuilder(
+      column: $table.lastPresentedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get masteredAt => $composableBuilder(
+      column: $table.masteredAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFree =>
+      $composableBuilder(column: $table.isFree, builder: (column) => column);
+
+  GeneratedColumn<int> get unlockLevel => $composableBuilder(
+      column: $table.unlockLevel, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$VocabularyItemsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $VocabularyItemsTable,
+    VocabularyItem,
+    $$VocabularyItemsTableFilterComposer,
+    $$VocabularyItemsTableOrderingComposer,
+    $$VocabularyItemsTableAnnotationComposer,
+    $$VocabularyItemsTableCreateCompanionBuilder,
+    $$VocabularyItemsTableUpdateCompanionBuilder,
+    (
+      VocabularyItem,
+      BaseReferences<_$AppDatabase, $VocabularyItemsTable, VocabularyItem>
+    ),
+    VocabularyItem,
+    PrefetchHooks Function()> {
+  $$VocabularyItemsTableTableManager(
+      _$AppDatabase db, $VocabularyItemsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VocabularyItemsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VocabularyItemsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VocabularyItemsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> questionId = const Value.absent(),
+            Value<String> type = const Value.absent(),
+            Value<String> category = const Value.absent(),
+            Value<String> difficulty = const Value.absent(),
+            Value<String> question = const Value.absent(),
+            Value<String> questionKo = const Value.absent(),
+            Value<String> options = const Value.absent(),
+            Value<String> correctAnswer = const Value.absent(),
+            Value<String?> hint = const Value.absent(),
+            Value<String?> explanation = const Value.absent(),
+            Value<String?> explanationKo = const Value.absent(),
+            Value<int> timesPresented = const Value.absent(),
+            Value<int> timesCorrectFirstAttempt = const Value.absent(),
+            Value<int> timesIncorrect = const Value.absent(),
+            Value<bool> isMastered = const Value.absent(),
+            Value<DateTime?> lastPresentedAt = const Value.absent(),
+            Value<DateTime?> masteredAt = const Value.absent(),
+            Value<bool> isFree = const Value.absent(),
+            Value<int> unlockLevel = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              VocabularyItemsCompanion(
+            id: id,
+            questionId: questionId,
+            type: type,
+            category: category,
+            difficulty: difficulty,
+            question: question,
+            questionKo: questionKo,
+            options: options,
+            correctAnswer: correctAnswer,
+            hint: hint,
+            explanation: explanation,
+            explanationKo: explanationKo,
+            timesPresented: timesPresented,
+            timesCorrectFirstAttempt: timesCorrectFirstAttempt,
+            timesIncorrect: timesIncorrect,
+            isMastered: isMastered,
+            lastPresentedAt: lastPresentedAt,
+            masteredAt: masteredAt,
+            isFree: isFree,
+            unlockLevel: unlockLevel,
+            createdAt: createdAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String questionId,
+            required String type,
+            required String category,
+            required String difficulty,
+            required String question,
+            required String questionKo,
+            required String options,
+            required String correctAnswer,
+            Value<String?> hint = const Value.absent(),
+            Value<String?> explanation = const Value.absent(),
+            Value<String?> explanationKo = const Value.absent(),
+            Value<int> timesPresented = const Value.absent(),
+            Value<int> timesCorrectFirstAttempt = const Value.absent(),
+            Value<int> timesIncorrect = const Value.absent(),
+            Value<bool> isMastered = const Value.absent(),
+            Value<DateTime?> lastPresentedAt = const Value.absent(),
+            Value<DateTime?> masteredAt = const Value.absent(),
+            Value<bool> isFree = const Value.absent(),
+            Value<int> unlockLevel = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              VocabularyItemsCompanion.insert(
+            id: id,
+            questionId: questionId,
+            type: type,
+            category: category,
+            difficulty: difficulty,
+            question: question,
+            questionKo: questionKo,
+            options: options,
+            correctAnswer: correctAnswer,
+            hint: hint,
+            explanation: explanation,
+            explanationKo: explanationKo,
+            timesPresented: timesPresented,
+            timesCorrectFirstAttempt: timesCorrectFirstAttempt,
+            timesIncorrect: timesIncorrect,
+            isMastered: isMastered,
+            lastPresentedAt: lastPresentedAt,
+            masteredAt: masteredAt,
+            isFree: isFree,
+            unlockLevel: unlockLevel,
+            createdAt: createdAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$VocabularyItemsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $VocabularyItemsTable,
+    VocabularyItem,
+    $$VocabularyItemsTableFilterComposer,
+    $$VocabularyItemsTableOrderingComposer,
+    $$VocabularyItemsTableAnnotationComposer,
+    $$VocabularyItemsTableCreateCompanionBuilder,
+    $$VocabularyItemsTableUpdateCompanionBuilder,
+    (
+      VocabularyItem,
+      BaseReferences<_$AppDatabase, $VocabularyItemsTable, VocabularyItem>
+    ),
+    VocabularyItem,
+    PrefetchHooks Function()>;
+typedef $$UserLevelProgressTableCreateCompanionBuilder
+    = UserLevelProgressCompanion Function({
+  Value<int> id,
+  Value<int> currentLevel,
+  Value<int> totalXp,
+  Value<int> dailyXp,
+  Value<DateTime?> lastXpDate,
+  Value<int> totalQuizzesCompleted,
+  Value<int> totalCorrectAnswers,
+  Value<int> totalItemsMastered,
+  Value<DateTime> updatedAt,
+});
+typedef $$UserLevelProgressTableUpdateCompanionBuilder
+    = UserLevelProgressCompanion Function({
+  Value<int> id,
+  Value<int> currentLevel,
+  Value<int> totalXp,
+  Value<int> dailyXp,
+  Value<DateTime?> lastXpDate,
+  Value<int> totalQuizzesCompleted,
+  Value<int> totalCorrectAnswers,
+  Value<int> totalItemsMastered,
+  Value<DateTime> updatedAt,
+});
+
+class $$UserLevelProgressTableFilterComposer
+    extends Composer<_$AppDatabase, $UserLevelProgressTable> {
+  $$UserLevelProgressTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get currentLevel => $composableBuilder(
+      column: $table.currentLevel, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalXp => $composableBuilder(
+      column: $table.totalXp, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get dailyXp => $composableBuilder(
+      column: $table.dailyXp, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastXpDate => $composableBuilder(
+      column: $table.lastXpDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalQuizzesCompleted => $composableBuilder(
+      column: $table.totalQuizzesCompleted,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalCorrectAnswers => $composableBuilder(
+      column: $table.totalCorrectAnswers,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalItemsMastered => $composableBuilder(
+      column: $table.totalItemsMastered,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$UserLevelProgressTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserLevelProgressTable> {
+  $$UserLevelProgressTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get currentLevel => $composableBuilder(
+      column: $table.currentLevel,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalXp => $composableBuilder(
+      column: $table.totalXp, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get dailyXp => $composableBuilder(
+      column: $table.dailyXp, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastXpDate => $composableBuilder(
+      column: $table.lastXpDate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalQuizzesCompleted => $composableBuilder(
+      column: $table.totalQuizzesCompleted,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalCorrectAnswers => $composableBuilder(
+      column: $table.totalCorrectAnswers,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalItemsMastered => $composableBuilder(
+      column: $table.totalItemsMastered,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$UserLevelProgressTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserLevelProgressTable> {
+  $$UserLevelProgressTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get currentLevel => $composableBuilder(
+      column: $table.currentLevel, builder: (column) => column);
+
+  GeneratedColumn<int> get totalXp =>
+      $composableBuilder(column: $table.totalXp, builder: (column) => column);
+
+  GeneratedColumn<int> get dailyXp =>
+      $composableBuilder(column: $table.dailyXp, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastXpDate => $composableBuilder(
+      column: $table.lastXpDate, builder: (column) => column);
+
+  GeneratedColumn<int> get totalQuizzesCompleted => $composableBuilder(
+      column: $table.totalQuizzesCompleted, builder: (column) => column);
+
+  GeneratedColumn<int> get totalCorrectAnswers => $composableBuilder(
+      column: $table.totalCorrectAnswers, builder: (column) => column);
+
+  GeneratedColumn<int> get totalItemsMastered => $composableBuilder(
+      column: $table.totalItemsMastered, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$UserLevelProgressTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $UserLevelProgressTable,
+    UserLevelProgressData,
+    $$UserLevelProgressTableFilterComposer,
+    $$UserLevelProgressTableOrderingComposer,
+    $$UserLevelProgressTableAnnotationComposer,
+    $$UserLevelProgressTableCreateCompanionBuilder,
+    $$UserLevelProgressTableUpdateCompanionBuilder,
+    (
+      UserLevelProgressData,
+      BaseReferences<_$AppDatabase, $UserLevelProgressTable,
+          UserLevelProgressData>
+    ),
+    UserLevelProgressData,
+    PrefetchHooks Function()> {
+  $$UserLevelProgressTableTableManager(
+      _$AppDatabase db, $UserLevelProgressTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserLevelProgressTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserLevelProgressTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserLevelProgressTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> currentLevel = const Value.absent(),
+            Value<int> totalXp = const Value.absent(),
+            Value<int> dailyXp = const Value.absent(),
+            Value<DateTime?> lastXpDate = const Value.absent(),
+            Value<int> totalQuizzesCompleted = const Value.absent(),
+            Value<int> totalCorrectAnswers = const Value.absent(),
+            Value<int> totalItemsMastered = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              UserLevelProgressCompanion(
+            id: id,
+            currentLevel: currentLevel,
+            totalXp: totalXp,
+            dailyXp: dailyXp,
+            lastXpDate: lastXpDate,
+            totalQuizzesCompleted: totalQuizzesCompleted,
+            totalCorrectAnswers: totalCorrectAnswers,
+            totalItemsMastered: totalItemsMastered,
+            updatedAt: updatedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> currentLevel = const Value.absent(),
+            Value<int> totalXp = const Value.absent(),
+            Value<int> dailyXp = const Value.absent(),
+            Value<DateTime?> lastXpDate = const Value.absent(),
+            Value<int> totalQuizzesCompleted = const Value.absent(),
+            Value<int> totalCorrectAnswers = const Value.absent(),
+            Value<int> totalItemsMastered = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              UserLevelProgressCompanion.insert(
+            id: id,
+            currentLevel: currentLevel,
+            totalXp: totalXp,
+            dailyXp: dailyXp,
+            lastXpDate: lastXpDate,
+            totalQuizzesCompleted: totalQuizzesCompleted,
+            totalCorrectAnswers: totalCorrectAnswers,
+            totalItemsMastered: totalItemsMastered,
+            updatedAt: updatedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$UserLevelProgressTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $UserLevelProgressTable,
+    UserLevelProgressData,
+    $$UserLevelProgressTableFilterComposer,
+    $$UserLevelProgressTableOrderingComposer,
+    $$UserLevelProgressTableAnnotationComposer,
+    $$UserLevelProgressTableCreateCompanionBuilder,
+    $$UserLevelProgressTableUpdateCompanionBuilder,
+    (
+      UserLevelProgressData,
+      BaseReferences<_$AppDatabase, $UserLevelProgressTable,
+          UserLevelProgressData>
+    ),
+    UserLevelProgressData,
+    PrefetchHooks Function()>;
+typedef $$XpTransactionsTableCreateCompanionBuilder = XpTransactionsCompanion
+    Function({
+  Value<int> id,
+  required int amount,
+  required String source,
+  Value<String?> referenceId,
+  required int levelAtTime,
+  Value<DateTime> earnedAt,
+});
+typedef $$XpTransactionsTableUpdateCompanionBuilder = XpTransactionsCompanion
+    Function({
+  Value<int> id,
+  Value<int> amount,
+  Value<String> source,
+  Value<String?> referenceId,
+  Value<int> levelAtTime,
+  Value<DateTime> earnedAt,
+});
+
+class $$XpTransactionsTableFilterComposer
+    extends Composer<_$AppDatabase, $XpTransactionsTable> {
+  $$XpTransactionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get amount => $composableBuilder(
+      column: $table.amount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get source => $composableBuilder(
+      column: $table.source, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get referenceId => $composableBuilder(
+      column: $table.referenceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get levelAtTime => $composableBuilder(
+      column: $table.levelAtTime, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get earnedAt => $composableBuilder(
+      column: $table.earnedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$XpTransactionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $XpTransactionsTable> {
+  $$XpTransactionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+      column: $table.amount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get source => $composableBuilder(
+      column: $table.source, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get referenceId => $composableBuilder(
+      column: $table.referenceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get levelAtTime => $composableBuilder(
+      column: $table.levelAtTime, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get earnedAt => $composableBuilder(
+      column: $table.earnedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$XpTransactionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $XpTransactionsTable> {
+  $$XpTransactionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get referenceId => $composableBuilder(
+      column: $table.referenceId, builder: (column) => column);
+
+  GeneratedColumn<int> get levelAtTime => $composableBuilder(
+      column: $table.levelAtTime, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get earnedAt =>
+      $composableBuilder(column: $table.earnedAt, builder: (column) => column);
+}
+
+class $$XpTransactionsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $XpTransactionsTable,
+    XpTransaction,
+    $$XpTransactionsTableFilterComposer,
+    $$XpTransactionsTableOrderingComposer,
+    $$XpTransactionsTableAnnotationComposer,
+    $$XpTransactionsTableCreateCompanionBuilder,
+    $$XpTransactionsTableUpdateCompanionBuilder,
+    (
+      XpTransaction,
+      BaseReferences<_$AppDatabase, $XpTransactionsTable, XpTransaction>
+    ),
+    XpTransaction,
+    PrefetchHooks Function()> {
+  $$XpTransactionsTableTableManager(
+      _$AppDatabase db, $XpTransactionsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$XpTransactionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$XpTransactionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$XpTransactionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> amount = const Value.absent(),
+            Value<String> source = const Value.absent(),
+            Value<String?> referenceId = const Value.absent(),
+            Value<int> levelAtTime = const Value.absent(),
+            Value<DateTime> earnedAt = const Value.absent(),
+          }) =>
+              XpTransactionsCompanion(
+            id: id,
+            amount: amount,
+            source: source,
+            referenceId: referenceId,
+            levelAtTime: levelAtTime,
+            earnedAt: earnedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int amount,
+            required String source,
+            Value<String?> referenceId = const Value.absent(),
+            required int levelAtTime,
+            Value<DateTime> earnedAt = const Value.absent(),
+          }) =>
+              XpTransactionsCompanion.insert(
+            id: id,
+            amount: amount,
+            source: source,
+            referenceId: referenceId,
+            levelAtTime: levelAtTime,
+            earnedAt: earnedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$XpTransactionsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $XpTransactionsTable,
+    XpTransaction,
+    $$XpTransactionsTableFilterComposer,
+    $$XpTransactionsTableOrderingComposer,
+    $$XpTransactionsTableAnnotationComposer,
+    $$XpTransactionsTableCreateCompanionBuilder,
+    $$XpTransactionsTableUpdateCompanionBuilder,
+    (
+      XpTransaction,
+      BaseReferences<_$AppDatabase, $XpTransactionsTable, XpTransaction>
+    ),
+    XpTransaction,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2549,4 +5285,10 @@ class $AppDatabaseManager {
       $$QuizProgressTableTableManager(_db, _db.quizProgress);
   $$AlarmHistoryTableTableManager get alarmHistory =>
       $$AlarmHistoryTableTableManager(_db, _db.alarmHistory);
+  $$VocabularyItemsTableTableManager get vocabularyItems =>
+      $$VocabularyItemsTableTableManager(_db, _db.vocabularyItems);
+  $$UserLevelProgressTableTableManager get userLevelProgress =>
+      $$UserLevelProgressTableTableManager(_db, _db.userLevelProgress);
+  $$XpTransactionsTableTableManager get xpTransactions =>
+      $$XpTransactionsTableTableManager(_db, _db.xpTransactions);
 }

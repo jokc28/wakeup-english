@@ -4,7 +4,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/services/subscription_provider.dart';
 import '../../../alarm/data/repositories/alarm_repository.dart';
 import '../../data/repositories/quiz_repository.dart';
+import '../../data/repositories/vocabulary_repository.dart';
 import '../../domain/entities/quiz_question.dart';
+import 'level_progress_provider.dart';
 
 part 'quiz_provider.g.dart';
 
@@ -17,6 +19,7 @@ class QuizSessionState {
   final DateTime? startTime;
   final String? selectedAnswer;
   final bool showingResult;
+  final int newMasteryCount; // Items newly mastered this session
 
   const QuizSessionState({
     this.questions = const [],
@@ -26,6 +29,7 @@ class QuizSessionState {
     this.startTime,
     this.selectedAnswer,
     this.showingResult = false,
+    this.newMasteryCount = 0,
   });
 
   QuizQuestion? get currentQuestion {
@@ -46,6 +50,7 @@ class QuizSessionState {
     DateTime? startTime,
     String? selectedAnswer,
     bool? showingResult,
+    int? newMasteryCount,
   }) {
     return QuizSessionState(
       questions: questions ?? this.questions,
@@ -55,6 +60,7 @@ class QuizSessionState {
       startTime: startTime ?? this.startTime,
       selectedAnswer: selectedAnswer,
       showingResult: showingResult ?? this.showingResult,
+      newMasteryCount: newMasteryCount ?? this.newMasteryCount,
     );
   }
 }
@@ -70,14 +76,18 @@ class QuizSession extends _$QuizSession {
   /// Initialize quiz session for an alarm
   Future<void> initializeQuiz() async {
     final alarmRepo = ref.read(alarmRepositoryProvider);
-    final quizRepo = ref.read(quizRepositoryProvider(ref.read(hasFullAccessProvider)));
+    final hasFullAccess = ref.read(hasFullAccessProvider);
+    final vocabRepo = ref.read(vocabularyRepositoryProvider);
+    final levelState = ref.read(levelProgressProvider);
 
     final alarm = await alarmRepo.getAlarmById(alarmId);
     if (alarm == null) return;
 
-    var questions = await quizRepo.getRandomQuestions(
+    var questions = await vocabRepo.getRandomQuestions(
       count: alarm.quizCount,
       difficulty: alarm.quizDifficulty.name,
+      userLevel: levelState.currentLevel,
+      isFreeUser: !hasFullAccess,
     );
 
     // Filter out answers too short for word scramble (< 5 chars for single words)
@@ -89,9 +99,11 @@ class QuizSession extends _$QuizSession {
 
     // If filtering removed too many, re-fetch without filter
     if (questions.length < alarm.quizCount) {
-      final extra = await quizRepo.getRandomQuestions(
+      final extra = await vocabRepo.getRandomQuestions(
         count: alarm.quizCount * 3,
         difficulty: alarm.quizDifficulty.name,
+        userLevel: levelState.currentLevel,
+        isFreeUser: !hasFullAccess,
       );
       final filtered = extra.where((q) {
         final answer = q.correctAnswer.trim();
@@ -126,6 +138,7 @@ class QuizSession extends _$QuizSession {
       answers: [],
       isCompleted: false,
       startTime: DateTime.now(),
+      newMasteryCount: 0,
     );
   }
 
@@ -142,7 +155,7 @@ class QuizSession extends _$QuizSession {
 
     final isCorrect = question.checkAnswer(answer);
 
-    // Record the answer
+    // Record the answer in old QuizProgress table (backward compat)
     final responseTime = state.startTime != null
         ? DateTime.now().difference(state.startTime!).inMilliseconds
         : 0;
@@ -154,11 +167,19 @@ class QuizSession extends _$QuizSession {
       responseTimeMs: responseTime,
     );
 
+    // Record in VocabularyItems with mastery tracking
+    final vocabRepo = ref.read(vocabularyRepositoryProvider);
+    final newlyMastered = await vocabRepo.recordAnswerWithMastery(
+      questionId: question.id,
+      correct: isCorrect,
+    );
+
     // Show result
     state = state.copyWith(
       selectedAnswer: answer,
       showingResult: true,
       answers: [...state.answers, isCorrect],
+      newMasteryCount: state.newMasteryCount + (newlyMastered ? 1 : 0),
     );
 
     return isCorrect;

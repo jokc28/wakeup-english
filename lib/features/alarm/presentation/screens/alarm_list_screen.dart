@@ -4,10 +4,13 @@ import 'package:go_router/go_router.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:percent_indicator/circular_percent_indicator.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/services/streak_provider.dart';
+import '../../../quiz/presentation/providers/level_progress_provider.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
 import '../widgets/alarm_tile.dart';
@@ -169,6 +172,80 @@ class AlarmListScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildLevelBadge(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final levelState = ref.watch(levelProgressProvider);
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircularPercentIndicator(
+            radius: 24,
+            lineWidth: 4,
+            percent: levelState.progressInLevel.clamp(0.0, 1.0),
+            center: Text(
+              '${levelState.currentLevel}',
+              style: GoogleFonts.jua(
+                fontSize: 16,
+                color: AppColors.primary,
+              ),
+            ),
+            progressColor: AppColors.primary,
+            backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+            circularStrokeCap: CircularStrokeCap.round,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.levelLabel(levelState.currentLevel),
+                  style: GoogleFonts.jua(
+                    fontSize: 16,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+                Text(
+                  l10n.totalXpLabel(levelState.totalXp),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondaryLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (levelState.totalItemsMastered > 0)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.action.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                l10n.masteredCount(levelState.totalItemsMastered),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.action,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAlarmList(
     BuildContext context,
     WidgetRef ref,
@@ -177,6 +254,7 @@ class AlarmListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
+        _buildLevelBadge(context, ref),
         _buildStreakCard(context, ref),
         Expanded(
           child: ListView.builder(

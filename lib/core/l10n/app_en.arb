@@ -390,5 +390,54 @@
   },
   "freePlanStatus": "Free Plan",
   "freePlanLimits": "30 questions, 3 sounds",
-  "upgradeButton": "Upgrade"
+  "upgradeButton": "Upgrade",
+
+  "xpEarned": "+{xp} XP",
+  "@xpEarned": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "levelLabel": "Level {level}",
+  "@levelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "xpToNext": "{xp} XP to next level",
+  "@xpToNext": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "totalXpLabel": "{xp} XP total",
+  "@totalXpLabel": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "levelUpMessage": "Level Up! Lv.{level}",
+  "@levelUpMessage": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "masteredCount": "{count} mastered",
+  "@masteredCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

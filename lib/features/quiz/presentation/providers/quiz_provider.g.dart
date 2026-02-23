@@ -167,7 +167,7 @@ class _IsQuizSolvedProviderElement extends AutoDisposeProviderElement<bool>
   int get alarmId => (origin as IsQuizSolvedProvider).alarmId;
 }
 
-String _$quizQuestionsHash() => r'646c15cc521ff5d63ed270775a8936c9930a1b34';
+String _$quizQuestionsHash() => r'64599c24fbeab4767db364e0f67910aa97f490d7';
 
 /// Provider for loading quiz questions
 ///
@@ -326,7 +326,7 @@ class _QuizQuestionsProviderElement
   String get difficulty => (origin as QuizQuestionsProvider).difficulty;
 }
 
-String _$quizSessionHash() => r'39ac75441ac40e581edc44b9a160e7d7a8b6c519';
+String _$quizSessionHash() => r'5b81312d687473b36fa052ee7cdd7acec13710a0';
 
 abstract class _$QuizSession
     extends BuildlessAutoDisposeNotifier<QuizSessionState> {

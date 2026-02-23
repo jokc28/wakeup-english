@@ -30,6 +30,7 @@ class QuizRepository {
 
   /// Load all quiz questions from JSON asset
   /// If user doesn't have full access, only returns free tier questions
+  @Deprecated('Use VocabularyRepository instead, which reads from the database')
   Future<List<QuizQuestion>> loadAllQuestions() async {
     if (_cachedQuestions != null) {
       return _cachedQuestions!;

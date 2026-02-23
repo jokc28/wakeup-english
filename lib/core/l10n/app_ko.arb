@@ -187,5 +187,12 @@
   "trialDaysRemaining": "{count}일 남음",
   "freePlanStatus": "무료 플랜",
   "freePlanLimits": "30문제, 3개 소리",
-  "upgradeButton": "업그레이드"
+  "upgradeButton": "업그레이드",
+
+  "xpEarned": "+{xp} XP",
+  "levelLabel": "레벨 {level}",
+  "xpToNext": "다음 레벨까지 {xp} XP",
+  "totalXpLabel": "총 {xp} XP",
+  "levelUpMessage": "레벨 업! Lv.{level}",
+  "masteredCount": "{count}개 완벽 습득"
 }

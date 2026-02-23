@@ -1147,6 +1147,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upgrade'**
   String get upgradeButton;
+
+  /// No description provided for @xpEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP'**
+  String xpEarned(int xp);
+
+  /// No description provided for @levelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String levelLabel(int level);
+
+  /// No description provided for @xpToNext.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP to next level'**
+  String xpToNext(int xp);
+
+  /// No description provided for @totalXpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP total'**
+  String totalXpLabel(int xp);
+
+  /// No description provided for @levelUpMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Level Up! Lv.{level}'**
+  String levelUpMessage(int level);
+
+  /// No description provided for @masteredCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} mastered'**
+  String masteredCount(int count);
 }
 
 class _AppLocalizationsDelegate
