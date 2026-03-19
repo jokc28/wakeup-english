@@ -6,14 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-import 'package:flutter/foundation.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
-import '../../../../core/services/subscription_service.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
 import '../providers/level_progress_provider.dart';
@@ -51,6 +48,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
 
   // XP award result (set after quiz completion)
   XpAwardResult? _xpResult;
+
+  // Trial expired flag — when true, XP/progress are not saved
+  bool _trialExpiredOnComplete = false;
 
   @override
   void initState() {
@@ -599,48 +599,54 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 ),
               ).animate().fadeIn(delay: 500.ms),
               const SizedBox(height: 20),
-              // XP earned display
-              if (_xpResult != null) ...[
-                _buildXpDisplay(),
-                const SizedBox(height: 16),
-              ],
-              // Level progress bar
-              Consumer(
-                builder: (context, ref, _) {
-                  final levelState = ref.watch(levelProgressProvider);
-                  return _buildLevelProgressBar(levelState);
-                },
-              ),
-              const SizedBox(height: 16),
-              // Level-up celebration
-              if (_xpResult?.leveledUp == true)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.gradientStart, AppColors.gradientEnd],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.levelUpMessage(_xpResult!.newLevel!),
-                        style: GoogleFonts.jua(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ).animate().fadeIn(delay: 800.ms).scale(
-                  begin: const Offset(0.8, 0.8),
-                  end: const Offset(1.0, 1.0),
+              if (_trialExpiredOnComplete) ...[
+                // Locked indicator for expired trial users
+                _buildXpLockedIndicator(),
+                const SizedBox(height: 12),
+              ] else ...[
+                // XP earned display
+                if (_xpResult != null) ...[
+                  _buildXpDisplay(),
+                  const SizedBox(height: 16),
+                ],
+                // Level progress bar
+                Consumer(
+                  builder: (context, ref, _) {
+                    final levelState = ref.watch(levelProgressProvider);
+                    return _buildLevelProgressBar(levelState);
+                  },
                 ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 16),
+                // Level-up celebration
+                if (_xpResult?.leveledUp == true)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.levelUpMessage(_xpResult!.newLevel!),
+                          style: GoogleFonts.jua(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: 800.ms).scale(
+                    begin: const Offset(0.8, 0.8),
+                    end: const Offset(1.0, 1.0),
+                  ),
+                const SizedBox(height: 12),
+              ],
               // Streak badge
               Consumer(
                 builder: (context, ref, _) {
@@ -764,6 +770,19 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   }
 
   Future<void> _awardXpOnCompletion(QuizSessionState session) async {
+    // Check if user has active subscription/trial
+    final subState = ref.read(subscriptionProvider);
+    if (!subState.hasFullAccess) {
+      if (mounted) {
+        setState(() => _trialExpiredOnComplete = true);
+        // Show the XP locked bottom sheet after a brief delay
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) _showXpLockedBottomSheet();
+        });
+      }
+      return; // Do NOT award XP
+    }
+
     final streak = ref.read(streakProvider);
     final result = await ref.read(levelProgressProvider.notifier).awardXp(
           correctCount: session.correctCount,
@@ -780,17 +799,10 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   }
 
   Future<void> _dismissAlarm() async {
-    final subState = ref.read(subscriptionProvider);
-    if (!subState.isPremium) {
-      final trialExpired = await SubscriptionService.isTrialExpired();
-      if (trialExpired && mounted) {
-        _showTrialExpiredPaywall();
-        return;
-      }
+    // Only record streak if trial is not expired (progress is saved)
+    if (!_trialExpiredOnComplete) {
+      await ref.read(streakProvider.notifier).recordCompletion();
     }
-
-    // Record streak completion
-    await ref.read(streakProvider.notifier).recordCompletion();
 
     await ref.read(alarmOperationsProvider.notifier).stopAlarm(widget.alarmId);
 
@@ -799,62 +811,109 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
     }
   }
 
-  void _showTrialExpiredPaywall() {
+  Widget _buildXpLockedIndicator() {
     final l10n = AppLocalizations.of(context)!;
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(
-          l10n.trialExpiredTitle,
-          style: const TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.workspace_premium,
-                size: 36,
-                color: AppColors.primary,
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.textSecondaryLight.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.lock_rounded, color: AppColors.textSecondaryLight, size: 22),
+          const SizedBox(width: 8),
+          Text(
+            l10n.xpLockedTitle,
+            style: GoogleFonts.jua(
+              fontSize: 18,
+              color: AppColors.textSecondaryLight,
             ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.trialExpiredMessage,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 15),
-            ),
-          ],
-        ),
-        actions: [
-          if (kDebugMode)
-            TextButton(
-              onPressed: () async {
-                final service = ref.read(subscriptionServiceProvider);
-                final success = await service.restorePurchases();
-                if (success && mounted) {
-                  ref.read(subscriptionProvider.notifier).refresh();
-                  Navigator.of(context).pop();
-                  _dismissAlarm();
-                }
-              },
-              child: Text(l10n.restorePurchasesDebug),
-            ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              AppRouter.navigateToPaywall();
-            },
-            child: Text(l10n.subscribeButton),
           ),
         ],
+      ),
+    ).animate().fadeIn(delay: 400.ms);
+  }
+
+  void _showXpLockedBottomSheet() {
+    final l10n = AppLocalizations.of(context)!;
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.lock_rounded,
+                  size: 36,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.xpLockedMessage,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 15, height: 1.5),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.xpLockedFomo,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondaryLight,
+                ),
+              ),
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  AppRouter.navigateToPaywall();
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.action,
+                  minimumSize: const Size.fromHeight(52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Text(
+                  l10n.xpLockedSubscribe,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _dismissAlarm();
+                },
+                child: Text(
+                  l10n.dismissAlarmOnly,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondaryLight,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

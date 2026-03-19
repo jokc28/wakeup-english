@@ -13,6 +13,9 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <!-- Microphone for speaking quiz -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
     <!-- For keeping app running in background -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 

@@ -54,6 +54,14 @@
 	<key>NSUserNotificationUsageDescription</key>
 	<string>OK-Morning needs notification permission to alert you when alarms fire.</string>
 
+	<!-- Microphone permission for speaking quiz -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>스피킹 퀴즈를 위해 마이크 권한이 필요합니다.</string>
+
+	<!-- Speech recognition permission for speaking quiz -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>스피킹 퀴즈의 음성 인식을 위해 권한이 필요합니다.</string>
+
 	<!-- Required for iOS 14+ -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>

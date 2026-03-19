@@ -7,13 +7,13 @@ abstract class AppStrings {
   static const String quizLockRoute = '/quiz-lock';
   static const String settingsRoute = '/settings';
   static const String paywallRoute = '/paywall';
+  static const String onboardingRoute = '/onboarding';
 
   // Database
   static const String databaseName = 'wakeup_english.db';
 
   // Asset paths
   static const String defaultAlarmSound = 'assets/sounds/default_alarm.mp3';
-  static const String quizQuestionsPath = 'assets/data/quiz_questions.json';
 
   // Shared preferences keys
   static const String prefLanguage = 'pref_language';
@@ -22,10 +22,10 @@ abstract class AppStrings {
   static const String prefVibrationEnabled = 'pref_vibration_enabled';
   static const String prefTrialStartDate = 'trial_start_date';
   static const String prefEnabledMissionTypes = 'pref_enabled_mission_types';
-  static const String prefInstallDate = 'install_date';
-  static const String prefStreakCurrent = 'pref_streak_current';
+static const String prefStreakCurrent = 'pref_streak_current';
   static const String prefStreakLastDate = 'pref_streak_last_date';
   static const String prefStreakMax = 'pref_streak_max';
+  static const String prefFirstLaunchComplete = 'pref_first_launch_complete';
 
   // Notification channels
   static const String alarmChannelId = 'alarm_channel';

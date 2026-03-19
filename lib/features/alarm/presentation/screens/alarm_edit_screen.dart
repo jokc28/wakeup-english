@@ -190,43 +190,41 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         _SettingsRow(
           icon: Icons.label_outline,
           label: l10n.alarmNameLabel,
-          child: Expanded(
-            child: TextField(
-              controller: _labelController,
-              focusNode: _labelFocusNode,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: _kTextDark, fontSize: 15),
-              decoration: InputDecoration(
-                hintText: l10n.optionalLabel,
-                hintStyle: const TextStyle(color: _kTextHint, fontSize: 15),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-                suffixIcon: _labelHasText
-                    ? GestureDetector(
-                        onTap: () {
-                          _labelController.clear();
-                          ref
-                              .read(alarmFormProvider(alarmId: widget.alarmId)
-                                  .notifier)
-                              .setLabel('');
-                        },
-                        child: const Icon(
-                          Icons.cancel,
-                          size: 18,
-                          color: _kTextHint,
-                        ),
-                      )
-                    : null,
-                suffixIconConstraints:
-                    const BoxConstraints(minWidth: 24, minHeight: 24),
-              ),
-              onChanged: (value) {
-                ref
-                    .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
-                    .setLabel(value);
-              },
+          child: TextField(
+            controller: _labelController,
+            focusNode: _labelFocusNode,
+            textAlign: TextAlign.right,
+            style: const TextStyle(color: _kTextDark, fontSize: 15),
+            decoration: InputDecoration(
+              hintText: l10n.optionalLabel,
+              hintStyle: const TextStyle(color: _kTextHint, fontSize: 15),
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+              suffixIcon: _labelHasText
+                  ? GestureDetector(
+                      onTap: () {
+                        _labelController.clear();
+                        ref
+                            .read(alarmFormProvider(alarmId: widget.alarmId)
+                                .notifier)
+                            .setLabel('');
+                      },
+                      child: const Icon(
+                        Icons.cancel,
+                        size: 18,
+                        color: _kTextHint,
+                      ),
+                    )
+                  : null,
+              suffixIconConstraints:
+                  const BoxConstraints(minWidth: 24, minHeight: 24),
             ),
+            onChanged: (value) {
+              ref
+                  .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                  .setLabel(value);
+            },
           ),
         ),
       ],
@@ -747,8 +745,13 @@ class _SettingsRow extends StatelessWidget {
           const SizedBox(width: 8),
         ],
         Text(label, style: const TextStyle(color: _kTextDark, fontSize: 15)),
-        const Spacer(),
-        child,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: child,
+          ),
+        ),
       ],
     );
 
@@ -947,32 +950,35 @@ class _PillSelector<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: values.map((v) {
-        final isActive = v == selected;
-        return Padding(
-          padding: const EdgeInsets.only(left: 6),
-          child: GestureDetector(
-            onTap: () => onChanged(v),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: isActive ? AppColors.primary : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                labelOf(v),
-                style: TextStyle(
-                  color: isActive ? Colors.white : _kTextHint,
-                  fontSize: 13,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: values.map((v) {
+          final isActive = v == selected;
+          return Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: GestureDetector(
+              onTap: () => onChanged(v),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.primary : Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  labelOf(v),
+                  style: TextStyle(
+                    color: isActive ? Colors.white : _kTextHint,
+                    fontSize: 13,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }

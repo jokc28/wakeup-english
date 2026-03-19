@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'core/constants/app_strings.dart';
+import 'core/router/app_router.dart';
 import 'core/services/alarm_service.dart';
 import 'core/services/subscription_service.dart';
 
@@ -81,10 +84,19 @@ void main() async {
     debugPrint('[SubscriptionService] Failed to initialize: $e');
   }
 
+  // Check if onboarding is complete
+  final prefs = await SharedPreferences.getInstance();
+  final firstLaunchComplete =
+      prefs.getBool(AppStrings.prefFirstLaunchComplete) ?? false;
+
   // Run app with Riverpod
   runApp(
-    const ProviderScope(
-      child: OkMorningApp(),
+    ProviderScope(
+      overrides: [
+        firstLaunchCompleteProvider
+            .overrideWith((ref) => firstLaunchComplete),
+      ],
+      child: const OkMorningApp(),
     ),
   );
 }

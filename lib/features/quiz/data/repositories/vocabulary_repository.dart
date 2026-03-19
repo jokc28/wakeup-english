@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/services/alarm_service.dart';
 import '../../domain/entities/quiz_question.dart';
 
 /// Provider for VocabularyRepository

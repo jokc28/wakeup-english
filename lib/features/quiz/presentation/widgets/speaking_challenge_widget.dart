@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../../../core/constants/app_colors.dart';
@@ -32,7 +31,7 @@ class SpeakingChallengeWidget extends StatefulWidget {
 }
 
 class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
-  final SpeechToText _speech = SpeechToText();
+  final stt.SpeechToText _speech = stt.SpeechToText();
   bool _speechAvailable = false;
   bool _isListening = false;
   String _recognizedText = '';
@@ -113,7 +112,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
       onResult: _onSpeechResult,
       localeId: 'en_US',
       listenOptions: stt.SpeechListenOptions(
-        listenMode: ListenMode.confirmation,
+        listenMode: stt.ListenMode.confirmation,
         cancelOnError: true,
       ),
     );

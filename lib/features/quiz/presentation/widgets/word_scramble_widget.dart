@@ -402,13 +402,17 @@ class _ChunkyTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(14),
-          border: Border(
-            bottom: BorderSide(color: borderBottomColor, width: 4),
-            top: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
-            left: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
-            right: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
+          border: Border.all(
+            color: borderBottomColor.withValues(alpha: 0.3),
+            width: 1.5,
           ),
           boxShadow: [
+            // 3D chunky depth effect (bottom edge)
+            BoxShadow(
+              color: borderBottomColor.withValues(alpha: 0.6),
+              offset: const Offset(0, 3),
+              blurRadius: 0,
+            ),
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
@@ -431,13 +435,17 @@ class _ChunkyTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(14),
-          border: Border(
-            bottom: BorderSide(color: borderBottomColor, width: 4),
-            top: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
-            left: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
-            right: BorderSide(color: borderBottomColor.withValues(alpha: 0.2), width: 1),
+          border: Border.all(
+            color: borderBottomColor.withValues(alpha: 0.3),
+            width: 1.5,
           ),
           boxShadow: [
+            // 3D chunky depth effect (bottom edge)
+            BoxShadow(
+              color: borderBottomColor.withValues(alpha: 0.6),
+              offset: const Offset(0, 3),
+              blurRadius: 0,
+            ),
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,

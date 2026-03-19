@@ -1,18 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-import '../constants/iap_constants.dart';
 import 'tables/alarms_table.dart';
 import 'tables/quiz_progress_table.dart';
 import 'tables/vocabulary_items_table.dart';
 import 'tables/user_level_progress_table.dart';
 import 'tables/xp_transactions_table.dart';
+import 'utils/db_seeder.dart';
 
 part 'app_database.g.dart';
 
@@ -25,7 +24,15 @@ part 'app_database.g.dart';
   XpTransactions,
 ])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  static AppDatabase? _instance;
+
+  /// Returns the singleton database instance.
+  static AppDatabase get instance {
+    _instance ??= AppDatabase._();
+    return _instance!;
+  }
+
+  AppDatabase._() : super(_openConnection());
 
   /// Constructor for testing with custom executor
   AppDatabase.forTesting(super.e);
@@ -61,58 +68,9 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> _seedVocabularyItems() async {
     try {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/quiz_questions.json',
-      );
-      final jsonList = jsonDecode(jsonString) as List<dynamic>;
-      final freeIds = IapConstants.freeQuizQuestionIds.toSet();
-
-      await batch((batch) {
-        for (int i = 0; i < jsonList.length; i++) {
-          final json = jsonList[i] as Map<String, dynamic>;
-          final questionId = json['id'] as String;
-          final difficulty = json['difficulty'] as String? ?? 'medium';
-          final optionsList = json['options'] as List<dynamic>? ?? [];
-
-          batch.insert(
-            vocabularyItems,
-            VocabularyItemsCompanion.insert(
-              questionId: questionId,
-              type: json['type'] as String? ?? 'multiple_choice',
-              category: json['category'] as String? ?? 'vocabulary',
-              difficulty: difficulty,
-              question: json['question'] as String,
-              questionKo: json['question_ko'] as String? ?? '',
-              options: jsonEncode(optionsList),
-              correctAnswer: json['correct_answer'] as String,
-              hint: Value(json['hint'] as String?),
-              explanation: Value(json['explanation'] as String?),
-              explanationKo: Value(json['explanation_ko'] as String?),
-              isFree: Value(freeIds.contains(questionId)),
-              unlockLevel: Value(_assignUnlockLevel(difficulty, i, jsonList.length)),
-            ),
-          );
-        }
-      });
+      await DbSeeder.seedFromAsset(this);
     } catch (e) {
       // Seeding failure is non-fatal; the app can still operate from JSON
-    }
-  }
-
-  /// Assign unlock levels based on difficulty and position index
-  static int _assignUnlockLevel(String difficulty, int index, int totalCount) {
-    switch (difficulty) {
-      case 'easy':
-        // Levels 1-5: spread easy questions across ~22 per level
-        return (index % 5) + 1;
-      case 'medium':
-        // Levels 6-15: spread medium questions across ~12 per level
-        return (index % 10) + 6;
-      case 'hard':
-        // Levels 16-30: spread hard questions across ~7 per level
-        return (index % 15) + 16;
-      default:
-        return 1;
     }
   }
 
@@ -464,6 +422,9 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 }
+
+/// Global provider for the singleton AppDatabase instance.
+final databaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {

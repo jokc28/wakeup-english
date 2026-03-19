@@ -143,42 +143,4 @@ class SubscriptionService {
     }
   }
 
-  /// Record install date on first launch
-  static Future<void> recordInstallDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final existing = prefs.getString('install_date');
-    if (existing == null) {
-      await prefs.setString(
-        'install_date',
-        DateTime.now().toIso8601String(),
-      );
-    }
-  }
-
-  /// Check if the 7-day free trial has expired based on install_date
-  static Future<bool> isTrialExpired() async {
-    final prefs = await SharedPreferences.getInstance();
-    final installDateStr = prefs.getString('install_date');
-    if (installDateStr == null) return false;
-
-    final installDate = DateTime.parse(installDateStr);
-    final expiryDate = installDate.add(
-      const Duration(days: IapConstants.trialDurationDays),
-    );
-    return DateTime.now().isAfter(expiryDate);
-  }
-
-  /// Get the number of trial days remaining based on install_date
-  static Future<int> getTrialDaysRemaining() async {
-    final prefs = await SharedPreferences.getInstance();
-    final installDateStr = prefs.getString('install_date');
-    if (installDateStr == null) return IapConstants.trialDurationDays;
-
-    final installDate = DateTime.parse(installDateStr);
-    final expiryDate = installDate.add(
-      const Duration(days: IapConstants.trialDurationDays),
-    );
-    final remaining = expiryDate.difference(DateTime.now()).inDays;
-    return remaining > 0 ? remaining : 0;
-  }
 }

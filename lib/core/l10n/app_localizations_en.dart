@@ -599,4 +599,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String masteredCount(int count) {
     return '$count mastered';
   }
+
+  @override
+  String get devForceSeedDb => 'DEV: Force Seed DB';
+
+  @override
+  String get devForceSeedDbDesc => 'Re-seed vocabulary from bundled JSON';
+
+  @override
+  String devSeedComplete(int count) {
+    return 'Seeded $count items into DB';
+  }
+
+  @override
+  String get xpLockedTitle => 'Progress Locked';
+
+  @override
+  String get xpLockedMessage =>
+      'Your trial has ended. XP and progress cannot be saved.';
+
+  @override
+  String get xpLockedSubscribe => 'Subscribe to Keep Growing';
+
+  @override
+  String get xpLockedFomo => 'Subscribe to OK-Morning Pro to keep leveling up.';
+
+  @override
+  String get dismissAlarmOnly => 'Just Dismiss Alarm';
+
+  @override
+  String get onboardingWelcomeTitle => 'A fresh morning,\nOK-Morning!';
+
+  @override
+  String get onboardingWelcomeSubtitle =>
+      'Start each morning brighter with English';
+
+  @override
+  String get onboardingValueTitle =>
+      'Your alarm won\'t stop\nuntil you solve English!';
+
+  @override
+  String get onboardingValueSubtitle =>
+      'Level up every morning.\nGrow your English while waking up.';
+
+  @override
+  String get onboardingPermissionsTitle =>
+      'Just two permissions\nfor a perfect morning';
+
+  @override
+  String get onboardingPermissionsSubtitle =>
+      'We need these to ring your alarm and hear your voice.';
+
+  @override
+  String get onboardingNotificationBtn => 'Allow Notifications';
+
+  @override
+  String get onboardingMicrophoneBtn => 'Allow Microphone';
+
+  @override
+  String get onboardingPermissionGranted => 'Granted';
+
+  @override
+  String get onboardingCtaTitle => 'You\'re all set!';
+
+  @override
+  String get onboardingCtaSubtitle =>
+      'Set your first alarm and start growing tomorrow morning.';
+
+  @override
+  String get onboardingCtaButton => 'Set My First Alarm';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingSkip => 'Skip';
 }

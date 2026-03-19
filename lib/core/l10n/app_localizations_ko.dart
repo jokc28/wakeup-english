@@ -593,4 +593,74 @@ class AppLocalizationsKo extends AppLocalizations {
   String masteredCount(int count) {
     return '$count개 완벽 습득';
   }
+
+  @override
+  String get devForceSeedDb => 'DEV: DB 강제 시드';
+
+  @override
+  String get devForceSeedDbDesc => '번들 JSON에서 어휘 다시 시드';
+
+  @override
+  String devSeedComplete(int count) {
+    return 'DB에 $count개 항목 시드 완료';
+  }
+
+  @override
+  String get xpLockedTitle => '성장 기록 잠김';
+
+  @override
+  String get xpLockedMessage =>
+      '무료 체험이 종료되어 오늘의 학습 경험치(XP)와 성장 기록을 저장할 수 없습니다.';
+
+  @override
+  String get xpLockedSubscribe => '구독하고 계속 성장하기';
+
+  @override
+  String get xpLockedFomo => '계속 성장하려면 옥모닝 프로를 구독하세요.';
+
+  @override
+  String get dismissAlarmOnly => '알람만 해제';
+
+  @override
+  String get onboardingWelcomeTitle => '상쾌한 아침,\n옥모닝!';
+
+  @override
+  String get onboardingWelcomeSubtitle => '영어와 함께 더 빛나는 아침을 시작하세요';
+
+  @override
+  String get onboardingValueTitle => '영어를 맞춰야만\n알람이 꺼집니다!';
+
+  @override
+  String get onboardingValueSubtitle =>
+      '매일 아침 레벨을 올리고 성장하세요.\n잠에서 깨면서 영어 실력도 함께 성장합니다.';
+
+  @override
+  String get onboardingPermissionsTitle => '완벽한 아침을 위한\n두 가지 권한';
+
+  @override
+  String get onboardingPermissionsSubtitle => '알람을 울리고 목소리를 들으려면 권한이 필요합니다.';
+
+  @override
+  String get onboardingNotificationBtn => '알림 권한 허용';
+
+  @override
+  String get onboardingMicrophoneBtn => '마이크 권한 허용';
+
+  @override
+  String get onboardingPermissionGranted => '허용됨';
+
+  @override
+  String get onboardingCtaTitle => '준비 완료!';
+
+  @override
+  String get onboardingCtaSubtitle => '첫 알람을 설정하고 내일 아침부터 성장을 시작하세요.';
+
+  @override
+  String get onboardingCtaButton => '내일 아침 첫 알람 맞추기';
+
+  @override
+  String get onboardingNext => '다음';
+
+  @override
+  String get onboardingSkip => '건너뛰기';
 }

@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/database/utils/db_seeder.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/database/app_database.dart';
 import '../../../../core/services/mission_type_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
 
@@ -154,6 +156,23 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                 );
+              },
+            ),
+          if (kDebugMode)
+            _buildSettingsTile(
+              context,
+              icon: Icons.download_rounded,
+              title: l10n.devForceSeedDb,
+              subtitle: l10n.devForceSeedDbDesc,
+              titleColor: Colors.deepOrange,
+              onTap: () async {
+                final db = ref.read(databaseProvider);
+                final count = await DbSeeder.seedFromAsset(db);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.devSeedComplete(count))),
+                  );
+                }
               },
             ),
           const SizedBox(height: 24),

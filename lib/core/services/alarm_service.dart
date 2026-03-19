@@ -290,8 +290,3 @@ class AlarmService {
     }
   }
 }
-
-/// Provider for the database
-final databaseProvider = Provider<AppDatabase>((ref) {
-  return AppDatabase();
-});

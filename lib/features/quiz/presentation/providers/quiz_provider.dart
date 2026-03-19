@@ -73,6 +73,40 @@ class QuizSession extends _$QuizSession {
     return const QuizSessionState();
   }
 
+  /// Hardcoded emergency fallback questions when DB is empty
+  static const _fallbackQuestions = [
+    QuizQuestion(
+      id: 'fallback_hello',
+      type: QuizType.wordScramble,
+      category: QuizCategory.vocabulary,
+      difficulty: 'easy',
+      question: 'HELLO',
+      questionKo: '안녕, 인사말',
+      correctAnswer: 'HELLO',
+      hint: '안녕, 인사말 (비상용 퀴즈)',
+    ),
+    QuizQuestion(
+      id: 'fallback_morning',
+      type: QuizType.wordScramble,
+      category: QuizCategory.vocabulary,
+      difficulty: 'easy',
+      question: 'MORNING',
+      questionKo: '아침, 오전',
+      correctAnswer: 'MORNING',
+      hint: '아침, 오전 (비상용 퀴즈)',
+    ),
+    QuizQuestion(
+      id: 'fallback_energy',
+      type: QuizType.wordScramble,
+      category: QuizCategory.vocabulary,
+      difficulty: 'easy',
+      question: 'ENERGY',
+      questionKo: '에너지, 활력',
+      correctAnswer: 'ENERGY',
+      hint: '에너지, 활력 (비상용 퀴즈)',
+    ),
+  ];
+
   /// Initialize quiz session for an alarm
   Future<void> initializeQuiz() async {
     final alarmRepo = ref.read(alarmRepositoryProvider);
@@ -81,14 +115,22 @@ class QuizSession extends _$QuizSession {
     final levelState = ref.read(levelProgressProvider);
 
     final alarm = await alarmRepo.getAlarmById(alarmId);
-    if (alarm == null) return;
+    final quizCount = alarm?.quizCount ?? 3;
 
-    var questions = await vocabRepo.getRandomQuestions(
-      count: alarm.quizCount,
-      difficulty: alarm.quizDifficulty.name,
-      userLevel: levelState.currentLevel,
-      isFreeUser: !hasFullAccess,
-    );
+    List<QuizQuestion> questions;
+    try {
+      questions = await vocabRepo
+          .getRandomQuestions(
+            count: quizCount,
+            difficulty: alarm?.quizDifficulty.name ?? 'easy',
+            userLevel: levelState.currentLevel,
+            isFreeUser: !hasFullAccess,
+          )
+          .timeout(const Duration(seconds: 5));
+    } catch (e) {
+      // DB error or timeout — use fallback
+      questions = [];
+    }
 
     // Filter out answers too short for word scramble (< 5 chars for single words)
     questions = questions.where((q) {
@@ -98,32 +140,43 @@ class QuizSession extends _$QuizSession {
     }).toList();
 
     // If filtering removed too many, re-fetch without filter
-    if (questions.length < alarm.quizCount) {
-      final extra = await vocabRepo.getRandomQuestions(
-        count: alarm.quizCount * 3,
-        difficulty: alarm.quizDifficulty.name,
-        userLevel: levelState.currentLevel,
-        isFreeUser: !hasFullAccess,
-      );
-      final filtered = extra.where((q) {
-        final answer = q.correctAnswer.trim();
-        final isSingleWord = !answer.contains(' ');
-        return !isSingleWord || answer.length >= 5;
-      }).toList();
-      // Merge, deduplicate, take what we need
-      final ids = questions.map((q) => q.id).toSet();
-      for (final q in filtered) {
-        if (!ids.contains(q.id)) {
-          questions.add(q);
-          ids.add(q.id);
+    if (questions.length < quizCount) {
+      try {
+        final extra = await vocabRepo
+            .getRandomQuestions(
+              count: quizCount * 3,
+              difficulty: alarm?.quizDifficulty.name ?? 'easy',
+              userLevel: levelState.currentLevel,
+              isFreeUser: !hasFullAccess,
+            )
+            .timeout(const Duration(seconds: 5));
+        final filtered = extra.where((q) {
+          final answer = q.correctAnswer.trim();
+          final isSingleWord = !answer.contains(' ');
+          return !isSingleWord || answer.length >= 5;
+        }).toList();
+        // Merge, deduplicate, take what we need
+        final ids = questions.map((q) => q.id).toSet();
+        for (final q in filtered) {
+          if (!ids.contains(q.id)) {
+            questions.add(q);
+            ids.add(q.id);
+          }
+          if (questions.length >= quizCount) break;
         }
-        if (questions.length >= alarm.quizCount) break;
+      } catch (_) {
+        // Re-fetch also failed, continue with what we have
       }
     }
 
+    // CRITICAL: If DB returned nothing, inject hardcoded fallback
+    if (questions.isEmpty) {
+      questions = List.of(_fallbackQuestions);
+    }
+
     // Take only what we need
-    if (questions.length > alarm.quizCount) {
-      questions = questions.sublist(0, alarm.quizCount);
+    if (questions.length > quizCount) {
+      questions = questions.sublist(0, quizCount);
     }
 
     // Convert all questions to word scramble format
@@ -167,12 +220,16 @@ class QuizSession extends _$QuizSession {
       responseTimeMs: responseTime,
     );
 
-    // Record in VocabularyItems with mastery tracking
-    final vocabRepo = ref.read(vocabularyRepositoryProvider);
-    final newlyMastered = await vocabRepo.recordAnswerWithMastery(
-      questionId: question.id,
-      correct: isCorrect,
-    );
+    // Record in VocabularyItems with mastery tracking (only for users with full access)
+    final hasFullAccess = ref.read(hasFullAccessProvider);
+    bool newlyMastered = false;
+    if (hasFullAccess) {
+      final vocabRepo = ref.read(vocabularyRepositoryProvider);
+      newlyMastered = await vocabRepo.recordAnswerWithMastery(
+        questionId: question.id,
+        correct: isCorrect,
+      );
+    }
 
     // Show result
     state = state.copyWith(
@@ -216,15 +273,4 @@ class QuizSession extends _$QuizSession {
 bool isQuizSolved(Ref ref, int alarmId) {
   final session = ref.watch(quizSessionProvider(alarmId));
   return session.isCompleted;
-}
-
-/// Provider for loading quiz questions
-@riverpod
-Future<List<QuizQuestion>> quizQuestions(
-  Ref ref, {
-  required int count,
-  required String difficulty,
-}) async {
-  final repository = ref.watch(quizRepositoryProvider(ref.watch(hasFullAccessProvider)));
-  return repository.getRandomQuestions(count: count, difficulty: difficulty);
 }

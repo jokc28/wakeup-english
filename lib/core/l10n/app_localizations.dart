@@ -1183,6 +1183,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} mastered'**
   String masteredCount(int count);
+
+  /// No description provided for @devForceSeedDb.
+  ///
+  /// In en, this message translates to:
+  /// **'DEV: Force Seed DB'**
+  String get devForceSeedDb;
+
+  /// No description provided for @devForceSeedDbDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-seed vocabulary from bundled JSON'**
+  String get devForceSeedDbDesc;
+
+  /// No description provided for @devSeedComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeded {count} items into DB'**
+  String devSeedComplete(int count);
+
+  /// No description provided for @xpLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress Locked'**
+  String get xpLockedTitle;
+
+  /// No description provided for @xpLockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trial has ended. XP and progress cannot be saved.'**
+  String get xpLockedMessage;
+
+  /// No description provided for @xpLockedSubscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to Keep Growing'**
+  String get xpLockedSubscribe;
+
+  /// No description provided for @xpLockedFomo.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to OK-Morning Pro to keep leveling up.'**
+  String get xpLockedFomo;
+
+  /// No description provided for @dismissAlarmOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Just Dismiss Alarm'**
+  String get dismissAlarmOnly;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A fresh morning,\nOK-Morning!'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start each morning brighter with English'**
+  String get onboardingWelcomeSubtitle;
+
+  /// No description provided for @onboardingValueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your alarm won\'t stop\nuntil you solve English!'**
+  String get onboardingValueTitle;
+
+  /// No description provided for @onboardingValueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Level up every morning.\nGrow your English while waking up.'**
+  String get onboardingValueSubtitle;
+
+  /// No description provided for @onboardingPermissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Just two permissions\nfor a perfect morning'**
+  String get onboardingPermissionsTitle;
+
+  /// No description provided for @onboardingPermissionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We need these to ring your alarm and hear your voice.'**
+  String get onboardingPermissionsSubtitle;
+
+  /// No description provided for @onboardingNotificationBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Notifications'**
+  String get onboardingNotificationBtn;
+
+  /// No description provided for @onboardingMicrophoneBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Microphone'**
+  String get onboardingMicrophoneBtn;
+
+  /// No description provided for @onboardingPermissionGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Granted'**
+  String get onboardingPermissionGranted;
+
+  /// No description provided for @onboardingCtaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all set!'**
+  String get onboardingCtaTitle;
+
+  /// No description provided for @onboardingCtaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your first alarm and start growing tomorrow morning.'**
+  String get onboardingCtaSubtitle;
+
+  /// No description provided for @onboardingCtaButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Set My First Alarm'**
+  String get onboardingCtaButton;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
 }
 
 class _AppLocalizationsDelegate

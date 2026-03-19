@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/services/alarm_service.dart';
 import '../../domain/utils/xp_formula.dart';
 
 /// Result returned after awarding XP
@@ -157,20 +156,12 @@ class LevelProgressNotifier extends StateNotifier<LevelProgressState> {
       totalItemsMastered: masteredCount,
     );
 
-    // Record XP transaction
+    // Record XP transaction (includes mastery bonus in the total)
     await _db.insertXpTransaction(
       amount: xpEarned,
       source: correctCount == totalCount ? 'perfect_quiz' : 'quiz_complete',
       levelAtTime: progress.currentLevel,
     );
-
-    if (newMasteryCount > 0) {
-      await _db.insertXpTransaction(
-        amount: 25 * newMasteryCount,
-        source: 'mastery_bonus',
-        levelAtTime: progress.currentLevel,
-      );
-    }
 
     // Update state
     state = LevelProgressState(

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'core/constants/app_colors.dart';
+import 'core/database/app_database.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/services/alarm_service.dart';
@@ -23,14 +24,37 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
     super.initState();
     _setupAlarmListener();
     _recordTrialStart();
+    _syncAlarmsOnStartup();
   }
 
   Future<void> _recordTrialStart() async {
     try {
       await SubscriptionService.recordTrialStart();
-      await SubscriptionService.recordInstallDate();
     } catch (e) {
       debugPrint('[App] Failed to record trial start: $e');
+    }
+  }
+
+  Future<void> _syncAlarmsOnStartup() async {
+    try {
+      final alarmService = ref.read(alarmServiceProvider);
+      final activeAlarms = await alarmService.getActiveAlarms();
+      final activeIds = activeAlarms.map((a) => a.id).toSet();
+
+      final db = ref.read(databaseProvider);
+      final enabledAlarms = await db.getEnabledAlarms();
+
+      for (final alarm in enabledAlarms) {
+        if (!activeIds.contains(alarm.id)) {
+          try {
+            await alarmService.setAlarm(alarm);
+          } catch (e) {
+            debugPrint('[App] Failed to reschedule alarm ${alarm.id}: $e');
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[App] Alarm sync failed: $e');
     }
   }
 
@@ -58,6 +82,7 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
           title: 'OK-Morning',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
+          locale: const Locale('ko', 'KR'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: _buildLightTheme(),

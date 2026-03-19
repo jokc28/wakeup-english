@@ -439,5 +439,37 @@
         "type": "int"
       }
     }
-  }
+  },
+
+  "devForceSeedDb": "DEV: Force Seed DB",
+  "devForceSeedDbDesc": "Re-seed vocabulary from bundled JSON",
+  "devSeedComplete": "Seeded {count} items into DB",
+  "@devSeedComplete": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "xpLockedTitle": "Progress Locked",
+  "xpLockedMessage": "Your trial has ended. XP and progress cannot be saved.",
+  "xpLockedSubscribe": "Subscribe to Keep Growing",
+  "xpLockedFomo": "Subscribe to OK-Morning Pro to keep leveling up.",
+  "dismissAlarmOnly": "Just Dismiss Alarm",
+
+  "onboardingWelcomeTitle": "A fresh morning,\nOK-Morning!",
+  "onboardingWelcomeSubtitle": "Start each morning brighter with English",
+  "onboardingValueTitle": "Your alarm won't stop\nuntil you solve English!",
+  "onboardingValueSubtitle": "Level up every morning.\nGrow your English while waking up.",
+  "onboardingPermissionsTitle": "Just two permissions\nfor a perfect morning",
+  "onboardingPermissionsSubtitle": "We need these to ring your alarm and hear your voice.",
+  "onboardingNotificationBtn": "Allow Notifications",
+  "onboardingMicrophoneBtn": "Allow Microphone",
+  "onboardingPermissionGranted": "Granted",
+  "onboardingCtaTitle": "You're all set!",
+  "onboardingCtaSubtitle": "Set your first alarm and start growing tomorrow morning.",
+  "onboardingCtaButton": "Set My First Alarm",
+  "onboardingNext": "Next",
+  "onboardingSkip": "Skip"
 }
