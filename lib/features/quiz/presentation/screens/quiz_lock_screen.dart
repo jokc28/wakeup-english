@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/database/app_database.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/streak_provider.dart';
@@ -29,7 +32,7 @@ enum LockScreenPhase { alarm, quiz, completed }
 class QuizLockScreen extends ConsumerStatefulWidget {
   final int alarmId;
 
-  const QuizLockScreen({super.key, required this.alarmId});
+  const QuizLockScreen({required this.alarmId, super.key});
 
   @override
   ConsumerState<QuizLockScreen> createState() => _QuizLockScreenState();
@@ -61,14 +64,14 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
-    _bgShimmerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _bgShimmerAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _bgShimmerController, curve: Curves.easeInOut),
     );
     _initializeScreen();
   }
 
   Future<void> _initializeScreen() async {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     await ref
         .read(quizSessionProvider(widget.alarmId).notifier)
         .initializeQuiz();
@@ -78,9 +81,11 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   void dispose() {
     _confettiController.dispose();
     _bgShimmerController.dispose();
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
+    unawaited(
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: SystemUiOverlay.values,
+      ),
     );
     super.dispose();
   }
@@ -212,36 +217,36 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       },
       child: Builder(
         builder: (context) {
-        final l10n = AppLocalizations.of(context)!;
-        return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(flex: 2),
-              // Greeting
-              Text(
-                l10n.goodMorningGreeting,
-                style: GoogleFonts.jua(
-                  fontSize: 28,
-                  color: Colors.white.withValues(alpha: 0.9),
-                ),
-              )
-                  .animate()
-                  .fadeIn(duration: 800.ms, delay: 200.ms)
-                  .slideY(begin: -0.2, end: 0),
-              const SizedBox(height: 16),
-              // Massive clock
-              const AnimatedClockWidget(),
-              const Spacer(flex: 3),
-              // Slide to start
-              SlideToStartWidget(onSlideComplete: _onSlideComplete),
-              const SizedBox(height: 48),
-            ],
-          ),
-        ),
-        );
+          final l10n = AppLocalizations.of(context)!;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
+                  // Greeting
+                  Text(
+                    l10n.goodMorningGreeting,
+                    style: GoogleFonts.jua(
+                      fontSize: 28,
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 800.ms, delay: 200.ms)
+                      .slideY(begin: -0.2, end: 0),
+                  const SizedBox(height: 16),
+                  // Massive clock
+                  const AnimatedClockWidget(),
+                  const Spacer(flex: 3),
+                  // Slide to start
+                  SlideToStartWidget(onSlideComplete: _onSlideComplete),
+                  const SizedBox(height: 48),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
@@ -330,12 +335,13 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.outlineLight),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: AppColors.shadowWarm.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -377,9 +383,8 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
         tween: Tween(begin: 0, end: 1),
         duration: const Duration(milliseconds: 300),
         builder: (context, value, child) {
-          final shake =
-              (value < 0.5 ? value * 2 : (1 - value) * 2) * 10;
-          final dir = (value * 4).floor() % 2 == 0 ? 1 : -1;
+          final shake = (value < 0.5 ? value * 2 : (1 - value) * 2) * 10;
+          final dir = (value * 4).floor().isEven ? 1 : -1;
           return Transform.translate(
             offset: Offset(shake * dir, 0),
             child: child,
@@ -481,7 +486,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.info_outline,
                 size: 20,
                 color: AppColors.textSecondaryLight,
@@ -516,8 +521,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
 
   Widget _buildNextButton(QuizSessionState session) {
     final l10n = AppLocalizations.of(context)!;
-    final isLastQuestion =
-        session.currentIndex >= session.questions.length - 1;
+    final isLastQuestion = session.currentIndex >= session.questions.length - 1;
 
     return SafeArea(
       child: Padding(
@@ -576,7 +580,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                   .animate()
                   .scale(
                     begin: const Offset(0.5, 0.5),
-                    end: const Offset(1.0, 1.0),
+                    end: const Offset(1, 1),
                     duration: 500.ms,
                     curve: Curves.easeOutBack,
                   )
@@ -593,7 +597,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               const SizedBox(height: 8),
               Text(
                 l10n.quizCompletedMessage,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: AppColors.textSecondaryLight,
                 ),
@@ -618,19 +622,24 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 ),
                 const SizedBox(height: 16),
                 // Level-up celebration
-                if (_xpResult?.leveledUp == true)
+                if (_xpResult?.leveledUp ?? false)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                        colors: [
+                          AppColors.gradientStart,
+                          AppColors.gradientEnd
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
+                        const Icon(Icons.arrow_upward_rounded,
+                            color: Colors.white, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           l10n.levelUpMessage(_xpResult!.newLevel!),
@@ -642,9 +651,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                       ],
                     ),
                   ).animate().fadeIn(delay: 800.ms).scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.0, 1.0),
-                  ),
+                        begin: const Offset(0.8, 0.8),
+                        end: const Offset(1, 1),
+                      ),
                 const SizedBox(height: 12),
               ],
               // Streak badge
@@ -653,15 +662,20 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                   final streak = ref.watch(streakProvider);
                   if (streak.currentStreak < 1) return const SizedBox();
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     decoration: BoxDecoration(
                       color: AppColors.quizStreak.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text('🔥', style: TextStyle(fontSize: 24)),
+                        const Icon(
+                          Icons.local_fire_department_rounded,
+                          color: AppColors.quizStreak,
+                          size: 24,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           l10n.streakDays(streak.currentStreak),
@@ -673,9 +687,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                       ],
                     ),
                   ).animate().fadeIn(delay: 600.ms).scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.0, 1.0),
-                  );
+                        begin: const Offset(0.8, 0.8),
+                        end: const Offset(1, 1),
+                      );
                 },
               ),
               const Spacer(),
@@ -691,7 +705,8 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 ),
                 child: Text(
                   l10n.dismissAlarmButton,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.2, end: 0),
               const SizedBox(height: 16),
@@ -713,7 +728,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.bolt_rounded, color: AppColors.primary, size: 24),
+          const Icon(Icons.bolt_rounded, color: AppColors.primary, size: 24),
           const SizedBox(width: 8),
           Text(
             l10n.xpEarned(_xpResult!.xpEarned),
@@ -725,9 +740,9 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
         ],
       ),
     ).animate().fadeIn(delay: 400.ms).scale(
-      begin: const Offset(0.8, 0.8),
-      end: const Offset(1.0, 1.0),
-    );
+          begin: const Offset(0.8, 0.8),
+          end: const Offset(1, 1),
+        );
   }
 
   Widget _buildLevelProgressBar(LevelProgressState levelState) {
@@ -746,7 +761,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
             ),
             Text(
               l10n.xpToNext(levelState.xpToNextLevel),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondaryLight,
               ),
@@ -804,6 +819,14 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       await ref.read(streakProvider.notifier).recordCompletion();
     }
 
+    final session = ref.read(quizSessionProvider(widget.alarmId));
+    await ref.read(databaseProvider).recordLatestAlarmDismiss(
+          alarmId: widget.alarmId,
+          questionsAttempted: session.answers.length,
+          questionsCorrect: session.correctCount,
+          dismissMethod: 'quiz',
+        );
+
     await ref.read(alarmOperationsProvider.notifier).stopAlarm(widget.alarmId);
 
     if (mounted) {
@@ -822,7 +845,8 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.lock_rounded, color: AppColors.textSecondaryLight, size: 22),
+          const Icon(Icons.lock_rounded,
+              color: AppColors.textSecondaryLight, size: 22),
           const SizedBox(width: 8),
           Text(
             l10n.xpLockedTitle,
@@ -874,7 +898,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               Text(
                 l10n.xpLockedFomo,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondaryLight,
                 ),
@@ -894,7 +918,8 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 ),
                 child: Text(
                   l10n.xpLockedSubscribe,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w700),
                 ),
               ),
               const SizedBox(height: 8),
@@ -905,7 +930,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 },
                 child: Text(
                   l10n.dismissAlarmOnly,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondaryLight,
                   ),

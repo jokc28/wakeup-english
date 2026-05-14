@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/services/app_settings_provider.dart';
 import '../../data/repositories/alarm_repository.dart';
 import '../../domain/entities/alarm.dart';
 
@@ -29,17 +30,24 @@ class AlarmForm extends _$AlarmForm {
     if (alarmId != null) {
       // Load existing alarm
       _loadAlarm(alarmId);
+      return _defaultAlarm(const AppSettingsState());
     }
-    return _defaultAlarm();
+    final settings = ref.watch(appSettingsProvider);
+    return _defaultAlarm(settings);
   }
 
-  AlarmEntity _defaultAlarm() {
+  AlarmEntity _defaultAlarm(AppSettingsState settings) {
     final now = TimeOfDay.now();
     return AlarmEntity(
       time: TimeOfDay(
         hour: (now.hour + 1) % 24,
         minute: 0,
       ),
+      quizDifficulty: settings.defaultDifficulty,
+      quizCount: settings.defaultQuizCount,
+      snoozeDuration: settings.defaultSnoozeMinutes,
+      vibrationEnabled: settings.vibrationEnabled,
+      gradualVolume: settings.gradualVolumeEnabled,
     );
   }
 
@@ -138,6 +146,11 @@ class AlarmOperations extends _$AlarmOperations {
   Future<bool> deleteAlarm(int id) async {
     final repository = ref.read(alarmRepositoryProvider);
     return repository.deleteAlarm(id);
+  }
+
+  Future<bool> restoreAlarm(AlarmEntity alarm) async {
+    final repository = ref.read(alarmRepositoryProvider);
+    return repository.restoreAlarm(alarm);
   }
 
   Future<bool> stopAlarm(int id) async {

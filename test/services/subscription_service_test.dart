@@ -61,7 +61,8 @@ void main() {
       expect(result, isTrue);
     });
 
-    test('malformed trial_start_date → returns false (handles gracefully)', () async {
+    test('malformed trial_start_date → returns false (handles gracefully)',
+        () async {
       SharedPreferences.setMockInitialValues({
         IapConstants.prefTrialStartDate: 'not-a-date',
       });

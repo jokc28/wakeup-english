@@ -128,21 +128,26 @@ Two entry points:
 
 | Method | Use Case |
 |--------|----------|
-| `seedFromAsset(db)` | Called during DB migration (`onCreate` / `onUpgrade`). Reads `assets/data/level_vocabulary.json`. |
-| `seedFromJsonString(db, json)` | Dev utility for bulk-loading external JSON. Used by the Settings "DEV: Force Seed DB" button. |
+| `seedFromAsset(db)` | Called during DB migration (`onCreate` / `onUpgrade`). Reads `assets/data/reel_expressions.json`. |
+| `seedFromJsonString(db, json)` | Dev utility for bulk-loading verified Instagram Reel expression JSON. Used by the Settings "DEV: Force Seed DB" button. |
 
-**Seed data format** (`level_vocabulary.json`):
+**Seed data format** (`reel_expressions.json`):
 
 ```json
 {
-  "word": "BRUSH",
-  "hint": "이를 닦을 때 사용하는 동작 (teeth ~)",
-  "type": "definition",
-  "difficulty_level": 1
+  "id": 1,
+  "expression_en": "Put yourself out there",
+  "expression_meaning_kr": "적극적으로 나서다",
+  "situation_kr": "용기를 내서 사람 만날 때",
+  "description_kr": "새로운 사람을 만나거나 기회를 잡을 때 쓰는 표현이에요.",
+  "category": "일상대화",
+  "difficulty": "intermediate",
+  "reel_url": "https://www.instagram.com/reel/DX86xDZNS3X/",
+  "source": "instagram_reel"
 }
 ```
 
-The seeder maps `difficulty_level` ranges to difficulty labels (`1-15 → easy`, `16-35 → medium`, `36-50 → hard`), generates stable `questionId` values (`lv{level}_{word}`), and uses `InsertMode.insertOrIgnore` to safely skip duplicates on re-seed. Items at level ≤ 5 are automatically flagged `is_free = true`.
+The seeder rejects entries unless `source == instagram_reel`, required expression fields are present, and `reel_url` is a valid Instagram Reel URL. It generates multiple-choice questions with same-category/same-difficulty distractors, stable `questionId` values (`reel_{id}_{expression}`), spreads unlock levels across levels 1-50, and uses `InsertMode.insertOrIgnore` to safely skip duplicates on re-seed.
 
 ### Dev Tooling
 
@@ -179,5 +184,5 @@ lib/
 │   ├── settings/           # Settings screen with dev tools
 │   └── subscription/       # Paywall screen
 └── assets/data/
-    └── level_vocabulary.json  # Seed data (Level 1-50 word scramble items)
+    └── reel_expressions.json  # Verified @ok.english.kr Reel expression seed data
 ```

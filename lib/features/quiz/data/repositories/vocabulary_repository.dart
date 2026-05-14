@@ -57,6 +57,26 @@ class VocabularyRepository {
       }
     }
 
+    // Some source datasets do not contain every app difficulty bucket.
+    // If the selected difficulty is sparse (notably hard), keep the alarm
+    // mission usable by falling back to the user's accessible pool.
+    if (items.length < count) {
+      final anyDifficultyItems = await _db.getVocabularyItemsForQuiz(
+        userLevel: userLevel,
+        isFreeUser: isFreeUser,
+        limit: count * 3,
+        excludeIds: recentIds,
+      );
+      final existingIds = items.map((i) => i.questionId).toSet();
+      for (final item in anyDifficultyItems) {
+        if (!existingIds.contains(item.questionId)) {
+          items.add(item);
+          existingIds.add(item.questionId);
+        }
+        if (items.length >= count) break;
+      }
+    }
+
     // Shuffle and take what we need
     items.shuffle(_random);
     if (items.length > count) {
@@ -89,7 +109,7 @@ class VocabularyRepository {
 
   /// Convert a VocabularyItem DB row to a QuizQuestion domain entity
   QuizQuestion _toQuizQuestion(VocabularyItem item) {
-    List<String> options = [];
+    var options = <String>[];
     try {
       final decoded = jsonDecode(item.options);
       if (decoded is List) {

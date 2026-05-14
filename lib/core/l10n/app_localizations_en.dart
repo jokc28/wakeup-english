@@ -333,7 +333,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alarmSoundTitle => 'Alarm Sound';
 
   @override
-  String get soundPickerHint => 'Tap to preview, long press to select';
+  String get soundPickerHint =>
+      'Tap a sound to select it. Use the play icon to preview.';
 
   @override
   String get defaultAlarmSettings => 'Default Alarm Settings';

@@ -15,8 +15,8 @@ class CommonButton extends StatelessWidget {
   final IconData? icon;
 
   const CommonButton({
-    super.key,
     required this.text,
+    super.key,
     this.onPressed,
     this.isLoading = false,
     this.isOutlined = false,
@@ -29,8 +29,6 @@ class CommonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     if (isOutlined) {
       return SizedBox(
         width: width,
@@ -110,8 +108,8 @@ class CommonIconButton extends StatelessWidget {
   final double size;
 
   const CommonIconButton({
-    super.key,
     required this.icon,
+    super.key,
     this.onPressed,
     this.backgroundColor,
     this.iconColor,

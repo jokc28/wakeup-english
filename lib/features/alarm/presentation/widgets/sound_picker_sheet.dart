@@ -13,9 +13,9 @@ class SoundPickerSheet extends ConsumerStatefulWidget {
   final ValueChanged<String> onSoundSelected;
 
   const SoundPickerSheet({
-    super.key,
     required this.currentSoundPath,
     required this.onSoundSelected,
+    super.key,
   });
 
   @override
@@ -103,17 +103,32 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
                 final isPlaying = _playingPath == sound.assetPath;
 
                 return ListTile(
-                  leading: Icon(
-                    isPlaying ? Icons.pause_circle : Icons.play_circle_outline,
+                  leading: IconButton(
+                    icon: Icon(
+                      isPlaying
+                          ? Icons.pause_circle
+                          : Icons.play_circle_outline,
+                    ),
                     color: isLocked
-                        ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4)
+                        ? theme.colorScheme.onSurfaceVariant
+                            .withValues(alpha: 0.4)
                         : AppColors.primary,
+                    onPressed: isLocked
+                        ? null
+                        : () {
+                            if (isPlaying) {
+                              _stopPreview();
+                            } else {
+                              _playPreview(sound.assetPath);
+                            }
+                          },
                   ),
                   title: Text(
                     sound.displayName,
                     style: TextStyle(
                       color: isLocked
-                          ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+                          ? theme.colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.5)
                           : null,
                     ),
                   ),
@@ -121,25 +136,26 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
                     sound.displayNameKo,
                     style: TextStyle(
                       color: isLocked
-                          ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3)
+                          ? theme.colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.3)
                           : null,
                     ),
                   ),
                   trailing: isLocked
-                      ? const Icon(Icons.lock, size: 20, color: AppColors.primary)
+                      ? const Icon(Icons.lock,
+                          size: 20, color: AppColors.primary)
                       : isSelected
-                          ? const Icon(Icons.check_circle, color: AppColors.action)
+                          ? const Icon(Icons.check_circle,
+                              color: AppColors.action)
                           : null,
                   onTap: () {
                     if (isLocked) {
                       Navigator.pop(context);
                       AppRouter.navigateToPaywall();
                     } else {
-                      if (isPlaying) {
-                        _stopPreview();
-                      } else {
-                        _playPreview(sound.assetPath);
-                      }
+                      _stopPreview();
+                      widget.onSoundSelected(sound.assetPath);
+                      Navigator.pop(context);
                     }
                   },
                   onLongPress: isLocked
@@ -162,9 +178,9 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
               ),
             ),
           ),
-          SafeArea(
+          const SafeArea(
             top: false,
-            child: const SizedBox(height: 8),
+            child: SizedBox(height: 8),
           ),
         ],
       ),

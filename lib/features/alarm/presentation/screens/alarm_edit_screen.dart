@@ -4,20 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/constants/alarm_sounds.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../data/repositories/alarm_repository.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
 import '../utils/alarm_display_helpers.dart';
 import '../widgets/sound_picker_sheet.dart';
 
 // --- Design constants ---
-const _kCardColor = Color(0xFFF5F5F5);
-const _kCardRadius = 20.0;
-const _kTextDark = Color(0xFF333333);
-const _kTextHint = Color(0xFF999999);
+const _kCardColor = AppColors.surfaceLight;
+const _kCardRadius = 8.0;
+const _kTextDark = AppColors.textPrimaryLight;
+const _kTextHint = AppColors.textSecondaryLight;
 const _kHorizontalPadding = 24.0;
 
 /// Screen for creating or editing an alarm
@@ -76,9 +78,9 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFAFAFA),
+        backgroundColor: AppColors.backgroundLight,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -115,7 +117,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   )
                 : Text(
                     l10n.saveAlarm,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -167,7 +169,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                     fontWeight: FontWeight.w300,
                     color: AppColors.primary,
                     fontSize: 72,
-                    letterSpacing: -2,
+                    letterSpacing: 0,
                   ),
             ),
             const SizedBox(height: 4),
@@ -235,7 +237,15 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
 
   Widget _buildRepeatCard(BuildContext context, AlarmEntity form) {
     final l10n = AppLocalizations.of(context)!;
-    final days = [l10n.monday, l10n.tuesday, l10n.wednesday, l10n.thursday, l10n.friday, l10n.saturday, l10n.sunday];
+    final days = [
+      l10n.monday,
+      l10n.tuesday,
+      l10n.wednesday,
+      l10n.thursday,
+      l10n.friday,
+      l10n.saturday,
+      l10n.sunday
+    ];
 
     return _SettingsCard(
       children: [
@@ -292,12 +302,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     final l10n = AppLocalizations.of(context)!;
     return _SettingsCard(
       children: [
-        _SectionHeader(icon: Icons.extension_outlined, label: l10n.wakeMissionLabel),
+        _SectionHeader(
+            icon: Icons.extension_outlined, label: l10n.wakeMissionLabel),
         const SizedBox(height: 14),
         // Difficulty
         Row(
           children: [
-            Text(l10n.difficultyLabel, style: const TextStyle(color: _kTextDark, fontSize: 15)),
+            Text(l10n.difficultyLabel,
+                style: const TextStyle(color: _kTextDark, fontSize: 15)),
             const Spacer(),
             _MiniSegment<QuizDifficulty>(
               values: QuizDifficulty.values,
@@ -316,7 +328,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         // Question count
         Row(
           children: [
-            Text(l10n.quizCount, style: const TextStyle(color: _kTextDark, fontSize: 15)),
+            Text(l10n.quizCount,
+                style: const TextStyle(color: _kTextDark, fontSize: 15)),
             const Spacer(),
             _StepperControl(
               value: form.quizCount,
@@ -341,7 +354,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     final l10n = AppLocalizations.of(context)!;
     return _SettingsCard(
       children: [
-        _SectionHeader(icon: Icons.music_note_outlined, label: l10n.alarmSoundLabel),
+        _SectionHeader(
+            icon: Icons.music_note_outlined, label: l10n.alarmSoundLabel),
         const _ThinDivider(),
         // Sound selector
         _SettingsRow(
@@ -353,10 +367,10 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               Text(
                 AlarmSounds.getByPath(form.soundPath)?.displayName ??
                     'Classic Alarm',
-                style: TextStyle(color: AppColors.primary, fontSize: 15),
+                style: const TextStyle(color: AppColors.primary, fontSize: 15),
               ),
               const SizedBox(width: 4),
-              Icon(Icons.chevron_right, size: 20, color: _kTextHint),
+              const Icon(Icons.chevron_right, size: 20, color: _kTextHint),
             ],
           ),
         ),
@@ -386,7 +400,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         // Volume slider
         Row(
           children: [
-            Text(l10n.volumeLabel, style: const TextStyle(color: _kTextDark, fontSize: 15)),
+            Text(l10n.volumeLabel,
+                style: const TextStyle(color: _kTextDark, fontSize: 15)),
             const SizedBox(width: 16),
             Expanded(
               child: SliderTheme(
@@ -396,7 +411,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   thumbColor: AppColors.primary,
                   overlayColor: AppColors.primary.withValues(alpha: 0.1),
                   trackHeight: 3,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+                  thumbShape:
+                      const RoundSliderThumbShape(enabledThumbRadius: 7),
                 ),
                 child: Slider(
                   value: form.volume.toDouble(),
@@ -405,7 +421,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                   divisions: 10,
                   onChanged: (value) {
                     ref
-                        .read(alarmFormProvider(alarmId: widget.alarmId).notifier)
+                        .read(
+                            alarmFormProvider(alarmId: widget.alarmId).notifier)
                         .setVolume(value.toInt());
                   },
                 ),
@@ -450,7 +467,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             child: _PillSelector<int>(
               values: const [5, 10, 15, 20, 30],
               selected: form.snoozeDuration,
-              labelOf: (v) => l10n.minutes(v),
+              labelOf: l10n.minutes,
               onChanged: (v) {
                 HapticFeedback.lightImpact();
                 ref
@@ -465,7 +482,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             child: _PillSelector<int>(
               values: const [1, 2, 3, 5, 10],
               selected: form.maxSnoozes,
-              labelOf: (v) => l10n.maxSnoozesFormat(v),
+              labelOf: l10n.maxSnoozesFormat,
               onChanged: (v) {
                 HapticFeedback.lightImpact();
                 ref
@@ -482,7 +499,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   // ─── Actions ────────────────────────────────────────────────
 
   void _showSoundPicker(BuildContext context, AlarmEntity form) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -505,12 +522,14 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   void _selectTime(BuildContext context, AlarmEntity form) {
     final l10n = AppLocalizations.of(context)!;
     var selectedTime = DateTime(
-      2026, 1, 1,
+      2026,
+      1,
+      1,
       form.time.hour,
       form.time.minute,
     );
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
@@ -524,8 +543,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
             children: [
               // Toolbar
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -565,7 +583,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
                       },
                       child: Text(
                         l10n.doneButton,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.primary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -614,8 +632,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       if (id != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(isEditing ? l10n.alarmUpdated : l10n.alarmCreated),
+            content: Text(isEditing ? l10n.alarmUpdated : l10n.alarmCreated),
           ),
         );
         context.pop();
@@ -623,18 +640,47 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
     } catch (e) {
       debugPrint('Alarm save error: $e');
       if (mounted) {
+        if (e is AlarmSchedulingException && e.canOpenSettings) {
+          await _showAlarmPermissionDialog(e.message);
+          if (!mounted) return;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(isEditing ? l10n.alarmUpdated : l10n.alarmCreated),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
           ),
         );
-        context.pop();
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  Future<void> _showAlarmPermissionDialog(String message) async {
+    final l10n = AppLocalizations.of(context)!;
+    final openSettings = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('알림 권한 필요'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('설정 열기'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (openSettings) {
+      await openAppSettings();
     }
   }
 
@@ -659,7 +705,7 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       ),
     );
 
-    if (confirmed == true && widget.alarmId != null && mounted) {
+    if ((confirmed ?? false) && widget.alarmId != null && mounted) {
       await ref
           .read(alarmOperationsProvider.notifier)
           .deleteAlarm(widget.alarmId!);
@@ -687,6 +733,14 @@ class _SettingsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _kCardColor,
         borderRadius: BorderRadius.circular(_kCardRadius),
+        border: Border.all(color: AppColors.outlineLight),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowWarm.withValues(alpha: 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -730,9 +784,9 @@ class _SettingsRow extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _SettingsRow({
-    this.icon,
     required this.label,
     required this.child,
+    this.icon,
     this.onTap,
   });
 
@@ -774,10 +828,10 @@ class _ToggleRow extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   const _ToggleRow({
-    this.icon,
     required this.label,
     required this.value,
     required this.onChanged,
+    this.icon,
   });
 
   @override
@@ -895,19 +949,21 @@ class _StepperControl extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _stepButton(Icons.remove, value > min ? () => onChanged(value - 1) : null),
+          _stepButton(
+              Icons.remove, value > min ? () => onChanged(value - 1) : null),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Text(
               '$value',
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          _stepButton(Icons.add, value < max ? () => onChanged(value + 1) : null),
+          _stepButton(
+              Icons.add, value < max ? () => onChanged(value + 1) : null),
         ],
       ),
     );
@@ -961,7 +1017,8 @@ class _PillSelector<T> extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onChanged(v),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: isActive ? AppColors.primary : Colors.white,
                   borderRadius: BorderRadius.circular(14),

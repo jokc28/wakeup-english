@@ -26,11 +26,15 @@ abstract class AppColors {
   static const Color secondaryLight = Color(0xFFFF9E94);
   static const Color secondaryDark = Color(0xFFE54B3C);
 
-  // Background colors - Warm palette
-  static const Color backgroundLight = Color(0xFFFFFDF5);
+  // Background colors - warm but neutral enough for repeated daily use
+  static const Color backgroundLight = Color(0xFFF8FAF7);
   static const Color backgroundDark = Color(0xFF1A1712);
   static const Color surfaceLight = Color(0xFFFFFFFF);
+  static const Color surfaceSoftLight = Color(0xFFF1F6EF);
+  static const Color surfaceWarmLight = Color(0xFFFFF6E6);
   static const Color surfaceDark = Color(0xFF2A2520);
+  static const Color outlineLight = Color(0xFFE2E8DD);
+  static const Color shadowWarm = Color(0x332D2006);
 
   // Text colors - Warm tones
   static const Color textPrimaryLight = Color(0xFF2D2006);

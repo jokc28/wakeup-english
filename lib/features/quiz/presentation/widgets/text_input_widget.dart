@@ -13,11 +13,11 @@ class TextInputWidget extends StatefulWidget {
   final ValueChanged<String> onSubmit;
 
   const TextInputWidget({
-    super.key,
     required this.question,
+    required this.onSubmit,
+    super.key,
     this.showResult = false,
     this.isCorrect = false,
-    required this.onSubmit,
   });
 
   @override

@@ -8,6 +8,8 @@ import 'core/database/app_database.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/services/alarm_service.dart';
+import 'core/services/locale_provider.dart';
+import 'core/services/subscription_provider.dart';
 import 'core/services/subscription_service.dart';
 
 /// Main app widget
@@ -38,6 +40,7 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
   Future<void> _syncAlarmsOnStartup() async {
     try {
       final alarmService = ref.read(alarmServiceProvider);
+      final hasFullAccess = ref.read(hasFullAccessProvider);
       final activeAlarms = await alarmService.getActiveAlarms();
       final activeIds = activeAlarms.map((a) => a.id).toSet();
 
@@ -47,7 +50,10 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
       for (final alarm in enabledAlarms) {
         if (!activeIds.contains(alarm.id)) {
           try {
-            await alarmService.setAlarm(alarm);
+            await alarmService.setAlarm(
+              alarm,
+              hasFullAccess: hasFullAccess,
+            );
           } catch (e) {
             debugPrint('[App] Failed to reschedule alarm ${alarm.id}: $e');
           }
@@ -61,7 +67,14 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
   void _setupAlarmListener() {
     try {
       final alarmService = ref.read(alarmServiceProvider);
-      alarmService.onAlarmRing.listen((alarmSettings) {
+      alarmService.onAlarmRing.listen((alarmSettings) async {
+        try {
+          await alarmService.handleAlarmRing(alarmSettings.id);
+        } catch (e) {
+          debugPrint(
+            '[App] Failed to record alarm ring ${alarmSettings.id}: $e',
+          );
+        }
         AppRouter.navigateToQuizLock(alarmSettings.id);
       });
     } catch (e) {
@@ -72,6 +85,7 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(appRouterProvider);
+    final locale = ref.watch(localeProvider);
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -82,7 +96,7 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
           title: 'OK-Morning',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
-          locale: const Locale('ko', 'KR'),
+          locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: _buildLightTheme(),
@@ -97,10 +111,10 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
   // Safe wrapper: returns Jua TextStyle, falls back to system font on failure
   static TextStyle _jua({
     required double fontSize,
+    required Color color,
     FontWeight fontWeight = FontWeight.w400,
     double? letterSpacing,
     double? height,
-    required Color color,
   }) {
     try {
       return GoogleFonts.jua(
@@ -134,19 +148,19 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
       // Headings use Jua — rounded, friendly Korean font
       displayLarge: _jua(
         fontSize: 72,
-        letterSpacing: -1.5,
+        letterSpacing: 0,
         height: 1.1,
         color: base,
       ),
       displayMedium: _jua(
         fontSize: 44,
-        letterSpacing: -0.5,
+        letterSpacing: 0,
         height: 1.15,
         color: base,
       ),
       headlineLarge: _jua(
         fontSize: 32,
-        letterSpacing: -0.25,
+        letterSpacing: 0,
         color: base,
       ),
       headlineMedium: _jua(
@@ -235,7 +249,7 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
         ),
         color: AppColors.surfaceLight,
       ),
@@ -397,7 +411,7 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
         ),
         color: AppColors.surfaceDark,
       ),

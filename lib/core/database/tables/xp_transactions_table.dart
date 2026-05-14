@@ -17,6 +17,5 @@ class XpTransactions extends Table {
   IntColumn get levelAtTime => integer()();
 
   /// Timestamp
-  DateTimeColumn get earnedAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get earnedAt => dateTime().withDefault(currentDateAndTime)();
 }

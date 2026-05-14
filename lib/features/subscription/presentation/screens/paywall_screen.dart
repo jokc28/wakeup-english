@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +10,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
+import '../../../../core/constants/iap_constants.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/services/subscription_provider.dart';
 
@@ -83,7 +87,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         .animate()
                         .scale(
                           begin: const Offset(0.8, 0.8),
-                          end: const Offset(1.0, 1.0),
+                          end: const Offset(1, 1),
                           duration: 500.ms,
                           curve: Curves.easeOutBack,
                         )
@@ -177,7 +181,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                           ),
                         )
                         .scale(
-                          begin: const Offset(1.0, 1.0),
+                          begin: const Offset(1, 1),
                           end: const Offset(1.03, 1.03),
                           duration: 2.seconds,
                           curve: Curves.easeInOut,
@@ -205,7 +209,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            // TODO: Open terms URL
+                            unawaited(
+                              _copyPolicyUrl(IapConstants.termsOfServiceUrl),
+                            );
                           },
                           child: Text(
                             l10n.termsOfService,
@@ -217,7 +223,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         Text(' | ', style: theme.textTheme.bodySmall),
                         TextButton(
                           onPressed: () {
-                            // TODO: Open privacy URL
+                            unawaited(
+                              _copyPolicyUrl(IapConstants.privacyPolicyUrl),
+                            );
                           },
                           child: Text(
                             l10n.privacyPolicy,
@@ -286,13 +294,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   Widget _buildPriceSection(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final offering = _offerings?.current;
     final monthlyPackage = offering?.monthly;
 
-    final priceText =
-        monthlyPackage != null ? l10n.premiumMonthlyPrice(monthlyPackage.storeProduct.priceString) : '--';
+    final priceText = monthlyPackage != null
+        ? l10n.premiumMonthlyPrice(monthlyPackage.storeProduct.priceString)
+        : '--';
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -357,7 +365,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       final success = await service.purchasePackage(monthlyPackage);
 
       if (success) {
-        ref.read(subscriptionProvider.notifier).refresh();
+        unawaited(ref.read(subscriptionProvider.notifier).refresh());
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -383,7 +391,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         if (success) {
-          ref.read(subscriptionProvider.notifier).refresh();
+          unawaited(ref.read(subscriptionProvider.notifier).refresh());
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(l10n.purchasesRestored)),
           );
@@ -399,5 +407,18 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         setState(() => _isPurchasing = false);
       }
     }
+  }
+
+  Future<void> _copyPolicyUrl(String url) async {
+    await Clipboard.setData(ClipboardData(text: url));
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final message = l10n.localeName == 'ko'
+        ? '링크를 클립보드에 복사했습니다: $url'
+        : 'Link copied to clipboard: $url';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }

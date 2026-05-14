@@ -1,8 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('App smoke test', (WidgetTester tester) async {
-    // TODO: Add proper widget tests
+  testWidgets('test harness is configured', (WidgetTester tester) async {
     expect(true, isTrue);
   });
 }

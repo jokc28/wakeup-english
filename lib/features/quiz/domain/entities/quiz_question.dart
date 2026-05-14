@@ -109,9 +109,9 @@ class QuizQuestion {
     required this.category,
     required this.difficulty,
     required this.question,
+    required this.correctAnswer,
     this.questionKo = '',
     this.options = const [],
-    required this.correctAnswer,
     this.hint,
     this.explanation,
     this.explanationKo,
@@ -126,7 +126,8 @@ class QuizQuestion {
 
     if (type == QuizType.speakingChallenge) {
       // 80% fuzzy match for speaking challenges
-      final distance = _levenshteinDistance(normalizedAnswer, normalizedCorrect);
+      final distance =
+          _levenshteinDistance(normalizedAnswer, normalizedCorrect);
       final maxLen = normalizedAnswer.length > normalizedCorrect.length
           ? normalizedAnswer.length
           : normalizedCorrect.length;
@@ -155,16 +156,20 @@ class QuizQuestion {
     if (s1.isEmpty) return s2.length;
     if (s2.isEmpty) return s1.length;
 
-    List<List<int>> dp = List.generate(
+    final dp = List<List<int>>.generate(
       s1.length + 1,
       (_) => List.generate(s2.length + 1, (_) => 0),
     );
 
-    for (int i = 0; i <= s1.length; i++) dp[i][0] = i;
-    for (int j = 0; j <= s2.length; j++) dp[0][j] = j;
+    for (var i = 0; i <= s1.length; i++) {
+      dp[i][0] = i;
+    }
+    for (var j = 0; j <= s2.length; j++) {
+      dp[0][j] = j;
+    }
 
-    for (int i = 1; i <= s1.length; i++) {
-      for (int j = 1; j <= s2.length; j++) {
+    for (var i = 1; i <= s1.length; i++) {
+      for (var j = 1; j <= s2.length; j++) {
         final cost = s1[i - 1] == s2[j - 1] ? 0 : 1;
         dp[i][j] = [
           dp[i - 1][j] + 1,

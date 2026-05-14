@@ -1,15 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/database/app_database.dart';
 import '../../../../core/database/utils/db_seeder.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
-import '../../../../core/database/app_database.dart';
+import '../../../../core/services/app_settings_provider.dart';
+import '../../../../core/services/locale_provider.dart';
 import '../../../../core/services/mission_type_provider.dart';
+import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
+import '../../../alarm/domain/entities/alarm.dart';
+import '../../../quiz/presentation/providers/level_progress_provider.dart';
 
 /// Settings screen for app configuration
 class SettingsScreen extends ConsumerWidget {
@@ -17,10 +24,11 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final subState = ref.watch(subscriptionProvider);
     final missionState = ref.watch(missionTypeProvider);
+    final appSettings = ref.watch(appSettingsProvider);
+    final locale = ref.watch(localeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -43,8 +51,8 @@ class SettingsScreen extends ConsumerWidget {
             context,
             icon: Icons.language,
             title: l10n.language,
-            subtitle: l10n.korean,
-            onTap: () => _showLanguageDialog(context),
+            subtitle: locale.languageCode == 'en' ? l10n.english : l10n.korean,
+            onTap: () => _showLanguageDialog(context, ref, locale),
           ),
           const SizedBox(height: 24),
 
@@ -54,22 +62,34 @@ class SettingsScreen extends ConsumerWidget {
             context,
             icon: Icons.quiz_outlined,
             title: l10n.defaultQuizCount,
-            subtitle: l10n.quizCountFormat(3),
-            onTap: () => _showQuizCountDialog(context),
+            subtitle: l10n.quizCountFormat(appSettings.defaultQuizCount),
+            onTap: () => _showQuizCountDialog(
+              context,
+              ref,
+              appSettings.defaultQuizCount,
+            ),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.speed_outlined,
             title: l10n.defaultDifficulty,
-            subtitle: l10n.difficultyMedium,
-            onTap: () => _showDifficultyDialog(context),
+            subtitle: _difficultyLabel(l10n, appSettings.defaultDifficulty),
+            onTap: () => _showDifficultyDialog(
+              context,
+              ref,
+              appSettings.defaultDifficulty,
+            ),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.snooze_outlined,
             title: l10n.defaultSnoozeTime,
-            subtitle: l10n.minutes(5),
-            onTap: () => _showSnoozeDialog(context),
+            subtitle: l10n.minutes(appSettings.defaultSnoozeMinutes),
+            onTap: () => _showSnoozeDialog(
+              context,
+              ref,
+              appSettings.defaultSnoozeMinutes,
+            ),
           ),
           const SizedBox(height: 24),
 
@@ -92,7 +112,9 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: l10n.speakingChallengeDescription,
             value: missionState.speakingChallengeEnabled,
             onChanged: (value) {
-              ref.read(missionTypeProvider.notifier).toggleSpeakingChallenge(value);
+              ref
+                  .read(missionTypeProvider.notifier)
+                  .toggleSpeakingChallenge(value);
             },
           ),
           const SizedBox(height: 24),
@@ -104,9 +126,13 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.vibration,
             title: l10n.vibration,
             subtitle: l10n.vibrationDescription,
-            value: true,
+            value: appSettings.vibrationEnabled,
             onChanged: (value) {
-              // TODO: Implement preference saving
+              unawaited(
+                ref
+                    .read(appSettingsProvider.notifier)
+                    .setVibrationEnabled(value),
+              );
             },
           ),
           _buildSwitchTile(
@@ -114,9 +140,13 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.volume_up_outlined,
             title: l10n.gradualVolumeLabel,
             subtitle: l10n.gradualVolumeDescription,
-            value: false,
+            value: appSettings.gradualVolumeEnabled,
             onChanged: (value) {
-              // TODO: Implement preference saving
+              unawaited(
+                ref
+                    .read(appSettingsProvider.notifier)
+                    .setGradualVolumeEnabled(value),
+              );
             },
           ),
           const SizedBox(height: 24),
@@ -129,7 +159,7 @@ class SettingsScreen extends ConsumerWidget {
               icon: Icons.workspace_premium,
               title: l10n.upgradeToPremium,
               subtitle: l10n.unlockAllContent,
-              onTap: () => AppRouter.navigateToPaywall(),
+              onTap: AppRouter.navigateToPaywall,
             ),
           _buildSettingsTile(
             context,
@@ -143,7 +173,9 @@ class SettingsScreen extends ConsumerWidget {
               context,
               icon: subState.isPremium ? Icons.toggle_on : Icons.toggle_off,
               title: l10n.debugPremiumMode,
-              subtitle: subState.isPremium ? l10n.debugPremiumEnabled : l10n.debugPremiumDisabled,
+              subtitle: subState.isPremium
+                  ? l10n.debugPremiumEnabled
+                  : l10n.debugPremiumDisabled,
               titleColor: Colors.deepOrange,
               onTap: () {
                 ref.read(subscriptionProvider.notifier).debugTogglePremium();
@@ -165,14 +197,18 @@ class SettingsScreen extends ConsumerWidget {
               title: l10n.devForceSeedDb,
               subtitle: l10n.devForceSeedDbDesc,
               titleColor: Colors.deepOrange,
-              onTap: () async {
-                final db = ref.read(databaseProvider);
-                final count = await DbSeeder.seedFromAsset(db);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.devSeedComplete(count))),
-                  );
-                }
+              onTap: () {
+                unawaited(
+                  () async {
+                    final db = ref.read(databaseProvider);
+                    final count = await DbSeeder.seedFromAsset(db);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.devSeedComplete(count))),
+                      );
+                    }
+                  }(),
+                );
               },
             ),
           const SizedBox(height: 24),
@@ -203,7 +239,7 @@ class SettingsScreen extends ConsumerWidget {
             title: l10n.clearProgressLabel,
             subtitle: l10n.clearProgressDescription,
             titleColor: AppColors.error,
-            onTap: () => _showClearProgressDialog(context),
+            onTap: () => _showClearProgressDialog(context, ref),
           ),
         ],
       ),
@@ -237,7 +273,8 @@ class SettingsScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: AppColors.outlineLight),
       ),
       child: ListTile(
         leading: Icon(
@@ -249,9 +286,7 @@ class SettingsScreen extends ConsumerWidget {
           style: TextStyle(color: titleColor),
         ),
         subtitle: Text(subtitle),
-        trailing: onTap != null
-            ? const Icon(Icons.chevron_right)
-            : null,
+        trailing: onTap != null ? const Icon(Icons.chevron_right) : null,
         onTap: onTap,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -292,7 +327,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSubscriptionCard(BuildContext context, SubscriptionState subState) {
+  Widget _buildSubscriptionCard(
+      BuildContext context, SubscriptionState subState) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
@@ -361,7 +397,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             if (!subState.isPremium)
               FilledButton(
-                onPressed: () => AppRouter.navigateToPaywall(),
+                onPressed: AppRouter.navigateToPaywall,
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.action,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -382,7 +418,7 @@ class SettingsScreen extends ConsumerWidget {
 
     if (context.mounted) {
       if (success) {
-        ref.read(subscriptionProvider.notifier).refresh();
+        unawaited(ref.read(subscriptionProvider.notifier).refresh());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.purchasesRestoredSnackbar)),
         );
@@ -394,9 +430,13 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showLanguageDialog(BuildContext context) {
+  void _showLanguageDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Locale selectedLocale,
+  ) {
     final l10n = AppLocalizations.of(context)!;
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.selectLanguageDialog),
@@ -406,18 +446,31 @@ class SettingsScreen extends ConsumerWidget {
             ListTile(
               leading: const Text('🇺🇸'),
               title: const Text('English'),
-              trailing: const Icon(Icons.check, color: AppColors.action),
+              trailing: selectedLocale.languageCode == 'en'
+                  ? const Icon(Icons.check, color: AppColors.action)
+                  : null,
               onTap: () {
+                unawaited(
+                  ref
+                      .read(localeProvider.notifier)
+                      .setLocale(const Locale('en')),
+                );
                 Navigator.pop(context);
-                // TODO: Change language
               },
             ),
             ListTile(
               leading: const Text('🇰🇷'),
               title: Text(l10n.korean),
+              trailing: selectedLocale.languageCode == 'ko'
+                  ? const Icon(Icons.check, color: AppColors.action)
+                  : null,
               onTap: () {
+                unawaited(
+                  ref
+                      .read(localeProvider.notifier)
+                      .setLocale(const Locale('ko', 'KR')),
+                );
                 Navigator.pop(context);
-                // TODO: Change language
               },
             ),
           ],
@@ -426,9 +479,24 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showQuizCountDialog(BuildContext context) {
+  String _difficultyLabel(AppLocalizations l10n, QuizDifficulty difficulty) {
+    switch (difficulty) {
+      case QuizDifficulty.easy:
+        return l10n.difficultyEasy;
+      case QuizDifficulty.medium:
+        return l10n.difficultyMedium;
+      case QuizDifficulty.hard:
+        return l10n.difficultyHard;
+    }
+  }
+
+  void _showQuizCountDialog(
+    BuildContext context,
+    WidgetRef ref,
+    int selectedCount,
+  ) {
     final l10n = AppLocalizations.of(context)!;
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.selectQuizCountDialog),
@@ -437,12 +505,16 @@ class SettingsScreen extends ConsumerWidget {
           children: [1, 3, 5, 7, 10].map((count) {
             return ListTile(
               title: Text(l10n.quizCountFormat(count)),
-              trailing: count == 3
+              trailing: count == selectedCount
                   ? const Icon(Icons.check, color: AppColors.action)
                   : null,
               onTap: () {
+                unawaited(
+                  ref
+                      .read(appSettingsProvider.notifier)
+                      .setDefaultQuizCount(count),
+                );
                 Navigator.pop(context);
-                // TODO: Save preference
               },
             );
           }).toList(),
@@ -451,9 +523,13 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showDifficultyDialog(BuildContext context) {
+  void _showDifficultyDialog(
+    BuildContext context,
+    WidgetRef ref,
+    QuizDifficulty selectedDifficulty,
+  ) {
     final l10n = AppLocalizations.of(context)!;
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.selectDifficultyDialog),
@@ -462,23 +538,46 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             ListTile(
               title: Text(l10n.difficultyEasy),
+              trailing: selectedDifficulty == QuizDifficulty.easy
+                  ? const Icon(Icons.check, color: AppColors.action)
+                  : null,
               subtitle: Text(l10n.easyDifficultyDesc),
               onTap: () {
+                unawaited(
+                  ref
+                      .read(appSettingsProvider.notifier)
+                      .setDefaultDifficulty(QuizDifficulty.easy),
+                );
                 Navigator.pop(context);
               },
             ),
             ListTile(
               title: Text(l10n.difficultyMedium),
-              trailing: const Icon(Icons.check, color: AppColors.action),
+              trailing: selectedDifficulty == QuizDifficulty.medium
+                  ? const Icon(Icons.check, color: AppColors.action)
+                  : null,
               subtitle: Text(l10n.mediumDifficultyDesc),
               onTap: () {
+                unawaited(
+                  ref
+                      .read(appSettingsProvider.notifier)
+                      .setDefaultDifficulty(QuizDifficulty.medium),
+                );
                 Navigator.pop(context);
               },
             ),
             ListTile(
               title: Text(l10n.difficultyHard),
+              trailing: selectedDifficulty == QuizDifficulty.hard
+                  ? const Icon(Icons.check, color: AppColors.action)
+                  : null,
               subtitle: Text(l10n.hardDifficultyDesc),
               onTap: () {
+                unawaited(
+                  ref
+                      .read(appSettingsProvider.notifier)
+                      .setDefaultDifficulty(QuizDifficulty.hard),
+                );
                 Navigator.pop(context);
               },
             ),
@@ -488,9 +587,13 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showSnoozeDialog(BuildContext context) {
+  void _showSnoozeDialog(
+    BuildContext context,
+    WidgetRef ref,
+    int selectedMinutes,
+  ) {
     final l10n = AppLocalizations.of(context)!;
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.selectSnoozeDialog),
@@ -499,10 +602,15 @@ class SettingsScreen extends ConsumerWidget {
           children: [5, 10, 15, 20, 30].map((minutes) {
             return ListTile(
               title: Text(l10n.minutes(minutes)),
-              trailing: minutes == 5
+              trailing: minutes == selectedMinutes
                   ? const Icon(Icons.check, color: AppColors.action)
                   : null,
               onTap: () {
+                unawaited(
+                  ref
+                      .read(appSettingsProvider.notifier)
+                      .setDefaultSnoozeMinutes(minutes),
+                );
                 Navigator.pop(context);
               },
             );
@@ -521,9 +629,9 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showClearProgressDialog(BuildContext context) {
+  void _showClearProgressDialog(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.clearProgressDialog),
@@ -538,9 +646,17 @@ class SettingsScreen extends ConsumerWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              // TODO: Clear progress
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.progressClearedSnackbar)),
+              unawaited(
+                () async {
+                  await ref.read(databaseProvider).clearLearningProgress();
+                  await ref.read(streakProvider.notifier).clearStreak();
+                  await ref.read(levelProgressProvider.notifier).refresh();
+
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.progressClearedSnackbar)),
+                  );
+                }(),
               );
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),

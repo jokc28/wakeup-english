@@ -25,8 +25,9 @@ void main() {
     });
 
     test('XP requirement increases with level', () {
-      for (int i = 1; i < 49; i++) {
-        expect(XpFormula.xpForNextLevel(i + 1), greaterThan(XpFormula.xpForNextLevel(i)));
+      for (var i = 1; i < 49; i++) {
+        expect(XpFormula.xpForNextLevel(i + 1),
+            greaterThan(XpFormula.xpForNextLevel(i)));
       }
     });
   });
@@ -48,7 +49,7 @@ void main() {
     });
 
     test('cumulative XP is monotonically increasing', () {
-      for (int i = 1; i < 50; i++) {
+      for (var i = 1; i < 50; i++) {
         expect(
           XpFormula.cumulativeXpForLevel(i + 1),
           greaterThan(XpFormula.cumulativeXpForLevel(i)),

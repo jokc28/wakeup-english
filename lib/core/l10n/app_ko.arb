@@ -109,7 +109,7 @@
   "quizInfoFormat": "{difficulty} {count}문제",
 
   "alarmSoundTitle": "알람 소리",
-  "soundPickerHint": "탭하여 미리 듣기, 길게 눌러 선택",
+  "soundPickerHint": "항목을 탭하여 선택하고, 재생 아이콘으로 미리 들어보세요",
 
   "defaultAlarmSettings": "기본 알람 설정",
   "defaultQuizCount": "기본 문제 수",

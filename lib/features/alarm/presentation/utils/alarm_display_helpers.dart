@@ -2,7 +2,8 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/alarm.dart';
 
 /// Localized display name for QuizDifficulty.
-String localizedDifficultyName(AppLocalizations l10n, QuizDifficulty difficulty) {
+String localizedDifficultyName(
+    AppLocalizations l10n, QuizDifficulty difficulty) {
   switch (difficulty) {
     case QuizDifficulty.easy:
       return l10n.difficultyEasy;

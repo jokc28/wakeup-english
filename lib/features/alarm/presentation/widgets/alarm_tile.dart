@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,11 +14,11 @@ import '../utils/alarm_display_helpers.dart';
 class AlarmTile extends ConsumerWidget {
   final AlarmEntity alarm;
   final VoidCallback? onTap;
-  final VoidCallback? onDelete;
+  final Future<void> Function()? onDelete;
 
   const AlarmTile({
-    super.key,
     required this.alarm,
+    super.key,
     this.onTap,
     this.onDelete,
   });
@@ -33,7 +35,10 @@ class AlarmTile extends ConsumerWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: AppColors.error,
+        decoration: BoxDecoration(
+          color: AppColors.error,
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: const Icon(
           Icons.delete_outline,
           color: Colors.white,
@@ -41,39 +46,61 @@ class AlarmTile extends ConsumerWidget {
         ),
       ),
       confirmDismiss: (direction) async {
-        return await _showDeleteConfirmation(context);
+        return _showDeleteConfirmation(context);
       },
       onDismissed: (direction) {
-        onDelete?.call();
+        final delete = onDelete;
+        if (delete != null) {
+          unawaited(delete());
+        }
       },
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
+          borderRadius: BorderRadius.circular(8),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: isEnabled
-                  ? Border(
-                      left: BorderSide(
-                        color: AppColors.primary,
-                        width: 4,
-                      ),
-                    )
-                  : null,
+              color: isEnabled
+                  ? AppColors.surfaceLight
+                  : AppColors.surfaceSoftLight,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isEnabled
+                    ? AppColors.primary.withValues(alpha: 0.28)
+                    : AppColors.outlineLight,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
+                  color: AppColors.shadowWarm.withValues(alpha: 0.08),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: isEnabled
+                        ? AppColors.primary.withValues(alpha: 0.12)
+                        : AppColors.alarmInactive.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    isEnabled
+                        ? Icons.alarm_on_rounded
+                        : Icons.alarm_off_rounded,
+                    color:
+                        isEnabled ? AppColors.primary : AppColors.alarmInactive,
+                  ),
+                ),
+                const SizedBox(width: 14),
                 // Time display
                 Expanded(
                   child: Column(
@@ -83,7 +110,7 @@ class AlarmTile extends ConsumerWidget {
                       Text(
                         alarm.timeDisplay,
                         style: theme.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: isEnabled
                               ? theme.colorScheme.onSurface
                               : theme.colorScheme.onSurface
@@ -92,39 +119,23 @@ class AlarmTile extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       // Label and repeat days
-                      Row(
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           if (alarm.label.isNotEmpty) ...[
-                            Flexible(
-                              child: Text(
-                                alarm.label,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: isEnabled
-                                      ? theme.colorScheme.onSurfaceVariant
-                                      : theme.colorScheme.onSurfaceVariant
-                                          .withValues(alpha: 0.4),
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 150),
+                              child: _MetaText(
+                                text: alarm.label,
+                                isEnabled: isEnabled,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '\u2022',
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurfaceVariant
-                                    .withValues(alpha: 0.4),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
                           ],
-                          Text(
-                            localizedRepeatDaysDisplay(l10n, alarm),
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: isEnabled
-                                  ? theme.colorScheme.onSurfaceVariant
-                                  : theme.colorScheme.onSurfaceVariant
-                                      .withValues(alpha: 0.4),
-                            ),
+                          _MetaText(
+                            text: localizedRepeatDaysDisplay(l10n, alarm),
+                            isEnabled: isEnabled,
                           ),
                         ],
                       ),
@@ -141,7 +152,10 @@ class AlarmTile extends ConsumerWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            l10n.quizInfoFormat(localizedDifficultyName(l10n, alarm.quizDifficulty), alarm.quizCount),
+                            l10n.quizInfoFormat(
+                                localizedDifficultyName(
+                                    l10n, alarm.quizDifficulty),
+                                alarm.quizCount),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isEnabled
                                   ? AppColors.primary
@@ -153,16 +167,24 @@ class AlarmTile extends ConsumerWidget {
                     ],
                   ),
                 ),
+                const SizedBox(width: 10),
                 // Toggle switch
-                Switch.adaptive(
-                  value: isEnabled,
-                  onChanged: (value) {
-                    HapticFeedback.lightImpact();
-                    ref
-                        .read(alarmOperationsProvider.notifier)
-                        .toggleAlarm(alarm.id!, value);
-                  },
-                  activeColor: AppColors.action,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _StatusPill(isEnabled: isEnabled, l10n: l10n),
+                    const SizedBox(height: 8),
+                    Switch.adaptive(
+                      value: isEnabled,
+                      onChanged: (value) {
+                        HapticFeedback.lightImpact();
+                        ref
+                            .read(alarmOperationsProvider.notifier)
+                            .toggleAlarm(alarm.id!, value);
+                      },
+                      activeThumbColor: AppColors.action,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -199,5 +221,57 @@ class AlarmTile extends ConsumerWidget {
           ),
         ) ??
         false;
+  }
+}
+
+class _MetaText extends StatelessWidget {
+  final String text;
+  final bool isEnabled;
+
+  const _MetaText({
+    required this.text,
+    required this.isEnabled,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.onSurfaceVariant;
+    return Text(
+      text,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isEnabled ? color : color.withValues(alpha: 0.45),
+          ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  final bool isEnabled;
+  final AppLocalizations l10n;
+
+  const _StatusPill({
+    required this.isEnabled,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isEnabled ? AppColors.action : AppColors.alarmInactive;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        isEnabled ? l10n.alarmEnabled : l10n.alarmDisabled,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
+      ),
+    );
   }
 }

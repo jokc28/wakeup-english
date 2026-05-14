@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/services/mission_type_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
 import '../../../alarm/data/repositories/alarm_repository.dart';
 import '../../data/repositories/quiz_repository.dart';
@@ -40,7 +41,8 @@ class QuizSessionState {
   int get questionsRemaining => questions.length - currentIndex;
   int get correctCount => answers.where((a) => a).length;
   int get incorrectCount => answers.where((a) => !a).length;
-  double get progress => questions.isEmpty ? 0 : currentIndex / questions.length;
+  double get progress =>
+      questions.isEmpty ? 0 : currentIndex / questions.length;
 
   QuizSessionState copyWith({
     List<QuizQuestion>? questions,
@@ -76,34 +78,52 @@ class QuizSession extends _$QuizSession {
   /// Hardcoded emergency fallback questions when DB is empty
   static const _fallbackQuestions = [
     QuizQuestion(
-      id: 'fallback_hello',
-      type: QuizType.wordScramble,
-      category: QuizCategory.vocabulary,
-      difficulty: 'easy',
-      question: 'HELLO',
-      questionKo: '안녕, 인사말',
-      correctAnswer: 'HELLO',
-      hint: '안녕, 인사말 (비상용 퀴즈)',
+      id: 'fallback_reel_put_yourself_out_there',
+      type: QuizType.multipleChoice,
+      category: QuizCategory.phrases,
+      difficulty: 'medium',
+      question: '다음 상황에서 가장 자연스러운 영어 표현은?',
+      questionKo: '적극적으로 나서다 · 용기를 내서 사람 만날 때',
+      options: [
+        'Put yourself out there',
+        'squeeze in',
+        'corny',
+        'back out',
+      ],
+      correctAnswer: 'Put yourself out there',
+      hint: '출처: @ok.english.kr Instagram Reel',
     ),
     QuizQuestion(
-      id: 'fallback_morning',
-      type: QuizType.wordScramble,
-      category: QuizCategory.vocabulary,
-      difficulty: 'easy',
-      question: 'MORNING',
-      questionKo: '아침, 오전',
-      correctAnswer: 'MORNING',
-      hint: '아침, 오전 (비상용 퀴즈)',
+      id: 'fallback_reel_squeeze_in',
+      type: QuizType.multipleChoice,
+      category: QuizCategory.phrases,
+      difficulty: 'medium',
+      question: '다음 상황에서 가장 자연스러운 영어 표현은?',
+      questionKo: '시간을 끼워 넣다 · 바쁜 와중에 시간을 낼 때',
+      options: [
+        'squeeze in',
+        'Put yourself out there',
+        'make it count',
+        'stay in',
+      ],
+      correctAnswer: 'squeeze in',
+      hint: '출처: @ok.english.kr Instagram Reel',
     ),
     QuizQuestion(
-      id: 'fallback_energy',
-      type: QuizType.wordScramble,
+      id: 'fallback_reel_corny',
+      type: QuizType.multipleChoice,
       category: QuizCategory.vocabulary,
       difficulty: 'easy',
-      question: 'ENERGY',
-      questionKo: '에너지, 활력',
-      correctAnswer: 'ENERGY',
-      hint: '에너지, 활력 (비상용 퀴즈)',
+      question: '다음 상황에서 가장 자연스러운 영어 표현은?',
+      questionKo: '뻔한 · 재미없는 상황을 표현할 때',
+      options: [
+        'corny',
+        'back out',
+        'Sounds fair enough',
+        'I feel sluggish',
+      ],
+      correctAnswer: 'corny',
+      hint: '출처: @ok.english.kr Instagram Reel',
     ),
   ];
 
@@ -132,44 +152,7 @@ class QuizSession extends _$QuizSession {
       questions = [];
     }
 
-    // Filter out answers too short for word scramble (< 5 chars for single words)
-    questions = questions.where((q) {
-      final answer = q.correctAnswer.trim();
-      final isSingleWord = !answer.contains(' ');
-      return !isSingleWord || answer.length >= 5;
-    }).toList();
-
-    // If filtering removed too many, re-fetch without filter
-    if (questions.length < quizCount) {
-      try {
-        final extra = await vocabRepo
-            .getRandomQuestions(
-              count: quizCount * 3,
-              difficulty: alarm?.quizDifficulty.name ?? 'easy',
-              userLevel: levelState.currentLevel,
-              isFreeUser: !hasFullAccess,
-            )
-            .timeout(const Duration(seconds: 5));
-        final filtered = extra.where((q) {
-          final answer = q.correctAnswer.trim();
-          final isSingleWord = !answer.contains(' ');
-          return !isSingleWord || answer.length >= 5;
-        }).toList();
-        // Merge, deduplicate, take what we need
-        final ids = questions.map((q) => q.id).toSet();
-        for (final q in filtered) {
-          if (!ids.contains(q.id)) {
-            questions.add(q);
-            ids.add(q.id);
-          }
-          if (questions.length >= quizCount) break;
-        }
-      } catch (_) {
-        // Re-fetch also failed, continue with what we have
-      }
-    }
-
-    // CRITICAL: If DB returned nothing, inject hardcoded fallback
+    // If the DB is empty, use only verified Reel-derived fallback items.
     if (questions.isEmpty) {
       questions = List.of(_fallbackQuestions);
     }
@@ -179,11 +162,10 @@ class QuizSession extends _$QuizSession {
       questions = questions.sublist(0, quizCount);
     }
 
-    // Convert all questions to word scramble format
-    questions = questions.map((q) => q.copyWith(
-      type: QuizType.wordScramble,
-      options: [],
-    )).toList();
+    questions = applyMissionTypes(
+      questions,
+      ref.read(missionTypeProvider),
+    );
 
     state = state.copyWith(
       questions: questions,
@@ -213,7 +195,8 @@ class QuizSession extends _$QuizSession {
         ? DateTime.now().difference(state.startTime!).inMilliseconds
         : 0;
 
-    final quizRepo = ref.read(quizRepositoryProvider(ref.read(hasFullAccessProvider)));
+    final quizRepo =
+        ref.read(quizRepositoryProvider(ref.read(hasFullAccessProvider)));
     await quizRepo.recordAnswer(
       questionId: question.id,
       correct: isCorrect,
@@ -222,7 +205,7 @@ class QuizSession extends _$QuizSession {
 
     // Record in VocabularyItems with mastery tracking (only for users with full access)
     final hasFullAccess = ref.read(hasFullAccessProvider);
-    bool newlyMastered = false;
+    var newlyMastered = false;
     if (hasFullAccess) {
       final vocabRepo = ref.read(vocabularyRepositoryProvider);
       newlyMastered = await vocabRepo.recordAnswerWithMastery(
@@ -247,7 +230,24 @@ class QuizSession extends _$QuizSession {
     final nextIndex = state.currentIndex + 1;
 
     if (nextIndex >= state.questions.length) {
-      // Quiz completed
+      final missedQuestions = <QuizQuestion>[];
+      for (var i = 0; i < state.questions.length; i++) {
+        if (i >= state.answers.length || !state.answers[i]) {
+          missedQuestions.add(state.questions[i]);
+        }
+      }
+
+      if (missedQuestions.isNotEmpty) {
+        state = state.copyWith(
+          questions: missedQuestions,
+          currentIndex: 0,
+          answers: [],
+          showingResult: false,
+          startTime: DateTime.now(),
+        );
+        return;
+      }
+
       state = state.copyWith(
         isCompleted: true,
         showingResult: false,
@@ -263,8 +263,7 @@ class QuizSession extends _$QuizSession {
 
   /// Check if all required questions are answered correctly
   bool canDismissAlarm() {
-    // Require all questions answered (whether correct or not)
-    return state.isCompleted;
+    return state.isCompleted && state.incorrectCount == 0;
   }
 }
 

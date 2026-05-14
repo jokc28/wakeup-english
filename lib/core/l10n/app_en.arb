@@ -277,7 +277,7 @@
   },
 
   "alarmSoundTitle": "Alarm Sound",
-  "soundPickerHint": "Tap to preview, long press to select",
+  "soundPickerHint": "Tap a sound to select it. Use the play icon to preview.",
 
   "defaultAlarmSettings": "Default Alarm Settings",
   "defaultQuizCount": "Default Quiz Count",

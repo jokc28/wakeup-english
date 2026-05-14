@@ -329,7 +329,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get alarmSoundTitle => '알람 소리';
 
   @override
-  String get soundPickerHint => '탭하여 미리 듣기, 길게 눌러 선택';
+  String get soundPickerHint => '항목을 탭하여 선택하고, 재생 아이콘으로 미리 들어보세요';
 
   @override
   String get defaultAlarmSettings => '기본 알람 설정';

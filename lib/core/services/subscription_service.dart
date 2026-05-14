@@ -42,8 +42,8 @@ class SubscriptionService {
     if (!_hasValidApiKey) return false;
     try {
       final customerInfo = await Purchases.getCustomerInfo();
-      return customerInfo.entitlements.all[IapConstants.premiumEntitlementId]
-              ?.isActive ??
+      return customerInfo
+              .entitlements.all[IapConstants.premiumEntitlementId]?.isActive ??
           false;
     } catch (e) {
       debugPrint('[SubscriptionService] Error checking premium: $e');
@@ -105,8 +105,8 @@ class SubscriptionService {
     if (!_hasValidApiKey) return false;
     try {
       final customerInfo = await Purchases.purchasePackage(package);
-      return customerInfo.entitlements.all[IapConstants.premiumEntitlementId]
-              ?.isActive ??
+      return customerInfo
+              .entitlements.all[IapConstants.premiumEntitlementId]?.isActive ??
           false;
     } catch (e) {
       debugPrint('[SubscriptionService] Error purchasing: $e');
@@ -118,8 +118,8 @@ class SubscriptionService {
     if (!_hasValidApiKey) return false;
     try {
       final customerInfo = await Purchases.restorePurchases();
-      return customerInfo.entitlements.all[IapConstants.premiumEntitlementId]
-              ?.isActive ??
+      return customerInfo
+              .entitlements.all[IapConstants.premiumEntitlementId]?.isActive ??
           false;
     } catch (e) {
       debugPrint('[SubscriptionService] Error restoring: $e');
@@ -142,5 +142,4 @@ class SubscriptionService {
       );
     }
   }
-
 }

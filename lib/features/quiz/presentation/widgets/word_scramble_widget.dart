@@ -20,11 +20,11 @@ class WordScrambleWidget extends StatefulWidget {
   final ValueChanged<String> onSubmit;
 
   const WordScrambleWidget({
-    super.key,
     required this.question,
+    required this.onSubmit,
+    super.key,
     this.showResult = false,
     this.isCorrect = false,
-    required this.onSubmit,
   });
 
   @override
@@ -179,8 +179,8 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
                   )
                       .animate()
                       .scale(
-                        begin: const Offset(0.0, 0.0),
-                        end: const Offset(1.0, 1.0),
+                        begin: Offset.zero,
+                        end: const Offset(1, 1),
                         duration: 200.ms,
                         curve: Curves.easeOutBack,
                       )
@@ -222,13 +222,12 @@ class _WordScrambleWidgetState extends State<WordScrambleWidget> {
                         .animate()
                         .scale(
                           begin: const Offset(0.7, 0.7),
-                          end: const Offset(1.0, 1.0),
+                          end: const Offset(1, 1),
                           delay: (50 * entry.key).ms,
                           duration: 300.ms,
                           curve: Curves.easeOutBack,
                         )
-                        .fadeIn(
-                            delay: (50 * entry.key).ms, duration: 200.ms),
+                        .fadeIn(delay: (50 * entry.key).ms, duration: 200.ms),
                   ),
                 ),
               );
@@ -363,9 +362,9 @@ class _ChunkyTile extends StatelessWidget {
   final bool isDisabled;
 
   const _ChunkyTile({
-    super.key,
     required this.text,
     required this.isWordMode,
+    super.key,
     this.isPlaced = false,
     this.isCorrect = false,
     this.isIncorrect = false,

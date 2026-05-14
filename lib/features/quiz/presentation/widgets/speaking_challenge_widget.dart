@@ -4,8 +4,8 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/constants/app_gradients.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/quiz_question.dart';
 
 /// Widget for speaking challenge quiz type
@@ -18,11 +18,11 @@ class SpeakingChallengeWidget extends StatefulWidget {
   final ValueChanged<String> onSubmit;
 
   const SpeakingChallengeWidget({
-    super.key,
     required this.question,
+    required this.onSubmit,
+    super.key,
     this.showResult = false,
     this.isCorrect = false,
-    required this.onSubmit,
   });
 
   @override
@@ -99,10 +99,10 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
     }
   }
 
-  void _startListening() async {
+  Future<void> _startListening() async {
     if (!_speechAvailable || widget.showResult || _hasSubmitted) return;
 
-    HapticFeedback.mediumImpact();
+    await HapticFeedback.mediumImpact();
     setState(() {
       _isListening = true;
       _recognizedText = '';
@@ -118,8 +118,8 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
     );
   }
 
-  void _stopListening() async {
-    HapticFeedback.lightImpact();
+  Future<void> _stopListening() async {
+    await HapticFeedback.lightImpact();
     await _speech.stop();
     setState(() => _isListening = false);
 
@@ -284,7 +284,12 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                 if (widget.showResult) ...[
                   const SizedBox(height: 4),
                   Text(
-                    l10n.similarityPercentage((_calculateSimilarity(_recognizedText, widget.question.correctAnswer) * 100).round().toString()),
+                    l10n.similarityPercentage((_calculateSimilarity(
+                                _recognizedText,
+                                widget.question.correctAnswer) *
+                            100)
+                        .round()
+                        .toString()),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: widget.isCorrect
                           ? AppColors.quizCorrect
@@ -335,9 +340,8 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
             ),
             const SizedBox(height: 16),
             FilledButton(
-              onPressed: _hasSubmitted
-                  ? null
-                  : () => _submit(_textController.text),
+              onPressed:
+                  _hasSubmitted ? null : () => _submit(_textController.text),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.action,
                 minimumSize: const Size.fromHeight(56),
@@ -346,7 +350,8 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
                 ),
               ),
               child: Text(l10n.submit,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w700)),
             ),
           ] else ...[
             // Gradient mic button
@@ -354,7 +359,7 @@ class _SpeakingChallengeWidgetState extends State<SpeakingChallengeWidget> {
               child: GestureDetector(
                 onTapDown: (_) => _startListening(),
                 onTapUp: (_) => _stopListening(),
-                onTapCancel: () => _stopListening(),
+                onTapCancel: _stopListening,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   width: _isListening ? 100 : 80,

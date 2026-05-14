@@ -8,7 +8,7 @@ import '../../../../core/l10n/app_localizations.dart';
 class SlideToStartWidget extends StatefulWidget {
   final VoidCallback onSlideComplete;
 
-  const SlideToStartWidget({super.key, required this.onSlideComplete});
+  const SlideToStartWidget({required this.onSlideComplete, super.key});
 
   @override
   State<SlideToStartWidget> createState() => _SlideToStartWidgetState();
@@ -55,8 +55,8 @@ class _SlideToStartWidgetState extends State<SlideToStartWidget>
     if (_completed) return;
     final trackWidth = maxWidth - _thumbSize;
     setState(() {
-      _dragPosition = (_dragPosition + details.delta.dx / trackWidth)
-          .clamp(0.0, 1.0);
+      _dragPosition =
+          (_dragPosition + details.delta.dx / trackWidth).clamp(0.0, 1.0);
     });
   }
 
@@ -73,7 +73,7 @@ class _SlideToStartWidgetState extends State<SlideToStartWidget>
       // Snap back
       _resetAnimation = Tween<double>(
         begin: _dragPosition,
-        end: 0.0,
+        end: 0,
       ).animate(CurvedAnimation(
         parent: _resetController,
         curve: Curves.easeOut,

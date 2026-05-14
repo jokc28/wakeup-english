@@ -5,7 +5,7 @@ class QuizProgress extends Table {
   /// Unique identifier
   IntColumn get id => integer().autoIncrement()();
 
-  /// Question identifier from quiz_questions.json
+  /// Question identifier from the seeded quiz content
   TextColumn get questionId => text()();
 
   /// Number of times this question was shown
@@ -43,7 +43,8 @@ class AlarmHistory extends Table {
   DateTimeColumn get dismissedAt => dateTime().nullable()();
 
   /// Number of quiz questions attempted
-  IntColumn get questionsAttempted => integer().withDefault(const Constant(0))();
+  IntColumn get questionsAttempted =>
+      integer().withDefault(const Constant(0))();
 
   /// Number of quiz questions answered correctly
   IntColumn get questionsCorrect => integer().withDefault(const Constant(0))();

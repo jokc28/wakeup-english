@@ -60,7 +60,7 @@ class _AnimatedClockWidgetState extends State<AnimatedClockWidget> {
         .animate()
         .scale(
           begin: const Offset(0.8, 0.8),
-          end: const Offset(1.0, 1.0),
+          end: const Offset(1, 1),
           duration: 600.ms,
           curve: Curves.easeOutBack,
         )

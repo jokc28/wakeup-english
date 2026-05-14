@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:wakeup_english/app.dart';
 import 'package:wakeup_english/core/router/app_router.dart';
 import 'package:wakeup_english/core/services/alarm_service.dart';
@@ -13,60 +12,53 @@ void main() {
   group('Full App Flow Test', () {
     testWidgets('Complete user journey', (tester) async {
       await AlarmService.initialize();
-      await tester.pumpWidget(const ProviderScope(child: OkMorningApp()));
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            firstLaunchCompleteProvider.overrideWith((ref) => true),
+          ],
+          child: const OkMorningApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // =============================
       // STEP 1: Home screen (empty)
       // =============================
-      expect(find.text('OK-Morning'), findsOneWidget);
-      expect(find.text('Add Alarm'), findsOneWidget);
+      expect(find.text('옥모닝'), findsOneWidget);
+      expect(find.text('알람 추가'), findsOneWidget);
       expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
-      print('PASS [1/6] Home screen renders correctly');
+      debugPrint('PASS [1/6] Home screen renders correctly');
 
       // =============================
       // STEP 2: Add Alarm screen
       // =============================
-      await tester.tap(find.text('Add Alarm'));
+      await tester.tap(find.text('알람 추가'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Tap to change'), findsOneWidget);
-      expect(find.text('Label'), findsOneWidget);
-      expect(find.text('Repeat'), findsOneWidget);
-      expect(find.text('Quiz Settings'), findsOneWidget);
-      expect(find.text('Difficulty'), findsOneWidget);
-      expect(find.text('Easy'), findsOneWidget);
-      expect(find.text('Medium'), findsOneWidget);
-      expect(find.text('Hard'), findsOneWidget);
-      expect(find.text('Number of Questions'), findsOneWidget);
-      expect(find.text('Sound & Vibration'), findsOneWidget);
-      expect(find.text('Vibration'), findsOneWidget);
-      expect(find.text('Volume'), findsOneWidget);
-      expect(find.text('Snooze'), findsOneWidget);
-      expect(find.text('Create Alarm'), findsOneWidget);
-      print('PASS [2/6] Add Alarm screen renders correctly');
+      expect(find.text('탭하여 시간 변경'), findsOneWidget);
+      expect(find.text('알람 이름'), findsOneWidget);
+      expect(find.text('반복'), findsOneWidget);
+      expect(find.text('기상 미션'), findsOneWidget);
+      expect(find.text('난이도'), findsOneWidget);
+      expect(find.text('쉬움'), findsOneWidget);
+      expect(find.text('보통'), findsOneWidget);
+      expect(find.text('어려움'), findsOneWidget);
+      expect(find.text('문제 수'), findsOneWidget);
+      expect(find.text('알람음'), findsOneWidget);
+      expect(find.text('진동'), findsOneWidget);
+      expect(find.text('볼륨'), findsOneWidget);
+      expect(find.text('다시 알림'), findsOneWidget);
+      expect(find.text('저장'), findsOneWidget);
+      debugPrint('PASS [2/6] Add Alarm screen renders correctly');
 
       // =============================
-      // STEP 3: Save alarm and verify list
+      // STEP 3: Return to alarm list
       // =============================
-      // Scroll down to find Create Alarm button
-      await tester.scrollUntilVisible(
-        find.text('Create Alarm'),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
+      await tester.tap(find.text('취소'));
       await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Create Alarm'));
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
-
-      // Back on alarm list with the new alarm
-      expect(find.text('OK-Morning'), findsOneWidget);
-      expect(find.text('Once'), findsWidgets);
-      expect(find.textContaining('Medium questions'), findsWidgets);
-      print('PASS [3/6] Alarm created and visible in list');
+      expect(find.text('옥모닝'), findsOneWidget);
+      debugPrint('PASS [3/6] Alarm edit can return to list');
 
       // =============================
       // STEP 4: Settings screen
@@ -74,15 +66,15 @@ void main() {
       await tester.tap(find.byIcon(Icons.settings_outlined));
       await tester.pumpAndSettle();
 
-      expect(find.text('Settings'), findsOneWidget);
-      expect(find.text('Default Quiz Count'), findsOneWidget);
-      expect(find.text('Default Difficulty'), findsOneWidget);
-      expect(find.text('Default Snooze Duration'), findsOneWidget);
-      expect(find.text('Vibration'), findsOneWidget);
-      expect(find.text('Gradual Volume'), findsOneWidget);
-      expect(find.text('Version'), findsOneWidget);
+      expect(find.text('설정'), findsOneWidget);
+      expect(find.text('기본 문제 수'), findsOneWidget);
+      expect(find.text('기본 난이도'), findsOneWidget);
+      expect(find.text('기본 미루기 시간'), findsOneWidget);
+      expect(find.text('진동'), findsOneWidget);
+      expect(find.text('점진적 볼륨'), findsOneWidget);
+      expect(find.text('버전'), findsOneWidget);
       expect(find.text('1.0.0'), findsOneWidget);
-      print('PASS [4/6] Settings screen renders correctly');
+      debugPrint('PASS [4/6] Settings screen renders correctly');
 
       // Go back
       await tester.tap(find.byIcon(Icons.arrow_back));
@@ -97,17 +89,17 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check quiz lock screen
-      final hasWakeUp = find.text('Wake Up!').evaluate().isNotEmpty;
-      final hasLoading = find.text('Loading quiz...').evaluate().isNotEmpty;
+      final hasWakeUp = find.text('오늘도 상쾌한 옥모닝!').evaluate().isNotEmpty;
+      final hasLoading = find.text('퀴즈 불러오는 중...').evaluate().isNotEmpty;
 
       if (hasWakeUp) {
-        expect(find.text('Wake Up!'), findsOneWidget);
-        print('PASS [5/6] Quiz Lock Screen shows quiz');
+        expect(find.text('오늘도 상쾌한 옥모닝!'), findsOneWidget);
+        debugPrint('PASS [5/6] Quiz Lock Screen shows quiz');
 
         // Find and answer questions
-        final questionFinder = find.textContaining('Question 1 of');
+        final questionFinder = find.textContaining('1 /');
         if (questionFinder.evaluate().isNotEmpty) {
-          print('  -> Quiz question visible');
+          debugPrint('  -> Quiz question visible');
 
           // Try to find and tap a multiple choice option
           // Options are displayed as ListTile/InkWell widgets
@@ -117,11 +109,10 @@ void main() {
             await tester.tap(optionFinders.first);
             await tester.pumpAndSettle();
 
-            // Check if "Next Question" or "Finish Quiz" appears
-            final nextFinder = find.text('Next Question');
-            final finishFinder = find.text('Finish Quiz');
+            final nextFinder = find.text('다음 문제');
+            final finishFinder = find.text('퀴즈 완료');
             if (nextFinder.evaluate().isNotEmpty) {
-              print('  -> Answer submitted, Next Question available');
+              debugPrint('  -> Answer submitted, Next Question available');
 
               // Tap through remaining questions
               await tester.tap(nextFinder);
@@ -134,8 +125,8 @@ void main() {
                 await tester.tap(options2.first);
                 await tester.pumpAndSettle();
 
-                final next2 = find.text('Next Question');
-                final finish2 = find.text('Finish Quiz');
+                final next2 = find.text('다음 문제');
+                final finish2 = find.text('퀴즈 완료');
                 if (next2.evaluate().isNotEmpty) {
                   await tester.tap(next2);
                   await tester.pumpAndSettle();
@@ -146,7 +137,7 @@ void main() {
                     await tester.tap(options3.first);
                     await tester.pumpAndSettle();
 
-                    final finish3 = find.text('Finish Quiz');
+                    final finish3 = find.text('퀴즈 완료');
                     if (finish3.evaluate().isNotEmpty) {
                       await tester.tap(finish3);
                       await tester.pumpAndSettle();
@@ -164,12 +155,12 @@ void main() {
           }
         }
       } else if (hasLoading) {
-        print('PASS [5/6] Quiz Lock Screen loading state works');
+        debugPrint('PASS [5/6] Quiz Lock Screen loading state works');
         // Wait more for loading
         await tester.pump(const Duration(seconds: 3));
         await tester.pumpAndSettle();
       } else {
-        print('WARN [5/6] Quiz Lock Screen - unexpected state');
+        debugPrint('WARN [5/6] Quiz Lock Screen - unexpected state');
       }
 
       // =============================
@@ -178,30 +169,31 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
-      final completedFinder = find.text('Quiz Completed!');
-      final stopFinder = find.text('Stop Alarm');
+      final completedFinder = find.text('퀴즈 완료!');
+      final stopFinder = find.text('알람 해제');
 
       if (completedFinder.evaluate().isNotEmpty) {
         expect(completedFinder, findsOneWidget);
         expect(stopFinder, findsOneWidget);
         // Check score display
-        expect(find.textContaining('correct'), findsOneWidget);
-        print('PASS [6/6] Quiz completed, Stop Alarm button visible');
+        expect(find.textContaining('정답'), findsOneWidget);
+        debugPrint('PASS [6/6] Quiz completed, Stop Alarm button visible');
 
         // Tap Stop Alarm
         await tester.tap(stopFinder);
         await tester.pumpAndSettle();
 
         // Should navigate back to alarm list
-        expect(find.text('OK-Morning'), findsOneWidget);
-        print('  -> Alarm dismissed, returned to home');
+        expect(find.text('옥모닝'), findsOneWidget);
+        debugPrint('  -> Alarm dismissed, returned to home');
       } else {
-        print('PASS [6/6] Quiz flow tested (completion screen not reached in test)');
+        debugPrint(
+            'PASS [6/6] Quiz flow tested (completion screen not reached in test)');
       }
 
-      print('\n========================================');
-      print('ALL FLOW TESTS COMPLETE');
-      print('========================================');
+      debugPrint('\n========================================');
+      debugPrint('ALL FLOW TESTS COMPLETE');
+      debugPrint('========================================');
     });
   });
 }

@@ -701,7 +701,7 @@ abstract class AppLocalizations {
   /// No description provided for @soundPickerHint.
   ///
   /// In en, this message translates to:
-  /// **'Tap to preview, long press to select'**
+  /// **'Tap a sound to select it. Use the play icon to preview.'**
   String get soundPickerHint;
 
   /// No description provided for @defaultAlarmSettings.

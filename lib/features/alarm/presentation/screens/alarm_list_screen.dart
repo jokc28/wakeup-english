@@ -1,10 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:google_fonts/google_fonts.dart';
-
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -91,7 +89,10 @@ class AlarmListScreen extends ConsumerWidget {
             Icon(
               Icons.alarm_off_outlined,
               size: 100,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha:0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant
+                  .withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -107,141 +108,12 @@ class AlarmListScreen extends ConsumerWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurfaceVariant
-                        .withValues(alpha:0.7),
+                        .withValues(alpha: 0.7),
                   ),
               textAlign: TextAlign.center,
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildStreakCard(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final streak = ref.watch(streakProvider);
-
-    if (streak.currentStreak < 1) return const SizedBox.shrink();
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      decoration: BoxDecoration(
-        color: AppColors.quizStreak.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.quizStreak.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          const Text('🔥', style: TextStyle(fontSize: 28)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.streakDays(streak.currentStreak),
-                  style: GoogleFonts.jua(
-                    fontSize: 18,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-                if (streak.completedToday)
-                  Text(
-                    l10n.completedToday,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondaryLight,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Text(
-            l10n.streakRecord(streak.maxStreak),
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondaryLight,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLevelBadge(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final levelState = ref.watch(levelProgressProvider);
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
-        children: [
-          CircularPercentIndicator(
-            radius: 24,
-            lineWidth: 4,
-            percent: levelState.progressInLevel.clamp(0.0, 1.0),
-            center: Text(
-              '${levelState.currentLevel}',
-              style: GoogleFonts.jua(
-                fontSize: 16,
-                color: AppColors.primary,
-              ),
-            ),
-            progressColor: AppColors.primary,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-            circularStrokeCap: CircularStrokeCap.round,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.levelLabel(levelState.currentLevel),
-                  style: GoogleFonts.jua(
-                    fontSize: 16,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-                Text(
-                  l10n.totalXpLabel(levelState.totalXp),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondaryLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (levelState.totalItemsMastered > 0)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.action.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                l10n.masteredCount(levelState.totalItemsMastered),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.action,
-                ),
-              ),
-            ),
-        ],
       ),
     );
   }
@@ -254,8 +126,7 @@ class AlarmListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
-        _buildLevelBadge(context, ref),
-        _buildStreakCard(context, ref),
+        _buildHomeHeader(context, ref, alarms),
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
@@ -266,10 +137,14 @@ class AlarmListScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: AlarmTile(
                   alarm: alarm,
-                  onTap: () => context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
-                  onDelete: () {
-                    ref.read(alarmOperationsProvider.notifier).deleteAlarm(alarm.id!);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                  onTap: () =>
+                      context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
+                  onDelete: () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    final operations =
+                        ref.read(alarmOperationsProvider.notifier);
+                    await operations.deleteAlarm(alarm.id!);
+                    messenger.showSnackBar(
                       SnackBar(
                         content: Text(
                           alarm.label.isNotEmpty
@@ -279,7 +154,20 @@ class AlarmListScreen extends ConsumerWidget {
                         action: SnackBarAction(
                           label: l10n.undoAction,
                           onPressed: () {
-                            // TODO: Implement undo
+                            unawaited(
+                              () async {
+                                try {
+                                  await operations.restoreAlarm(alarm);
+                                } catch (error) {
+                                  messenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text(error.toString()),
+                                      backgroundColor: AppColors.error,
+                                    ),
+                                  );
+                                }
+                              }(),
+                            );
                           },
                         ),
                       ),
@@ -291,6 +179,184 @@ class AlarmListScreen extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildHomeHeader(
+    BuildContext context,
+    WidgetRef ref,
+    List<AlarmEntity> alarms,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final levelState = ref.watch(levelProgressProvider);
+    final streak = ref.watch(streakProvider);
+    final nextAlarm = _nextEnabledAlarm(alarms);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.surfaceWarmLight,
+              AppColors.surfaceSoftLight,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.outlineLight),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowWarm.withValues(alpha: 0.08),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.homeWelcome,
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: AppColors.textSecondaryLight,
+                                  ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          nextAlarm?.timeDisplay ?? l10n.noAlarms,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium
+                              ?.copyWith(
+                                color: AppColors.textPrimaryLight,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.78),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.alarm_on_rounded,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _MetricChip(
+                      icon: Icons.trending_up_rounded,
+                      label: l10n.levelLabel(levelState.currentLevel),
+                      value: l10n.totalXpLabel(levelState.totalXp),
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _MetricChip(
+                      icon: Icons.local_fire_department_rounded,
+                      label: l10n.morningStreak,
+                      value: streak.currentStreak > 0
+                          ? l10n.streakDays(streak.currentStreak)
+                          : l10n.streakStart,
+                      color: AppColors.action,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  AlarmEntity? _nextEnabledAlarm(List<AlarmEntity> alarms) {
+    final enabled = alarms.where((alarm) => alarm.isEnabled).toList()
+      ..sort((a, b) {
+        final aMinutes = a.time.hour * 60 + a.time.minute;
+        final bMinutes = b.time.hour * 60 + b.time.minute;
+        return aMinutes.compareTo(bMinutes);
+      });
+    return enabled.isEmpty ? null : enabled.first;
+  }
+}
+
+class _MetricChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  const _MetricChip({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 64),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.14)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppColors.textPrimaryLight,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondaryLight,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

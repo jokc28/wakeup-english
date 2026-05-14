@@ -6,8 +6,8 @@ class WrongAnswerShake extends StatefulWidget {
   final bool shake;
 
   const WrongAnswerShake({
-    super.key,
     required this.child,
+    super.key,
     this.shake = false,
   });
 

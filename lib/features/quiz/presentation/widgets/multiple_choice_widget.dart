@@ -14,11 +14,11 @@ class MultipleChoiceWidget extends StatelessWidget {
   final ValueChanged<String> onSelect;
 
   const MultipleChoiceWidget({
-    super.key,
     required this.question,
+    required this.onSelect,
+    super.key,
     this.selectedAnswer,
     this.showResult = false,
-    required this.onSelect,
   });
 
   @override
@@ -198,7 +198,7 @@ class _OptionButton extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         builder: (context, value, child) {
           final shake = (value < 0.5 ? value * 2 : (1 - value) * 2) * 8;
-          final dir = (value * 4).floor() % 2 == 0 ? 1 : -1;
+          final dir = (value * 4).floor().isEven ? 1 : -1;
           return Transform.translate(
             offset: Offset(shake * dir, 0),
             child: child,

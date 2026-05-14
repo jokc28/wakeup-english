@@ -36,7 +36,8 @@ void main() {
 
     test('same day completion → streak unchanged', () async {
       final today = DateTime.now();
-      final todayStr = DateTime(today.year, today.month, today.day).toIso8601String();
+      final todayStr =
+          DateTime(today.year, today.month, today.day).toIso8601String();
       SharedPreferences.setMockInitialValues({
         AppStrings.prefStreakCurrent: 5,
         AppStrings.prefStreakMax: 5,
@@ -49,7 +50,8 @@ void main() {
     test('consecutive day → streak increments', () async {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
       final yesterdayStr =
-          DateTime(yesterday.year, yesterday.month, yesterday.day).toIso8601String();
+          DateTime(yesterday.year, yesterday.month, yesterday.day)
+              .toIso8601String();
       SharedPreferences.setMockInitialValues({
         AppStrings.prefStreakCurrent: 5,
         AppStrings.prefStreakMax: 10,
@@ -62,7 +64,8 @@ void main() {
     test('2+ day gap → streak resets to 1', () async {
       final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
       final twoDaysAgoStr =
-          DateTime(twoDaysAgo.year, twoDaysAgo.month, twoDaysAgo.day).toIso8601String();
+          DateTime(twoDaysAgo.year, twoDaysAgo.month, twoDaysAgo.day)
+              .toIso8601String();
       SharedPreferences.setMockInitialValues({
         AppStrings.prefStreakCurrent: 15,
         AppStrings.prefStreakMax: 20,
@@ -77,7 +80,8 @@ void main() {
     test('new max streak is recorded', () async {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
       final yesterdayStr =
-          DateTime(yesterday.year, yesterday.month, yesterday.day).toIso8601String();
+          DateTime(yesterday.year, yesterday.month, yesterday.day)
+              .toIso8601String();
       SharedPreferences.setMockInitialValues({
         AppStrings.prefStreakCurrent: 9,
         AppStrings.prefStreakMax: 9,
@@ -91,7 +95,8 @@ void main() {
     test('incrementing streak does not exceed existing max', () async {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
       final yesterdayStr =
-          DateTime(yesterday.year, yesterday.month, yesterday.day).toIso8601String();
+          DateTime(yesterday.year, yesterday.month, yesterday.day)
+              .toIso8601String();
       SharedPreferences.setMockInitialValues({
         AppStrings.prefStreakCurrent: 3,
         AppStrings.prefStreakMax: 20,
@@ -100,6 +105,23 @@ void main() {
       final result = await StreakService.recordCompletion();
       expect(result.currentStreak, 4);
       expect(result.maxStreak, 20);
+    });
+  });
+
+  group('StreakService.clearStreak', () {
+    test('removes all stored streak values', () async {
+      SharedPreferences.setMockInitialValues({
+        AppStrings.prefStreakCurrent: 5,
+        AppStrings.prefStreakMax: 10,
+        AppStrings.prefStreakLastDate: '2026-03-01T00:00:00.000',
+      });
+
+      await StreakService.clearStreak();
+      final streak = await StreakService.getStreak();
+
+      expect(streak.currentStreak, 0);
+      expect(streak.maxStreak, 0);
+      expect(streak.lastCompletedDate, isNull);
     });
   });
 }

@@ -33,19 +33,22 @@ void main() {
 
     test('10 presentations, 8 correct (80%) → mastered', () {
       expect(
-        MasteryLogic.isMastered(timesPresented: 10, timesCorrectFirstAttempt: 8),
+        MasteryLogic.isMastered(
+            timesPresented: 10, timesCorrectFirstAttempt: 8),
         isTrue,
       );
     });
 
     test('10 presentations, 7 correct (70%) → NOT mastered', () {
       expect(
-        MasteryLogic.isMastered(timesPresented: 10, timesCorrectFirstAttempt: 7),
+        MasteryLogic.isMastered(
+            timesPresented: 10, timesCorrectFirstAttempt: 7),
         isFalse,
       );
     });
 
-    test('2 presentations, 2 correct → NOT mastered (below min presentations)', () {
+    test('2 presentations, 2 correct → NOT mastered (below min presentations)',
+        () {
       expect(
         MasteryLogic.isMastered(timesPresented: 2, timesCorrectFirstAttempt: 2),
         isFalse,
@@ -92,7 +95,9 @@ void main() {
       );
     });
 
-    test('2 presentations, 2 correct, next correct → becomes mastered (3/3 = 100%)', () {
+    test(
+        '2 presentations, 2 correct, next correct → becomes mastered (3/3 = 100%)',
+        () {
       expect(
         MasteryLogic.wouldBecomeNewlyMastered(
           currentTimesPresented: 2,
@@ -104,7 +109,8 @@ void main() {
       );
     });
 
-    test('2 presentations, 2 correct, next wrong → NOT mastered (2/3 = 66%)', () {
+    test('2 presentations, 2 correct, next wrong → NOT mastered (2/3 = 66%)',
+        () {
       expect(
         MasteryLogic.wouldBecomeNewlyMastered(
           currentTimesPresented: 2,
@@ -128,7 +134,9 @@ void main() {
       );
     });
 
-    test('1 presentation, 1 correct, next correct → NOT mastered (2/2, but < 3 presentations)', () {
+    test(
+        '1 presentation, 1 correct, next correct → NOT mastered (2/2, but < 3 presentations)',
+        () {
       expect(
         MasteryLogic.wouldBecomeNewlyMastered(
           currentTimesPresented: 1,

@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/app_strings.dart';
 import '../../features/quiz/domain/entities/quiz_question.dart';
+import '../constants/app_strings.dart';
 
 /// Manages which mission (quiz) types are enabled for alarm quizzes.
 /// Users can toggle wordScramble and speakingChallenge on/off in Settings.
@@ -40,8 +40,7 @@ class MissionTypeNotifier extends StateNotifier<MissionTypeState> {
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    final types =
-        prefs.getStringList(AppStrings.prefEnabledMissionTypes) ?? [];
+    final types = prefs.getStringList(AppStrings.prefEnabledMissionTypes) ?? [];
     state = MissionTypeState(
       wordScrambleEnabled: types.contains('wordScramble'),
       speakingChallengeEnabled: types.contains('speakingChallenge'),
@@ -80,8 +79,8 @@ List<QuizQuestion> applyMissionTypes(
   }
 
   final result = <QuizQuestion>[];
-  int wordScrambleCount = 0;
-  int speakingCount = 0;
+  var wordScrambleCount = 0;
+  var speakingCount = 0;
 
   // Calculate how many to convert (roughly 30% each if enabled)
   final maxConvert = (questions.length * 0.3).ceil();
@@ -90,13 +89,12 @@ List<QuizQuestion> applyMissionTypes(
     // Try to convert to wordScramble: short single-word answers work best
     if (missionState.wordScrambleEnabled &&
         wordScrambleCount < maxConvert &&
-        q.type != QuizType.multipleChoice &&
         q.correctAnswer.split(' ').length == 1 &&
         q.correctAnswer.length >= 3 &&
         q.correctAnswer.length <= 12) {
       result.add(q.copyWith(
         type: QuizType.wordScramble,
-        question: 'Unscramble the word',
+        question: '글자를 맞춰 표현을 완성하세요',
         options: [],
       ));
       wordScrambleCount++;
@@ -106,11 +104,10 @@ List<QuizQuestion> applyMissionTypes(
     // Try to convert to speakingChallenge: sentence answers
     if (missionState.speakingChallengeEnabled &&
         speakingCount < maxConvert &&
-        q.type == QuizType.translation &&
         q.correctAnswer.split(' ').length >= 2) {
       result.add(q.copyWith(
         type: QuizType.speakingChallenge,
-        question: 'Speak the following sentence in English',
+        question: '다음 표현을 영어로 말해 보세요',
         options: [],
       ));
       speakingCount++;

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/services/alarm_service.dart';
+import '../../../../core/services/subscription_provider.dart';
 import '../../domain/entities/alarm.dart';
 import '../models/alarm_model.dart';
 
@@ -10,15 +13,34 @@ import '../models/alarm_model.dart';
 final alarmRepositoryProvider = Provider<AlarmRepository>((ref) {
   final db = ref.watch(databaseProvider);
   final alarmService = ref.watch(alarmServiceProvider);
-  return AlarmRepository(db, alarmService);
+  final hasFullAccess = ref.watch(hasFullAccessProvider);
+  return AlarmRepository(db, alarmService, hasFullAccess: hasFullAccess);
 });
+
+class AlarmSchedulingException implements Exception {
+  final String message;
+  final bool canOpenSettings;
+
+  const AlarmSchedulingException(
+    this.message, {
+    this.canOpenSettings = false,
+  });
+
+  @override
+  String toString() => message;
+}
 
 /// Repository for alarm CRUD operations and scheduling
 class AlarmRepository {
   final AppDatabase _db;
   final AlarmService _alarmService;
+  final bool _hasFullAccess;
 
-  AlarmRepository(this._db, this._alarmService);
+  AlarmRepository(
+    this._db,
+    this._alarmService, {
+    required bool hasFullAccess,
+  }) : _hasFullAccess = hasFullAccess;
 
   /// Get all alarms as domain entities
   Future<List<AlarmEntity>> getAllAlarms() async {
@@ -62,11 +84,12 @@ class AlarmRepository {
       try {
         final createdAlarm = await _db.getAlarmById(id);
         if (createdAlarm != null) {
-          await _alarmService.setAlarm(createdAlarm);
+          await _scheduleOrThrow(createdAlarm);
         }
       } catch (e) {
-        // Alarm is saved in DB; scheduling can be retried later
         debugPrint('Alarm scheduling failed: $e');
+        await _db.deleteAlarm(id);
+        rethrow;
       }
     }
 
@@ -83,7 +106,7 @@ class AlarmRepository {
     final updatedAlarm = await _db.getAlarmById(alarm.id!);
     if (updatedAlarm != null) {
       if (alarm.isEnabled) {
-        await _alarmService.setAlarm(updatedAlarm);
+        await _scheduleOrThrow(updatedAlarm);
       } else {
         await _alarmService.cancelAlarm(alarm.id!);
       }
@@ -99,7 +122,7 @@ class AlarmRepository {
     if (enabled) {
       final alarm = await _db.getAlarmById(id);
       if (alarm != null) {
-        await _alarmService.setAlarm(alarm);
+        await _scheduleOrThrow(alarm);
       }
     } else {
       await _alarmService.cancelAlarm(id);
@@ -117,18 +140,68 @@ class AlarmRepository {
     return result > 0;
   }
 
+  /// Restore a previously deleted alarm, preserving its original ID.
+  Future<bool> restoreAlarm(AlarmEntity alarm) async {
+    if (alarm.id == null) return false;
+
+    await _db.insertAlarm(alarm.toCompanion());
+
+    if (alarm.isEnabled) {
+      try {
+        final restoredAlarm = await _db.getAlarmById(alarm.id!);
+        if (restoredAlarm != null) {
+          await _scheduleOrThrow(restoredAlarm);
+        }
+      } catch (e) {
+        debugPrint('Alarm restore scheduling failed: $e');
+        await _db.deleteAlarm(alarm.id!);
+        rethrow;
+      }
+    }
+
+    return true;
+  }
+
   /// Reschedule all enabled alarms
   Future<void> rescheduleAllAlarms() async {
-    await _alarmService.rescheduleAllAlarms();
+    final alarms = await _db.getEnabledAlarms();
+    for (final alarm in alarms) {
+      await _scheduleOrThrow(alarm);
+    }
   }
 
   /// Stop a ringing alarm
   Future<bool> stopAlarm(int id) async {
-    return _alarmService.stopAlarm(id);
+    return _alarmService.stopAlarm(id, hasFullAccess: _hasFullAccess);
   }
 
   /// Snooze an alarm
   Future<bool> snoozeAlarm(int id, {int? durationMinutes}) async {
     return _alarmService.snoozeAlarm(id, durationMinutes: durationMinutes);
+  }
+
+  Future<void> _scheduleOrThrow(Alarm alarm) async {
+    final hasPermissions = await _alarmService.hasRequiredPermissions();
+    if (!hasPermissions) {
+      final granted = await _alarmService.requestPermissions();
+      if (!granted) {
+        throw AlarmSchedulingException(
+          Platform.isIOS
+              ? '알림 권한이 꺼져 있어 알람을 예약하지 못했습니다. iPhone 설정에서 옥모닝 알림을 허용해 주세요.'
+              : '알람 권한이 없어 알람을 예약하지 못했습니다. 알림과 정확한 알람 권한을 허용해 주세요.',
+          canOpenSettings: true,
+        );
+      }
+    }
+
+    final scheduled = await _alarmService.setAlarm(
+      alarm,
+      hasFullAccess: _hasFullAccess,
+    );
+    if (!scheduled) {
+      throw const AlarmSchedulingException(
+        '알람 예약에 실패했습니다. 권한과 기기 설정을 확인해 주세요.',
+      );
+    }
   }
 }

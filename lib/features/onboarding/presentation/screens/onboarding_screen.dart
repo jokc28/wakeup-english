@@ -1,15 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/alarm_service.dart';
 import '../../../alarm/data/repositories/alarm_repository.dart';
 import '../../../alarm/domain/entities/alarm.dart';
 
@@ -51,15 +54,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _requestNotification() async {
-    HapticFeedback.mediumImpact();
-    final status = await Permission.notification.request();
+    unawaited(HapticFeedback.mediumImpact());
+    final granted = await ref.read(alarmServiceProvider).requestPermissions();
     if (mounted) {
-      setState(() => _notificationGranted = status.isGranted);
+      setState(() => _notificationGranted = granted);
     }
   }
 
   Future<void> _requestMicrophone() async {
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
     final status = await Permission.microphone.request();
     if (mounted) {
       setState(() => _microphoneGranted = status.isGranted);
@@ -68,10 +71,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   void _goToPage(int page) {
     HapticFeedback.lightImpact();
-    _pageController.animateToPage(
-      page,
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeOutCubic,
+    unawaited(
+      _pageController.animateToPage(
+        page,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      ),
     );
   }
 
@@ -90,9 +95,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _showFirstAlarmPicker() async {
-    HapticFeedback.mediumImpact();
+    unawaited(HapticFeedback.mediumImpact());
     final l10n = AppLocalizations.of(context)!;
-    DateTime selectedTime = DateTime.now().add(const Duration(hours: 8));
+    var selectedTime = DateTime.now().add(const Duration(hours: 8));
     // Round to nearest 5 min
     selectedTime = selectedTime.copyWith(
       minute: (selectedTime.minute / 5).round() * 5,
@@ -131,7 +136,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       onPressed: () => Navigator.pop(sheetContext, true),
                       child: Text(
                         l10n.doneButton,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.primary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -166,25 +171,66 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       },
     );
 
-    if (confirmed == true && mounted) {
+    if ((confirmed ?? false) && mounted) {
       // Create the alarm with the selected time
       final alarmRepo = ref.read(alarmRepositoryProvider);
 
-      await alarmRepo.createAlarm(
-        AlarmEntity(
-          time: TimeOfDay(
-            hour: selectedTime.hour,
-            minute: selectedTime.minute,
+      try {
+        await alarmRepo.createAlarm(
+          AlarmEntity(
+            time: TimeOfDay(
+              hour: selectedTime.hour,
+              minute: selectedTime.minute,
+            ),
+            label: 'OK-Morning',
+            isEnabled: true,
           ),
-          label: 'OK-Morning',
-          isEnabled: true,
-        ),
-      );
+        );
+      } catch (e) {
+        if (!mounted) return;
+        if (e is AlarmSchedulingException && e.canOpenSettings) {
+          await _showAlarmPermissionDialog(e.message);
+          return;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
 
       await _completeOnboarding();
       if (mounted) {
         AppRouter.navigateToAlarmList();
       }
+    }
+  }
+
+  Future<void> _showAlarmPermissionDialog(String message) async {
+    final l10n = AppLocalizations.of(context)!;
+    final openSettings = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('알림 권한 필요'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('설정 열기'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (openSettings) {
+      await openAppSettings();
     }
   }
 
@@ -205,7 +251,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   onPressed: _finishAndGoHome,
                   child: Text(
                     l10n.onboardingSkip,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.textSecondaryLight,
                       fontSize: 14,
                     ),
@@ -284,7 +330,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                            colors: [
+                              AppColors.gradientStart,
+                              AppColors.gradientEnd
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
@@ -331,29 +380,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Duckling mascot
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.gradientStart, AppColors.gradientEnd],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Text('🐥', style: TextStyle(fontSize: 64)),
-            ),
-          ),
+          _buildIconHero(Icons.wb_sunny_rounded),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingWelcomeTitle,
@@ -382,18 +409,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Alarm + quiz visual
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              color: AppColors.primarySurface,
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Text('⏰', style: TextStyle(fontSize: 64)),
-            ),
-          ),
+          _buildIconHero(Icons.alarm_on_rounded, muted: true),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingValueTitle,
@@ -419,12 +435,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               _buildBadge('Lv.1', AppColors.action),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.arrow_forward, color: AppColors.primary, size: 20),
+                child: Icon(Icons.arrow_forward,
+                    color: AppColors.primary, size: 20),
               ),
               _buildBadge('Lv.10', AppColors.primary),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.arrow_forward, color: AppColors.primary, size: 20),
+                child: Icon(Icons.arrow_forward,
+                    color: AppColors.primary, size: 20),
               ),
               _buildBadge('Lv.50', AppColors.secondary),
             ],
@@ -460,17 +478,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              color: AppColors.primarySurface,
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Text('🔔', style: TextStyle(fontSize: 64)),
-            ),
-          ),
+          _buildIconHero(Icons.notifications_active_rounded, muted: true),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingPermissionsTitle,
@@ -564,29 +572,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Celebration visual
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.gradientStart, AppColors.gradientEnd],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Text('🎉', style: TextStyle(fontSize: 64)),
-            ),
-          ),
+          _buildIconHero(Icons.task_alt_rounded),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingCtaTitle,
@@ -605,6 +591,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             textAlign: TextAlign.center,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconHero(IconData icon, {bool muted = false}) {
+    return Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        gradient: muted
+            ? null
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.gradientStart, AppColors.gradientEnd],
+              ),
+        color: muted ? AppColors.primarySurface : null,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: muted ? 0.12 : 0.24),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Icon(
+          icon,
+          size: 64,
+          color: muted ? AppColors.primary : Colors.white,
+        ),
       ),
     );
   }

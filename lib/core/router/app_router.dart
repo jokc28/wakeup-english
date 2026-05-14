@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../features/alarm/presentation/screens/alarm_list_screen.dart';
 import '../../features/alarm/presentation/screens/alarm_edit_screen.dart';
+import '../../features/alarm/presentation/screens/alarm_list_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_lock_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
@@ -32,7 +33,7 @@ class AppRouter {
       initialLocation: firstLaunchComplete
           ? AppStrings.alarmListRoute
           : AppStrings.onboardingRoute,
-      debugLogDiagnostics: true,
+      debugLogDiagnostics: kDebugMode,
       redirect: (context, state) {
         final goingToOnboarding =
             state.matchedLocation == AppStrings.onboardingRoute;

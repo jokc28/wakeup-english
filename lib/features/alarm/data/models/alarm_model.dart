@@ -87,9 +87,9 @@ extension AlarmEntityMapper on AlarmEntity {
 class AlarmModel {
   /// Create a new alarm companion from individual values
   static AlarmsCompanion create({
-    String label = '',
     required int hour,
     required int minute,
+    String label = '',
     bool isEnabled = true,
     List<int> repeatDays = const [],
     QuizDifficulty quizDifficulty = QuizDifficulty.medium,

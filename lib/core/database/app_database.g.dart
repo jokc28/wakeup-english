@@ -1004,7 +1004,7 @@ class QuizProgressData extends DataClass
   /// Unique identifier
   final int id;
 
-  /// Question identifier from quiz_questions.json
+  /// Question identifier from the seeded quiz content
   final String questionId;
 
   /// Number of times this question was shown

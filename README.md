@@ -102,24 +102,27 @@ The Info.plist configures:
 
 Minimum iOS: 14.0
 
-## Adding Quiz Questions
+## Adding Quiz Content
 
-Quiz questions are stored in `assets/data/quiz_questions.json`. Each question has:
+Quiz content is seeded from verified Reel expression data in
+`assets/data/reel_expressions.json`. Each item has:
 
 ```json
 {
-  "id": "unique_id",
-  "type": "multiple_choice",
-  "category": "vocabulary",
-  "difficulty": "easy",
-  "question": "Question text in English",
-  "question_ko": "한국어 번역",
-  "options": ["A", "B", "C", "D"],
-  "correct_answer": "A",
-  "explanation": "Why A is correct",
-  "explanation_ko": "설명 한국어 번역"
+  "id": 1,
+  "expression_en": "Put yourself out there",
+  "expression_meaning_kr": "적극적으로 나서다",
+  "situation_kr": "용기를 내서 사람 만날 때",
+  "description_kr": "새로운 사람을 만나거나 기회를 잡을 때 쓰는 표현이에요.",
+  "category": "일상대화",
+  "difficulty": "intermediate",
+  "reel_url": "https://www.instagram.com/reel/DX86xDZNS3X/",
+  "source": "instagram_reel"
 }
 ```
+
+The seeder only accepts trusted Instagram Reel entries, generates multiple
+choice options, and spreads unlock levels across levels 1-50.
 
 ## Building for Release
 

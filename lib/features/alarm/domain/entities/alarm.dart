@@ -49,9 +49,9 @@ class AlarmEntity {
   final DateTime? updatedAt;
 
   const AlarmEntity({
+    required this.time,
     this.id,
     this.label = '',
-    required this.time,
     this.isEnabled = true,
     this.repeatDays = const [],
     this.quizDifficulty = QuizDifficulty.medium,

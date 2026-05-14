@@ -9,8 +9,8 @@ class XpFormula {
 
   /// Total cumulative XP needed to reach a given level (from level 1)
   static int cumulativeXpForLevel(int level) {
-    int total = 0;
-    for (int i = 1; i < level; i++) {
+    var total = 0;
+    for (var i = 1; i < level; i++) {
       total += xpForNextLevel(i);
     }
     return total;
@@ -18,8 +18,8 @@ class XpFormula {
 
   /// Determine current level from total XP
   static int levelFromTotalXp(int totalXp) {
-    int level = 1;
-    int accumulated = 0;
+    var level = 1;
+    var accumulated = 0;
     while (level < 50) {
       final needed = xpForNextLevel(level);
       if (accumulated + needed > totalXp) break;
@@ -31,10 +31,10 @@ class XpFormula {
 
   /// Progress within current level (0.0 to 1.0)
   static double progressInLevel(int totalXp, int currentLevel) {
-    if (currentLevel >= 50) return 1.0;
+    if (currentLevel >= 50) return 1;
     final base = cumulativeXpForLevel(currentLevel);
     final needed = xpForNextLevel(currentLevel);
-    if (needed == 0) return 1.0;
+    if (needed == 0) return 1;
     return ((totalXp - base) / needed).clamp(0.0, 1.0);
   }
 
@@ -51,7 +51,7 @@ class XpFormula {
     if (streakDays >= 14) return 1.3;
     if (streakDays >= 7) return 1.2;
     if (streakDays >= 3) return 1.1;
-    return 1.0;
+    return 1;
   }
 
   /// Calculate total XP earned for a quiz session
@@ -68,7 +68,8 @@ class XpFormula {
     final accuracyBonus = 15 * correctCount;
 
     // Perfect bonus: +50 if 100% correct
-    final perfectBonus = (correctCount == questionCount && questionCount > 0) ? 50 : 0;
+    final perfectBonus =
+        (correctCount == questionCount && questionCount > 0) ? 50 : 0;
 
     // Mastery bonus: +25 per newly mastered item
     final masteryBonus = 25 * newMasteryCount;

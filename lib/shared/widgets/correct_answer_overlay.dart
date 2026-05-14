@@ -6,7 +6,7 @@ import '../../core/constants/app_colors.dart';
 class CorrectAnswerOverlay extends StatefulWidget {
   final VoidCallback onComplete;
 
-  const CorrectAnswerOverlay({super.key, required this.onComplete});
+  const CorrectAnswerOverlay({required this.onComplete, super.key});
 
   @override
   State<CorrectAnswerOverlay> createState() => _CorrectAnswerOverlayState();

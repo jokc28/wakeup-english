@@ -47,7 +47,8 @@ class Alarms extends Table {
   IntColumn get volume => integer().withDefault(const Constant(100))();
 
   /// Whether to gradually increase volume
-  BoolColumn get gradualVolume => boolean().withDefault(const Constant(false))();
+  BoolColumn get gradualVolume =>
+      boolean().withDefault(const Constant(false))();
 
   /// Created timestamp
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();

@@ -39,12 +39,11 @@ class StreakService {
     final lastDate =
         lastDateStr != null ? DateTime.tryParse(lastDateStr) : null;
 
-    int current = prefs.getInt(AppStrings.prefStreakCurrent) ?? 0;
-    int max = prefs.getInt(AppStrings.prefStreakMax) ?? 0;
+    var current = prefs.getInt(AppStrings.prefStreakCurrent) ?? 0;
+    var max = prefs.getInt(AppStrings.prefStreakMax) ?? 0;
 
     if (lastDate != null) {
-      final lastDay =
-          DateTime(lastDate.year, lastDate.month, lastDate.day);
+      final lastDay = DateTime(lastDate.year, lastDate.month, lastDate.day);
       final difference = today.difference(lastDay).inDays;
 
       if (difference == 0) {
@@ -80,5 +79,12 @@ class StreakService {
       maxStreak: max,
       lastCompletedDate: today,
     );
+  }
+
+  static Future<void> clearStreak() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(AppStrings.prefStreakCurrent);
+    await prefs.remove(AppStrings.prefStreakMax);
+    await prefs.remove(AppStrings.prefStreakLastDate);
   }
 }

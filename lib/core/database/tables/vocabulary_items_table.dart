@@ -48,8 +48,7 @@ class VocabularyItems extends Table {
   IntColumn get timesIncorrect => integer().withDefault(const Constant(0))();
 
   /// Mastery achieved flag
-  BoolColumn get isMastered =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isMastered => boolean().withDefault(const Constant(false))();
 
   /// Last shown timestamp
   DateTimeColumn get lastPresentedAt => dateTime().nullable()();
@@ -58,13 +57,11 @@ class VocabularyItems extends Table {
   DateTimeColumn get masteredAt => dateTime().nullable()();
 
   /// Available in free tier
-  BoolColumn get isFree =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isFree => boolean().withDefault(const Constant(false))();
 
   /// Minimum level to access
   IntColumn get unlockLevel => integer().withDefault(const Constant(1))();
 
   /// Row creation timestamp
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }

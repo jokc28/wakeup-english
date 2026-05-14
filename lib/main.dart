@@ -93,8 +93,7 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        firstLaunchCompleteProvider
-            .overrideWith((ref) => firstLaunchComplete),
+        firstLaunchCompleteProvider.overrideWith((ref) => firstLaunchComplete),
       ],
       child: const OkMorningApp(),
     ),

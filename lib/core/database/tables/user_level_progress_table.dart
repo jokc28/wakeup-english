@@ -30,8 +30,7 @@ class UserLevelProgress extends Table {
       integer().withDefault(const Constant(0))();
 
   /// Last update timestamp
-  DateTimeColumn get updatedAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -36,10 +36,10 @@ class AlarmService {
   Future<bool> requestPermissions() async {
     final permissions = <Permission>[
       Permission.notification,
-      Permission.scheduleExactAlarm,
     ];
 
     if (Platform.isAndroid) {
+      permissions.add(Permission.scheduleExactAlarm);
       permissions.add(Permission.ignoreBatteryOptimizations);
     }
 
@@ -48,8 +48,8 @@ class AlarmService {
     // Check if critical permissions are granted
     final notificationGranted =
         statuses[Permission.notification]?.isGranted ?? false;
-    final alarmGranted =
-        statuses[Permission.scheduleExactAlarm]?.isGranted ?? true;
+    final alarmGranted = !Platform.isAndroid ||
+        (statuses[Permission.scheduleExactAlarm]?.isGranted ?? false);
 
     return notificationGranted && alarmGranted;
   }
@@ -57,13 +57,11 @@ class AlarmService {
   /// Check if all required permissions are granted
   Future<bool> hasRequiredPermissions() async {
     final notification = await Permission.notification.isGranted;
-    final exactAlarm = await Permission.scheduleExactAlarm.isGranted;
-
-    // On iOS, scheduleExactAlarm may not be applicable
     if (Platform.isIOS) {
       return notification;
     }
 
+    final exactAlarm = await Permission.scheduleExactAlarm.isGranted;
     return notification && exactAlarm;
   }
 
@@ -80,7 +78,8 @@ class AlarmService {
   /// Returns true if successful
   Future<bool> setAlarm(Alarm alarm, {bool hasFullAccess = false}) async {
     if (!_initialized) {
-      throw StateError('AlarmService not initialized. Call initialize() first.');
+      throw StateError(
+          'AlarmService not initialized. Call initialize() first.');
     }
 
     // Calculate next fire time
@@ -94,7 +93,8 @@ class AlarmService {
     }
 
     // Validate sound path against subscription
-    final validatedSoundPath = _validateSoundPath(alarm.soundPath, hasFullAccess);
+    final validatedSoundPath =
+        _validateSoundPath(alarm.soundPath, hasFullAccess);
 
     // Create alarm settings
     final alarmSettings = alarm_pkg.AlarmSettings(
@@ -129,7 +129,8 @@ class AlarmService {
   /// Cancel an existing alarm
   Future<bool> cancelAlarm(int alarmId) async {
     if (!_initialized) {
-      throw StateError('AlarmService not initialized. Call initialize() first.');
+      throw StateError(
+          'AlarmService not initialized. Call initialize() first.');
     }
 
     final success = await alarm_pkg.Alarm.stop(alarmId);
@@ -155,7 +156,7 @@ class AlarmService {
   }
 
   /// Stop a ringing alarm (after quiz is solved)
-  Future<bool> stopAlarm(int alarmId) async {
+  Future<bool> stopAlarm(int alarmId, {bool hasFullAccess = false}) async {
     final success = await alarm_pkg.Alarm.stop(alarmId);
 
     if (success) {
@@ -167,7 +168,7 @@ class AlarmService {
         final repeatDays = _parseRepeatDays(alarm.repeatDays);
         if (repeatDays.isNotEmpty) {
           // Reschedule for next occurrence
-          await setAlarm(alarm);
+          await setAlarm(alarm, hasFullAccess: hasFullAccess);
         } else {
           // One-time alarm - disable it
           await db.toggleAlarmEnabled(alarmId, false);
@@ -212,7 +213,11 @@ class AlarmService {
       ),
     );
 
-    return alarm_pkg.Alarm.set(alarmSettings: alarmSettings);
+    final success = await alarm_pkg.Alarm.set(alarmSettings: alarmSettings);
+    if (success) {
+      await db.incrementLatestAlarmSnooze(alarmId);
+    }
+    return success;
   }
 
   /// Handle alarm ring event
@@ -228,7 +233,8 @@ class AlarmService {
   }
 
   /// Get the stream of ringing alarms
-  Stream<alarm_pkg.AlarmSettings> get onAlarmRing => alarm_pkg.Alarm.ringStream.stream;
+  Stream<alarm_pkg.AlarmSettings> get onAlarmRing =>
+      alarm_pkg.Alarm.ringStream.stream;
 
   /// Reschedule all enabled alarms
   /// Useful after app restart or timezone change

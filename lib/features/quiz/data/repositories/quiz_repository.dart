@@ -29,15 +29,12 @@ class QuizRepository {
 
     if (existing != null) {
       final newTimesShown = existing.timesShown + 1;
-      final newTimesCorrect =
-          existing.timesCorrect + (correct ? 1 : 0);
-      final newTimesIncorrect =
-          existing.timesIncorrect + (correct ? 0 : 1);
+      final newTimesCorrect = existing.timesCorrect + (correct ? 1 : 0);
+      final newTimesIncorrect = existing.timesIncorrect + (correct ? 0 : 1);
       final newAvgTime = ((existing.avgResponseTimeMs * existing.timesShown) +
               responseTimeMs) ~/
           newTimesShown;
-      final performance =
-          ((newTimesCorrect / newTimesShown) * 100).round();
+      final performance = ((newTimesCorrect / newTimesShown) * 100).round();
 
       await _db.upsertQuizProgress(
         QuizProgressCompanion(

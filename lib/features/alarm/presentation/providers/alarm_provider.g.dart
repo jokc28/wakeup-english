@@ -182,7 +182,7 @@ class _AlarmByIdProviderElement
   int get id => (origin as AlarmByIdProvider).id;
 }
 
-String _$alarmFormHash() => r'e0ae7edd8e7f5dbc7f6b179ac63efed6d4c1881e';
+String _$alarmFormHash() => r'6e9d69175d56ecb0a0b952eb065f9099e597defb';
 
 abstract class _$AlarmForm extends BuildlessAutoDisposeNotifier<AlarmEntity> {
   late final int? alarmId;
@@ -335,7 +335,7 @@ class _AlarmFormProviderElement
   int? get alarmId => (origin as AlarmFormProvider).alarmId;
 }
 
-String _$alarmOperationsHash() => r'f5625d32df4c0ee8e45c395cdd40813236718ac0';
+String _$alarmOperationsHash() => r'99ee3b5db6f3868a76edb2368d266593d9cef914';
 
 /// Provider for alarm operations (toggle, delete, etc.)
 ///

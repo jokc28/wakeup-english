@@ -14,8 +14,8 @@ class XpAwardResult {
   const XpAwardResult({
     required this.xpEarned,
     required this.leveledUp,
-    this.newLevel,
     required this.newMasteryCount,
+    this.newLevel,
   });
 }
 
@@ -76,7 +76,7 @@ class LevelProgressNotifier extends StateNotifier<LevelProgressState> {
       final today = DateTime(now.year, now.month, now.day);
 
       // Reset daily XP if it's a new day
-      int dailyXp = progress.dailyXp;
+      var dailyXp = progress.dailyXp;
       if (progress.lastXpDate != null) {
         final lastDate = DateTime(
           progress.lastXpDate!.year,
@@ -131,7 +131,7 @@ class LevelProgressNotifier extends StateNotifier<LevelProgressState> {
 
     // Reset daily XP if new day
     final today = DateTime(now.year, now.month, now.day);
-    int newDailyXp = progress.dailyXp + xpEarned;
+    var newDailyXp = progress.dailyXp + xpEarned;
     if (progress.lastXpDate != null) {
       final lastDate = DateTime(
         progress.lastXpDate!.year,

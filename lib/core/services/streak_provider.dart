@@ -67,6 +67,15 @@ class StreakNotifier extends StateNotifier<StreakState> {
       debugPrint('[StreakProvider] Failed to record completion: $e');
     }
   }
+
+  Future<void> clearStreak() async {
+    try {
+      await StreakService.clearStreak();
+      state = const StreakState();
+    } catch (e) {
+      debugPrint('[StreakProvider] Failed to clear streak: $e');
+    }
+  }
 }
 
 final streakProvider =

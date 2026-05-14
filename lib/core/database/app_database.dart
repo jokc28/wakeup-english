@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 import 'tables/alarms_table.dart';
 import 'tables/quiz_progress_table.dart';
-import 'tables/vocabulary_items_table.dart';
 import 'tables/user_level_progress_table.dart';
+import 'tables/vocabulary_items_table.dart';
 import 'tables/xp_transactions_table.dart';
 import 'utils/db_seeder.dart';
 
@@ -38,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -56,6 +56,12 @@ class AppDatabase extends _$AppDatabase {
           await _seedVocabularyItems();
           await _initializeUserLevelProgress();
           await _migrateQuizProgressData();
+        }
+        if (from < 3) {
+          await customStatement(
+            "DELETE FROM vocabulary_items WHERE question_id NOT LIKE 'reel_%'",
+          );
+          await _seedVocabularyItems();
         }
       },
       beforeOpen: (details) async {
@@ -182,8 +188,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Get quiz progress for a question
   Future<QuizProgressData?> getQuizProgress(String questionId) {
-    return (select(quizProgress)
-          ..where((q) => q.questionId.equals(questionId)))
+    return (select(quizProgress)..where((q) => q.questionId.equals(questionId)))
         .getSingleOrNull();
   }
 
@@ -201,7 +206,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// Get question IDs shown within the cooldown period
-  Future<Set<String>> getRecentlyShownQuestionIds({int cooldownDays = 3}) async {
+  Future<Set<String>> getRecentlyShownQuestionIds(
+      {int cooldownDays = 3}) async {
     final cutoff = DateTime.now().subtract(Duration(days: cooldownDays));
     final rows = await (select(quizProgress)
           ..where((q) => q.lastShownAt.isBiggerOrEqualValue(cutoff)))
@@ -218,6 +224,47 @@ class AppDatabase extends _$AppDatabase {
         alarmId: Value(alarmId),
         triggeredAt: Value(DateTime.now()),
       ),
+    );
+  }
+
+  /// Increment snooze count on the most recent open alarm history row.
+  Future<int> incrementLatestAlarmSnooze(int alarmId) async {
+    final row = await (select(alarmHistory)
+          ..where((h) => h.alarmId.equals(alarmId) & h.dismissedAt.isNull())
+          ..orderBy([(h) => OrderingTerm.desc(h.triggeredAt)])
+          ..limit(1))
+        .getSingleOrNull();
+
+    if (row == null) return 0;
+
+    return (update(alarmHistory)..where((h) => h.id.equals(row.id))).write(
+      AlarmHistoryCompanion(
+        snoozeCount: Value(row.snoozeCount + 1),
+      ),
+    );
+  }
+
+  /// Record dismissal on the most recent open alarm history row.
+  Future<int> recordLatestAlarmDismiss({
+    required int alarmId,
+    required int questionsAttempted,
+    required int questionsCorrect,
+    required String dismissMethod,
+  }) async {
+    final row = await (select(alarmHistory)
+          ..where((h) => h.alarmId.equals(alarmId) & h.dismissedAt.isNull())
+          ..orderBy([(h) => OrderingTerm.desc(h.triggeredAt)])
+          ..limit(1))
+        .getSingleOrNull();
+
+    if (row == null) return 0;
+
+    return recordAlarmDismiss(
+      historyId: row.id,
+      questionsAttempted: questionsAttempted,
+      questionsCorrect: questionsCorrect,
+      snoozeCount: row.snoozeCount,
+      dismissMethod: dismissMethod,
     );
   }
 
@@ -241,7 +288,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// Get alarm history for a specific alarm
-  Future<List<AlarmHistoryData>> getAlarmHistory(int alarmId, {int limit = 30}) {
+  Future<List<AlarmHistoryData>> getAlarmHistory(int alarmId,
+      {int limit = 30}) {
     return (select(alarmHistory)
           ..where((h) => h.alarmId.equals(alarmId))
           ..orderBy([(h) => OrderingTerm.desc(h.triggeredAt)])
@@ -260,9 +308,9 @@ class AppDatabase extends _$AppDatabase {
 
   /// Get vocabulary items for a quiz session with filtering
   Future<List<VocabularyItem>> getVocabularyItemsForQuiz({
-    String? difficulty,
     required int userLevel,
     required bool isFreeUser,
+    String? difficulty,
     int limit = 10,
     Set<String> excludeIds = const {},
   }) async {
@@ -281,7 +329,8 @@ class AppDatabase extends _$AppDatabase {
     final rows = await query.get();
 
     // Filter out excluded IDs in Dart (for cooldown)
-    var filtered = rows.where((r) => !excludeIds.contains(r.questionId)).toList();
+    var filtered =
+        rows.where((r) => !excludeIds.contains(r.questionId)).toList();
     filtered.shuffle();
 
     if (filtered.length > limit) {
@@ -359,16 +408,14 @@ class AppDatabase extends _$AppDatabase {
 
   /// Get the singleton user level progress row
   Future<UserLevelProgressData> getUserLevelProgress() async {
-    final row = await (select(userLevelProgress)
-          ..where((u) => u.id.equals(1)))
+    final row = await (select(userLevelProgress)..where((u) => u.id.equals(1)))
         .getSingleOrNull();
 
     if (row != null) return row;
 
     // Create if missing
     await _initializeUserLevelProgress();
-    return (select(userLevelProgress)
-          ..where((u) => u.id.equals(1)))
+    return (select(userLevelProgress)..where((u) => u.id.equals(1)))
         .getSingle();
   }
 
@@ -383,7 +430,8 @@ class AppDatabase extends _$AppDatabase {
     int? totalItemsMastered,
   }) async {
     final companion = UserLevelProgressCompanion(
-      currentLevel: currentLevel != null ? Value(currentLevel) : const Value.absent(),
+      currentLevel:
+          currentLevel != null ? Value(currentLevel) : const Value.absent(),
       totalXp: totalXp != null ? Value(totalXp) : const Value.absent(),
       dailyXp: dailyXp != null ? Value(dailyXp) : const Value.absent(),
       lastXpDate: lastXpDate != null ? Value(lastXpDate) : const Value.absent(),
@@ -409,8 +457,8 @@ class AppDatabase extends _$AppDatabase {
   Future<int> insertXpTransaction({
     required int amount,
     required String source,
-    String? referenceId,
     required int levelAtTime,
+    String? referenceId,
   }) {
     return into(xpTransactions).insert(
       XpTransactionsCompanion.insert(
@@ -420,6 +468,38 @@ class AppDatabase extends _$AppDatabase {
         levelAtTime: levelAtTime,
       ),
     );
+  }
+
+  /// Reset learning-only progress while preserving alarms and content rows.
+  Future<void> clearLearningProgress() async {
+    await transaction(() async {
+      await delete(quizProgress).go();
+      await delete(xpTransactions).go();
+
+      await update(vocabularyItems).write(
+        const VocabularyItemsCompanion(
+          timesPresented: Value(0),
+          timesCorrectFirstAttempt: Value(0),
+          timesIncorrect: Value(0),
+          isMastered: Value(false),
+          lastPresentedAt: Value<DateTime?>(null),
+          masteredAt: Value<DateTime?>(null),
+        ),
+      );
+
+      await (update(userLevelProgress)..where((u) => u.id.equals(1))).write(
+        UserLevelProgressCompanion(
+          currentLevel: const Value(1),
+          totalXp: const Value(0),
+          dailyXp: const Value(0),
+          lastXpDate: const Value<DateTime?>(null),
+          totalQuizzesCompleted: const Value(0),
+          totalCorrectAnswers: const Value(0),
+          totalItemsMastered: const Value(0),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+    });
   }
 }
 
