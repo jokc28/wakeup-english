@@ -70,6 +70,9 @@ void main() {
     expect(questions, hasLength(3));
     for (final question in questions) {
       expect(question.type, 'multiple_choice');
+      expect(question.source, 'instagram_reel');
+      expect(question.sourceLabel, '@ok.english.kr Reel');
+      expect(question.sourceUrl, startsWith('https://www.instagram.com/reel/'));
       expect(question.question, isNot(contains(question.correctAnswer)));
       expect(question.questionKo, isNot(contains(question.correctAnswer)));
 

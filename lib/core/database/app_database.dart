@@ -38,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -61,6 +61,12 @@ class AppDatabase extends _$AppDatabase {
           await customStatement(
             "DELETE FROM vocabulary_items WHERE question_id NOT LIKE 'reel_%'",
           );
+          await _seedVocabularyItems();
+        }
+        if (from < 4) {
+          await m.addColumn(vocabularyItems, vocabularyItems.source);
+          await m.addColumn(vocabularyItems, vocabularyItems.sourceUrl);
+          await m.addColumn(vocabularyItems, vocabularyItems.sourceLabel);
           await _seedVocabularyItems();
         }
       },

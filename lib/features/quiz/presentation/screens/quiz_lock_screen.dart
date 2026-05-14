@@ -365,6 +365,10 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
               ),
             ),
           ],
+          if (question.sourceLabel != null || question.sourceUrl != null) ...[
+            const SizedBox(height: 14),
+            _buildSourcePill(question),
+          ],
           const SizedBox(height: 24),
           // Answer input
           _buildAnswerInput(question, session),
@@ -398,6 +402,63 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
         .animate()
         .fadeIn(duration: 300.ms)
         .slideY(begin: 0.05, end: 0);
+  }
+
+  Widget _buildSourcePill(QuizQuestion question) {
+    final l10n = AppLocalizations.of(context)!;
+    final label = question.sourceLabel ?? question.source ?? 'Verified source';
+    final hasUrl = question.sourceUrl?.isNotEmpty ?? false;
+
+    return InkWell(
+      onTap: hasUrl
+          ? () async {
+              await Clipboard.setData(
+                ClipboardData(text: question.sourceUrl!),
+              );
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.sourceLinkCopied)),
+              );
+            }
+          : null,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        decoration: BoxDecoration(
+          color: AppColors.info.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.info.withValues(alpha: 0.18),
+          ),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.verified_rounded,
+              size: 18,
+              color: AppColors.info,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                hasUrl ? '$label · ${l10n.verifiedReelSource}' : label,
+                style: const TextStyle(
+                  color: AppColors.textSecondaryLight,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            if (hasUrl)
+              const Icon(
+                Icons.link_rounded,
+                size: 16,
+                color: AppColors.info,
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildAnswerInput(QuizQuestion question, QuizSessionState session) {

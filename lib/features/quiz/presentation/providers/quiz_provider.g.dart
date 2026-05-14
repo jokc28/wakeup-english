@@ -167,7 +167,7 @@ class _IsQuizSolvedProviderElement extends AutoDisposeProviderElement<bool>
   int get alarmId => (origin as IsQuizSolvedProvider).alarmId;
 }
 
-String _$quizSessionHash() => r'51cb7db65e2b287d460cbae2c7f7a9353631e055';
+String _$quizSessionHash() => r'f2d352fa3cf3e9fbfcfc036fe5b01070bd5f367c';
 
 abstract class _$QuizSession
     extends BuildlessAutoDisposeNotifier<QuizSessionState> {

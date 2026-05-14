@@ -23,6 +23,7 @@ class PaywallScreen extends ConsumerStatefulWidget {
 
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   Offerings? _offerings;
+  Package? _selectedPackage;
   bool _isLoading = true;
   bool _isPurchasing = false;
 
@@ -36,8 +37,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     final service = ref.read(subscriptionServiceProvider);
     final offerings = await service.getOfferings();
     if (mounted) {
+      final currentOffering = offerings?.current;
       setState(() {
         _offerings = offerings;
+        _selectedPackage = currentOffering?.annual ?? currentOffering?.monthly;
         _isLoading = false;
       });
     }
@@ -297,10 +300,28 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     final l10n = AppLocalizations.of(context)!;
     final offering = _offerings?.current;
     final monthlyPackage = offering?.monthly;
+    final annualPackage = offering?.annual;
 
-    final priceText = monthlyPackage != null
-        ? l10n.premiumMonthlyPrice(monthlyPackage.storeProduct.priceString)
-        : '--';
+    if (monthlyPackage == null && annualPackage == null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: AppColors.primarySurface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.18),
+          ),
+        ),
+        child: Text(
+          l10n.premiumNoOfferings,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondaryLight,
+              ),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -317,22 +338,26 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       ),
       child: Column(
         children: [
-          Text(
-            l10n.premiumMonthlyPlan,
-            style: GoogleFonts.jua(
-              fontSize: 18,
-              color: Colors.white.withValues(alpha: 0.9),
+          if (annualPackage != null)
+            _buildPlanOption(
+              title: l10n.premiumAnnualPlan,
+              price: l10n.premiumAnnualPrice(
+                annualPackage.storeProduct.priceString,
+              ),
+              package: annualPackage,
+              badge: l10n.premiumAnnualBadge,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            priceText,
-            style: GoogleFonts.jua(
-              fontSize: 28,
-              color: Colors.white,
+          if (annualPackage != null && monthlyPackage != null)
+            const SizedBox(height: 10),
+          if (monthlyPackage != null)
+            _buildPlanOption(
+              title: l10n.premiumMonthlyPlan,
+              price: l10n.premiumMonthlyPrice(
+                monthlyPackage.storeProduct.priceString,
+              ),
+              package: monthlyPackage,
             ),
-          ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
@@ -353,16 +378,104 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
+  Widget _buildPlanOption({
+    required String title,
+    required String price,
+    required Package package,
+    String? badge,
+  }) {
+    final selected = _selectedPackage?.identifier == package.identifier;
+    return InkWell(
+      onTap: () => setState(() => _selectedPackage = package),
+      borderRadius: BorderRadius.circular(14),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: selected ? Colors.white : Colors.white.withValues(alpha: 0.18),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected
+                ? AppColors.action
+                : Colors.white.withValues(alpha: 0.35),
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: selected ? AppColors.action : Colors.white,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.jua(
+                          fontSize: 18,
+                          color: selected
+                              ? AppColors.textPrimaryLight
+                              : Colors.white,
+                        ),
+                      ),
+                      if (badge != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.action,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            badge,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    price,
+                    style: TextStyle(
+                      color: selected
+                          ? AppColors.textSecondaryLight
+                          : Colors.white.withValues(alpha: 0.86),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _handlePurchase() async {
-    final offering = _offerings?.current;
-    final monthlyPackage = offering?.monthly;
-    if (monthlyPackage == null) return;
+    final package = _selectedPackage;
+    if (package == null) return;
 
     setState(() => _isPurchasing = true);
 
     try {
       final service = ref.read(subscriptionServiceProvider);
-      final success = await service.purchasePackage(monthlyPackage);
+      final success = await service.purchasePackage(package);
 
       if (success) {
         unawaited(ref.read(subscriptionProvider.notifier).refresh());

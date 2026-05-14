@@ -240,6 +240,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get explanationLabel => '해설';
 
   @override
+  String get verifiedReelSource => 'Reel 검증 표현';
+
+  @override
+  String get sourceLinkCopied => '출처 링크를 복사했습니다';
+
+  @override
   String get quizCompleteButton => '퀴즈 완료';
 
   @override
@@ -374,7 +380,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get upgradeToPremium => '프리미엄으로 업그레이드';
 
   @override
-  String get unlockAllContent => '모든 소리 및 문제 잠금 해제';
+  String get unlockAllContent => '검증 표현 전체 라이브러리와 모든 소리 잠금 해제';
 
   @override
   String get restorePurchasesLabel => '구매 복원';
@@ -460,13 +466,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get unlockPremium => '프리미엄 잠금 해제';
 
   @override
-  String get premiumSubtitle => '옥모닝 프로로 더 완벽한 아침을 만드세요';
+  String get premiumSubtitle => '검증된 실전 표현으로 아침 루틴을 끝까지 이어가세요';
 
   @override
-  String get feature1Title => '120개 퀴즈 문제';
+  String get feature1Title => '검증된 실전 표현 전체 라이브러리';
 
   @override
-  String get feature1Desc => '모든 카테고리와 난이도의 전체 라이브러리';
+  String get feature1Desc => 'Reel 기반 표현과 한국어 상황 설명을 모두 학습';
 
   @override
   String get feature2Title => '10가지 알람 소리';
@@ -475,16 +481,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get feature2Desc => '파도 소리, 피아노, 재즈 등 프리미엄 사운드';
 
   @override
-  String get feature3Title => '고급 학습 기능';
+  String get feature3Title => '성장 기록과 맞춤 복습';
 
   @override
-  String get feature3Desc => '취약 부분에 집중하는 맞춤형 퀴즈';
+  String get feature3Desc => 'XP, 레벨, 숙달 표현을 저장하고 취약 표현을 반복';
 
   @override
-  String get feature4Title => '새로운 콘텐츠 업데이트';
+  String get feature4Title => '새로운 실전 표현 업데이트';
 
   @override
-  String get feature4Desc => '정기적인 새 문제 및 소리 추가';
+  String get feature4Desc => '검증된 새 표현과 아침 미션을 정기적으로 추가';
 
   @override
   String get subscribeNowButton => '지금 구독하기';
@@ -503,12 +509,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get privacyPolicy => '개인정보 처리방침';
 
   @override
-  String get premiumMonthlyPlan => '프리미엄 월간';
+  String get premiumMonthlyPlan => '월간';
 
   @override
   String premiumMonthlyPrice(String price) {
     return '$price/월';
   }
+
+  @override
+  String get premiumAnnualPlan => '연간';
+
+  @override
+  String premiumAnnualPrice(String price) {
+    return '$price/년';
+  }
+
+  @override
+  String get premiumAnnualBadge => '추천';
+
+  @override
+  String get premiumNoOfferings =>
+      '구독 상품 설정 전입니다. RevenueCat에 월간/연간 상품을 연결하면 가격이 표시됩니다.';
 
   @override
   String get trialIncluded => '7일 무료 체험 포함';
@@ -559,7 +580,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get freePlanStatus => '무료 플랜';
 
   @override
-  String get freePlanLimits => '30문제, 3개 소리';
+  String get freePlanLimits => '제한된 표현, 3개 소리';
 
   @override
   String get upgradeButton => '업그레이드';
@@ -593,6 +614,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String masteredCount(int count) {
     return '$count개 완벽 습득';
   }
+
+  @override
+  String get dailyGoalTitle => '오늘 목표';
+
+  @override
+  String dailyGoalProgress(int current, int target) {
+    return '$current/$target XP';
+  }
+
+  @override
+  String get dailyGoalDone => '오늘 목표 완료';
+
+  @override
+  String get dailyGoalSubtitle => '아침 퀴즈를 풀고 연속 기상을 이어가세요';
 
   @override
   String get devForceSeedDb => 'DEV: DB 강제 시드';

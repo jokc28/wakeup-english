@@ -14,6 +14,9 @@ abstract class IapConstants {
   // Trial duration in days
   static const int trialDurationDays = 7;
 
+  // Product tuning
+  static const int dailyGoalXp = 150;
+
   // SharedPreferences keys
   static const String prefTrialStartDate = 'trial_start_date';
 

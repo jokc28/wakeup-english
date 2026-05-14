@@ -1823,6 +1823,23 @@ class $VocabularyItemsTable extends VocabularyItems
   late final GeneratedColumn<String> explanationKo = GeneratedColumn<String>(
       'explanation_ko', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+      'source', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sourceUrlMeta =
+      const VerificationMeta('sourceUrl');
+  @override
+  late final GeneratedColumn<String> sourceUrl = GeneratedColumn<String>(
+      'source_url', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sourceLabelMeta =
+      const VerificationMeta('sourceLabel');
+  @override
+  late final GeneratedColumn<String> sourceLabel = GeneratedColumn<String>(
+      'source_label', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _timesPresentedMeta =
       const VerificationMeta('timesPresented');
   @override
@@ -1908,6 +1925,9 @@ class $VocabularyItemsTable extends VocabularyItems
         hint,
         explanation,
         explanationKo,
+        source,
+        sourceUrl,
+        sourceLabel,
         timesPresented,
         timesCorrectFirstAttempt,
         timesIncorrect,
@@ -2003,6 +2023,20 @@ class $VocabularyItemsTable extends VocabularyItems
           explanationKo.isAcceptableOrUnknown(
               data['explanation_ko']!, _explanationKoMeta));
     }
+    if (data.containsKey('source')) {
+      context.handle(_sourceMeta,
+          source.isAcceptableOrUnknown(data['source']!, _sourceMeta));
+    }
+    if (data.containsKey('source_url')) {
+      context.handle(_sourceUrlMeta,
+          sourceUrl.isAcceptableOrUnknown(data['source_url']!, _sourceUrlMeta));
+    }
+    if (data.containsKey('source_label')) {
+      context.handle(
+          _sourceLabelMeta,
+          sourceLabel.isAcceptableOrUnknown(
+              data['source_label']!, _sourceLabelMeta));
+    }
     if (data.containsKey('times_presented')) {
       context.handle(
           _timesPresentedMeta,
@@ -2087,6 +2121,12 @@ class $VocabularyItemsTable extends VocabularyItems
           .read(DriftSqlType.string, data['${effectivePrefix}explanation']),
       explanationKo: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}explanation_ko']),
+      source: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source']),
+      sourceUrl: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source_url']),
+      sourceLabel: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source_label']),
       timesPresented: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}times_presented'])!,
       timesCorrectFirstAttempt: attachedDatabase.typeMapping.read(
@@ -2151,6 +2191,15 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
   /// Korean explanation
   final String? explanationKo;
 
+  /// Content source key, e.g. instagram_reel or tatoeba_sentence
+  final String? source;
+
+  /// Canonical source URL for attribution/provenance
+  final String? sourceUrl;
+
+  /// Human-readable source label
+  final String? sourceLabel;
+
   /// Total presentations
   final int timesPresented;
 
@@ -2190,6 +2239,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
       this.hint,
       this.explanation,
       this.explanationKo,
+      this.source,
+      this.sourceUrl,
+      this.sourceLabel,
       required this.timesPresented,
       required this.timesCorrectFirstAttempt,
       required this.timesIncorrect,
@@ -2219,6 +2271,15 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
     }
     if (!nullToAbsent || explanationKo != null) {
       map['explanation_ko'] = Variable<String>(explanationKo);
+    }
+    if (!nullToAbsent || source != null) {
+      map['source'] = Variable<String>(source);
+    }
+    if (!nullToAbsent || sourceUrl != null) {
+      map['source_url'] = Variable<String>(sourceUrl);
+    }
+    if (!nullToAbsent || sourceLabel != null) {
+      map['source_label'] = Variable<String>(sourceLabel);
     }
     map['times_presented'] = Variable<int>(timesPresented);
     map['times_correct_first_attempt'] =
@@ -2255,6 +2316,14 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
       explanationKo: explanationKo == null && nullToAbsent
           ? const Value.absent()
           : Value(explanationKo),
+      source:
+          source == null && nullToAbsent ? const Value.absent() : Value(source),
+      sourceUrl: sourceUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceUrl),
+      sourceLabel: sourceLabel == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceLabel),
       timesPresented: Value(timesPresented),
       timesCorrectFirstAttempt: Value(timesCorrectFirstAttempt),
       timesIncorrect: Value(timesIncorrect),
@@ -2287,6 +2356,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
       hint: serializer.fromJson<String?>(json['hint']),
       explanation: serializer.fromJson<String?>(json['explanation']),
       explanationKo: serializer.fromJson<String?>(json['explanationKo']),
+      source: serializer.fromJson<String?>(json['source']),
+      sourceUrl: serializer.fromJson<String?>(json['sourceUrl']),
+      sourceLabel: serializer.fromJson<String?>(json['sourceLabel']),
       timesPresented: serializer.fromJson<int>(json['timesPresented']),
       timesCorrectFirstAttempt:
           serializer.fromJson<int>(json['timesCorrectFirstAttempt']),
@@ -2315,6 +2387,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
       'hint': serializer.toJson<String?>(hint),
       'explanation': serializer.toJson<String?>(explanation),
       'explanationKo': serializer.toJson<String?>(explanationKo),
+      'source': serializer.toJson<String?>(source),
+      'sourceUrl': serializer.toJson<String?>(sourceUrl),
+      'sourceLabel': serializer.toJson<String?>(sourceLabel),
       'timesPresented': serializer.toJson<int>(timesPresented),
       'timesCorrectFirstAttempt':
           serializer.toJson<int>(timesCorrectFirstAttempt),
@@ -2341,6 +2416,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
           Value<String?> hint = const Value.absent(),
           Value<String?> explanation = const Value.absent(),
           Value<String?> explanationKo = const Value.absent(),
+          Value<String?> source = const Value.absent(),
+          Value<String?> sourceUrl = const Value.absent(),
+          Value<String?> sourceLabel = const Value.absent(),
           int? timesPresented,
           int? timesCorrectFirstAttempt,
           int? timesIncorrect,
@@ -2364,6 +2442,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
         explanation: explanation.present ? explanation.value : this.explanation,
         explanationKo:
             explanationKo.present ? explanationKo.value : this.explanationKo,
+        source: source.present ? source.value : this.source,
+        sourceUrl: sourceUrl.present ? sourceUrl.value : this.sourceUrl,
+        sourceLabel: sourceLabel.present ? sourceLabel.value : this.sourceLabel,
         timesPresented: timesPresented ?? this.timesPresented,
         timesCorrectFirstAttempt:
             timesCorrectFirstAttempt ?? this.timesCorrectFirstAttempt,
@@ -2399,6 +2480,10 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
       explanationKo: data.explanationKo.present
           ? data.explanationKo.value
           : this.explanationKo,
+      source: data.source.present ? data.source.value : this.source,
+      sourceUrl: data.sourceUrl.present ? data.sourceUrl.value : this.sourceUrl,
+      sourceLabel:
+          data.sourceLabel.present ? data.sourceLabel.value : this.sourceLabel,
       timesPresented: data.timesPresented.present
           ? data.timesPresented.value
           : this.timesPresented,
@@ -2437,6 +2522,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
           ..write('hint: $hint, ')
           ..write('explanation: $explanation, ')
           ..write('explanationKo: $explanationKo, ')
+          ..write('source: $source, ')
+          ..write('sourceUrl: $sourceUrl, ')
+          ..write('sourceLabel: $sourceLabel, ')
           ..write('timesPresented: $timesPresented, ')
           ..write('timesCorrectFirstAttempt: $timesCorrectFirstAttempt, ')
           ..write('timesIncorrect: $timesIncorrect, ')
@@ -2464,6 +2552,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
         hint,
         explanation,
         explanationKo,
+        source,
+        sourceUrl,
+        sourceLabel,
         timesPresented,
         timesCorrectFirstAttempt,
         timesIncorrect,
@@ -2490,6 +2581,9 @@ class VocabularyItem extends DataClass implements Insertable<VocabularyItem> {
           other.hint == this.hint &&
           other.explanation == this.explanation &&
           other.explanationKo == this.explanationKo &&
+          other.source == this.source &&
+          other.sourceUrl == this.sourceUrl &&
+          other.sourceLabel == this.sourceLabel &&
           other.timesPresented == this.timesPresented &&
           other.timesCorrectFirstAttempt == this.timesCorrectFirstAttempt &&
           other.timesIncorrect == this.timesIncorrect &&
@@ -2514,6 +2608,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
   final Value<String?> hint;
   final Value<String?> explanation;
   final Value<String?> explanationKo;
+  final Value<String?> source;
+  final Value<String?> sourceUrl;
+  final Value<String?> sourceLabel;
   final Value<int> timesPresented;
   final Value<int> timesCorrectFirstAttempt;
   final Value<int> timesIncorrect;
@@ -2536,6 +2633,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
     this.hint = const Value.absent(),
     this.explanation = const Value.absent(),
     this.explanationKo = const Value.absent(),
+    this.source = const Value.absent(),
+    this.sourceUrl = const Value.absent(),
+    this.sourceLabel = const Value.absent(),
     this.timesPresented = const Value.absent(),
     this.timesCorrectFirstAttempt = const Value.absent(),
     this.timesIncorrect = const Value.absent(),
@@ -2559,6 +2659,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
     this.hint = const Value.absent(),
     this.explanation = const Value.absent(),
     this.explanationKo = const Value.absent(),
+    this.source = const Value.absent(),
+    this.sourceUrl = const Value.absent(),
+    this.sourceLabel = const Value.absent(),
     this.timesPresented = const Value.absent(),
     this.timesCorrectFirstAttempt = const Value.absent(),
     this.timesIncorrect = const Value.absent(),
@@ -2589,6 +2692,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
     Expression<String>? hint,
     Expression<String>? explanation,
     Expression<String>? explanationKo,
+    Expression<String>? source,
+    Expression<String>? sourceUrl,
+    Expression<String>? sourceLabel,
     Expression<int>? timesPresented,
     Expression<int>? timesCorrectFirstAttempt,
     Expression<int>? timesIncorrect,
@@ -2612,6 +2718,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
       if (hint != null) 'hint': hint,
       if (explanation != null) 'explanation': explanation,
       if (explanationKo != null) 'explanation_ko': explanationKo,
+      if (source != null) 'source': source,
+      if (sourceUrl != null) 'source_url': sourceUrl,
+      if (sourceLabel != null) 'source_label': sourceLabel,
       if (timesPresented != null) 'times_presented': timesPresented,
       if (timesCorrectFirstAttempt != null)
         'times_correct_first_attempt': timesCorrectFirstAttempt,
@@ -2638,6 +2747,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
       Value<String?>? hint,
       Value<String?>? explanation,
       Value<String?>? explanationKo,
+      Value<String?>? source,
+      Value<String?>? sourceUrl,
+      Value<String?>? sourceLabel,
       Value<int>? timesPresented,
       Value<int>? timesCorrectFirstAttempt,
       Value<int>? timesIncorrect,
@@ -2660,6 +2772,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
       hint: hint ?? this.hint,
       explanation: explanation ?? this.explanation,
       explanationKo: explanationKo ?? this.explanationKo,
+      source: source ?? this.source,
+      sourceUrl: sourceUrl ?? this.sourceUrl,
+      sourceLabel: sourceLabel ?? this.sourceLabel,
       timesPresented: timesPresented ?? this.timesPresented,
       timesCorrectFirstAttempt:
           timesCorrectFirstAttempt ?? this.timesCorrectFirstAttempt,
@@ -2712,6 +2827,15 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
     if (explanationKo.present) {
       map['explanation_ko'] = Variable<String>(explanationKo.value);
     }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (sourceUrl.present) {
+      map['source_url'] = Variable<String>(sourceUrl.value);
+    }
+    if (sourceLabel.present) {
+      map['source_label'] = Variable<String>(sourceLabel.value);
+    }
     if (timesPresented.present) {
       map['times_presented'] = Variable<int>(timesPresented.value);
     }
@@ -2758,6 +2882,9 @@ class VocabularyItemsCompanion extends UpdateCompanion<VocabularyItem> {
           ..write('hint: $hint, ')
           ..write('explanation: $explanation, ')
           ..write('explanationKo: $explanationKo, ')
+          ..write('source: $source, ')
+          ..write('sourceUrl: $sourceUrl, ')
+          ..write('sourceLabel: $sourceLabel, ')
           ..write('timesPresented: $timesPresented, ')
           ..write('timesCorrectFirstAttempt: $timesCorrectFirstAttempt, ')
           ..write('timesIncorrect: $timesIncorrect, ')
@@ -4450,6 +4577,9 @@ typedef $$VocabularyItemsTableCreateCompanionBuilder = VocabularyItemsCompanion
   Value<String?> hint,
   Value<String?> explanation,
   Value<String?> explanationKo,
+  Value<String?> source,
+  Value<String?> sourceUrl,
+  Value<String?> sourceLabel,
   Value<int> timesPresented,
   Value<int> timesCorrectFirstAttempt,
   Value<int> timesIncorrect,
@@ -4474,6 +4604,9 @@ typedef $$VocabularyItemsTableUpdateCompanionBuilder = VocabularyItemsCompanion
   Value<String?> hint,
   Value<String?> explanation,
   Value<String?> explanationKo,
+  Value<String?> source,
+  Value<String?> sourceUrl,
+  Value<String?> sourceLabel,
   Value<int> timesPresented,
   Value<int> timesCorrectFirstAttempt,
   Value<int> timesIncorrect,
@@ -4529,6 +4662,15 @@ class $$VocabularyItemsTableFilterComposer
 
   ColumnFilters<String> get explanationKo => $composableBuilder(
       column: $table.explanationKo, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get source => $composableBuilder(
+      column: $table.source, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sourceUrl => $composableBuilder(
+      column: $table.sourceUrl, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sourceLabel => $composableBuilder(
+      column: $table.sourceLabel, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get timesPresented => $composableBuilder(
       column: $table.timesPresented,
@@ -4609,6 +4751,15 @@ class $$VocabularyItemsTableOrderingComposer
       column: $table.explanationKo,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get source => $composableBuilder(
+      column: $table.source, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sourceUrl => $composableBuilder(
+      column: $table.sourceUrl, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sourceLabel => $composableBuilder(
+      column: $table.sourceLabel, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get timesPresented => $composableBuilder(
       column: $table.timesPresented,
       builder: (column) => ColumnOrderings(column));
@@ -4686,6 +4837,15 @@ class $$VocabularyItemsTableAnnotationComposer
   GeneratedColumn<String> get explanationKo => $composableBuilder(
       column: $table.explanationKo, builder: (column) => column);
 
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceUrl =>
+      $composableBuilder(column: $table.sourceUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceLabel => $composableBuilder(
+      column: $table.sourceLabel, builder: (column) => column);
+
   GeneratedColumn<int> get timesPresented => $composableBuilder(
       column: $table.timesPresented, builder: (column) => column);
 
@@ -4753,6 +4913,9 @@ class $$VocabularyItemsTableTableManager extends RootTableManager<
             Value<String?> hint = const Value.absent(),
             Value<String?> explanation = const Value.absent(),
             Value<String?> explanationKo = const Value.absent(),
+            Value<String?> source = const Value.absent(),
+            Value<String?> sourceUrl = const Value.absent(),
+            Value<String?> sourceLabel = const Value.absent(),
             Value<int> timesPresented = const Value.absent(),
             Value<int> timesCorrectFirstAttempt = const Value.absent(),
             Value<int> timesIncorrect = const Value.absent(),
@@ -4776,6 +4939,9 @@ class $$VocabularyItemsTableTableManager extends RootTableManager<
             hint: hint,
             explanation: explanation,
             explanationKo: explanationKo,
+            source: source,
+            sourceUrl: sourceUrl,
+            sourceLabel: sourceLabel,
             timesPresented: timesPresented,
             timesCorrectFirstAttempt: timesCorrectFirstAttempt,
             timesIncorrect: timesIncorrect,
@@ -4799,6 +4965,9 @@ class $$VocabularyItemsTableTableManager extends RootTableManager<
             Value<String?> hint = const Value.absent(),
             Value<String?> explanation = const Value.absent(),
             Value<String?> explanationKo = const Value.absent(),
+            Value<String?> source = const Value.absent(),
+            Value<String?> sourceUrl = const Value.absent(),
+            Value<String?> sourceLabel = const Value.absent(),
             Value<int> timesPresented = const Value.absent(),
             Value<int> timesCorrectFirstAttempt = const Value.absent(),
             Value<int> timesIncorrect = const Value.absent(),
@@ -4822,6 +4991,9 @@ class $$VocabularyItemsTableTableManager extends RootTableManager<
             hint: hint,
             explanation: explanation,
             explanationKo: explanationKo,
+            source: source,
+            sourceUrl: sourceUrl,
+            sourceLabel: sourceLabel,
             timesPresented: timesPresented,
             timesCorrectFirstAttempt: timesCorrectFirstAttempt,
             timesIncorrect: timesIncorrect,

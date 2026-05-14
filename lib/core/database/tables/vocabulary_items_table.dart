@@ -37,6 +37,15 @@ class VocabularyItems extends Table {
   /// Korean explanation
   TextColumn get explanationKo => text().nullable()();
 
+  /// Content source key, e.g. instagram_reel or tatoeba_sentence
+  TextColumn get source => text().nullable()();
+
+  /// Canonical source URL for attribution/provenance
+  TextColumn get sourceUrl => text().nullable()();
+
+  /// Human-readable source label
+  TextColumn get sourceLabel => text().nullable()();
+
   /// Total presentations
   IntColumn get timesPresented => integer().withDefault(const Constant(0))();
 

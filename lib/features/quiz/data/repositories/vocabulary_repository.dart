@@ -77,8 +77,12 @@ class VocabularyRepository {
       }
     }
 
-    // Shuffle and take what we need
-    items.shuffle(_random);
+    // Prefer weak review items, then keep enough randomness for variety.
+    items.sort(_compareForReviewPriority);
+    final reviewSliceLength = min(items.length, count * 2);
+    final reviewSlice = items.sublist(0, reviewSliceLength)..shuffle(_random);
+    final rest = items.sublist(reviewSliceLength)..shuffle(_random);
+    items = [...reviewSlice, ...rest];
     if (items.length > count) {
       items = items.sublist(0, count);
     }
@@ -129,6 +133,46 @@ class VocabularyRepository {
       hint: item.hint,
       explanation: item.explanation,
       explanationKo: item.explanationKo,
+      source: item.source,
+      sourceUrl: item.sourceUrl,
+      sourceLabel: item.sourceLabel,
     );
+  }
+
+  int _compareForReviewPriority(VocabularyItem a, VocabularyItem b) {
+    final aScore = _reviewPriorityScore(a);
+    final bScore = _reviewPriorityScore(b);
+    final scoreCompare = bScore.compareTo(aScore);
+    if (scoreCompare != 0) return scoreCompare;
+
+    final aLast = a.lastPresentedAt;
+    final bLast = b.lastPresentedAt;
+    if (aLast == null && bLast != null) return -1;
+    if (aLast != null && bLast == null) return 1;
+    if (aLast != null && bLast != null) {
+      return aLast.compareTo(bLast);
+    }
+    return a.questionId.compareTo(b.questionId);
+  }
+
+  int _reviewPriorityScore(VocabularyItem item) {
+    var score = 0;
+    if (!item.isMastered) score += 20;
+    score += item.timesIncorrect * 8;
+
+    if (item.timesPresented > 0) {
+      final correctRate = item.timesCorrectFirstAttempt / item.timesPresented;
+      if (correctRate < 0.6) score += 12;
+      if (correctRate < 0.4) score += 12;
+    }
+
+    final lastPresentedAt = item.lastPresentedAt;
+    if (lastPresentedAt == null) {
+      score += 6;
+    } else if (DateTime.now().difference(lastPresentedAt).inDays >= 7) {
+      score += 6;
+    }
+
+    return score;
   }
 }

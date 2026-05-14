@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/iap_constants.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/services/streak_provider.dart';
 import '../../../quiz/presentation/providers/level_progress_provider.dart';
@@ -191,6 +192,9 @@ class AlarmListScreen extends ConsumerWidget {
     final levelState = ref.watch(levelProgressProvider);
     final streak = ref.watch(streakProvider);
     final nextAlarm = _nextEnabledAlarm(alarms);
+    const dailyGoal = IapConstants.dailyGoalXp;
+    final dailyGoalDone = levelState.dailyXp >= dailyGoal;
+    final dailyGoalProgress = (levelState.dailyXp / dailyGoal).clamp(0.0, 1.0);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
@@ -284,6 +288,43 @@ class AlarmListScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.dailyGoalTitle,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: AppColors.textPrimaryLight,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                  ),
+                  Text(
+                    dailyGoalDone
+                        ? l10n.dailyGoalDone
+                        : l10n.dailyGoalProgress(levelState.dailyXp, dailyGoal),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: dailyGoalDone
+                              ? AppColors.action
+                              : AppColors.textSecondaryLight,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: dailyGoalProgress,
+                  minHeight: 8,
+                  backgroundColor: Colors.white.withValues(alpha: 0.78),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    dailyGoalDone ? AppColors.action : AppColors.primary,
+                  ),
+                ),
               ),
             ],
           ),

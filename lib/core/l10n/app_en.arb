@@ -212,6 +212,8 @@
   "goodMorningGreeting": "Good morning!",
   "loadingQuiz": "Loading quiz...",
   "explanationLabel": "Explanation",
+  "verifiedReelSource": "Verified Reel expression",
+  "sourceLinkCopied": "Source link copied",
   "quizCompleteButton": "Complete Quiz",
   "nextQuestionButton": "Next Question",
   "scoreDisplay": "{correct}/{total} correct!",
@@ -293,7 +295,7 @@
   "gradualVolumeDescription": "Gradually increase alarm volume",
   "subscriptionHeader": "Subscription",
   "upgradeToPremium": "Upgrade to Premium",
-  "unlockAllContent": "Unlock all sounds and questions",
+  "unlockAllContent": "Unlock every verified expression and alarm sound",
   "restorePurchasesLabel": "Restore Purchases",
   "restorePurchasesDescription": "Restore previous purchases",
   "debugPremiumMode": "[Debug] Premium Mode",
@@ -329,21 +331,21 @@
   "noPurchasesToRestore": "No purchases to restore",
 
   "unlockPremium": "Unlock Premium",
-  "premiumSubtitle": "Make your morning perfect with OK-Morning Pro",
-  "feature1Title": "120 Quiz Questions",
-  "feature1Desc": "Full library across all categories and difficulties",
+  "premiumSubtitle": "Keep your morning routine growing with verified real-life expressions",
+  "feature1Title": "Full Verified Expression Library",
+  "feature1Desc": "Learn Reel-based expressions with Korean situation notes",
   "feature2Title": "10 Alarm Sounds",
   "feature2Desc": "Premium sounds: ocean waves, piano, jazz & more",
-  "feature3Title": "Advanced Learning",
-  "feature3Desc": "Personalized quizzes focused on your weak areas",
-  "feature4Title": "New Content Updates",
-  "feature4Desc": "Regular new questions and sound additions",
+  "feature3Title": "Progress & Smart Review",
+  "feature3Desc": "Save XP, levels, mastery, and repeat weak expressions",
+  "feature4Title": "New Real-Life Updates",
+  "feature4Desc": "Verified expressions and morning missions added regularly",
   "subscribeNowButton": "Subscribe Now",
   "startTrialButton": "Start Free Trial",
   "subscriptionTerms": "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. You can manage your subscription in device settings.",
   "termsOfService": "Terms of Service",
   "privacyPolicy": "Privacy Policy",
-  "premiumMonthlyPlan": "Premium Monthly",
+  "premiumMonthlyPlan": "Monthly",
   "premiumMonthlyPrice": "{price}/mo",
   "@premiumMonthlyPrice": {
     "placeholders": {
@@ -352,6 +354,17 @@
       }
     }
   },
+  "premiumAnnualPlan": "Annual",
+  "premiumAnnualPrice": "{price}/yr",
+  "@premiumAnnualPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumAnnualBadge": "Recommended",
+  "premiumNoOfferings": "Subscription products are not configured yet. Prices will appear after monthly and annual products are connected in RevenueCat.",
   "trialIncluded": "Includes 7-day free trial",
   "welcomeToPremium": "Welcome to Premium!",
   "purchasesRestored": "Purchases restored!",
@@ -389,7 +402,7 @@
     }
   },
   "freePlanStatus": "Free Plan",
-  "freePlanLimits": "30 questions, 3 sounds",
+  "freePlanLimits": "Limited expressions, 3 sounds",
   "upgradeButton": "Upgrade",
 
   "xpEarned": "+{xp} XP",
@@ -440,6 +453,20 @@
       }
     }
   },
+  "dailyGoalTitle": "Daily Goal",
+  "dailyGoalProgress": "{current}/{target} XP",
+  "@dailyGoalProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyGoalDone": "Daily goal complete",
+  "dailyGoalSubtitle": "Solve your morning quiz and keep your streak alive",
 
   "devForceSeedDb": "DEV: Force Seed DB",
   "devForceSeedDbDesc": "Re-seed vocabulary from bundled JSON",

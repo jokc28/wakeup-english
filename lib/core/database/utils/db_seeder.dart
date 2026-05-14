@@ -46,6 +46,7 @@ class DbSeeder {
         final situation = (entry['situation_kr'] as String).trim();
         final description = (entry['description_kr'] as String? ?? '').trim();
         final category = (entry['category'] as String? ?? '일상대화').trim();
+        final reelUrl = (entry['reel_url'] as String).trim();
         final difficulty = _normalizeDifficulty(entry['difficulty'] as String?);
         final unlockLevel = _unlockLevelForIndex(i, entries.length);
         final questionId = 'reel_${entry['id']}_${_slug(expression)}';
@@ -64,12 +65,37 @@ class DbSeeder {
                 hint: Value(situation),
                 explanation: Value(description.isEmpty ? null : description),
                 explanationKo: Value(
-                  '출처: @ok.english.kr Instagram Reel ${entry['reel_url']}',
+                  '출처: @ok.english.kr Instagram Reel $reelUrl',
                 ),
+                source: const Value('instagram_reel'),
+                sourceUrl: Value(reelUrl),
+                sourceLabel: const Value('@ok.english.kr Reel'),
                 isFree: Value(unlockLevel <= 5),
                 unlockLevel: Value(unlockLevel),
               ),
-              mode: InsertMode.insertOrIgnore,
+              onConflict: DoUpdate(
+                (old) => VocabularyItemsCompanion.custom(
+                  type: const Constant('multiple_choice'),
+                  category: Constant(_normalizeCategory(category)),
+                  difficulty: Constant(difficulty),
+                  question: const Constant('다음 상황에서 가장 자연스러운 영어 표현은?'),
+                  questionKo: Constant('$meaning · $situation'),
+                  options: Constant(jsonEncode(options)),
+                  correctAnswer: Constant(expression),
+                  hint: Constant(situation),
+                  explanation:
+                      Constant(description.isEmpty ? null : description),
+                  explanationKo: Constant(
+                    '출처: @ok.english.kr Instagram Reel $reelUrl',
+                  ),
+                  source: const Constant('instagram_reel'),
+                  sourceUrl: Constant(reelUrl),
+                  sourceLabel: const Constant('@ok.english.kr Reel'),
+                  isFree: Constant(unlockLevel <= 5),
+                  unlockLevel: Constant(unlockLevel),
+                ),
+                target: [db.vocabularyItems.questionId],
+              ),
             );
         if (rowId > 0) insertedCount++;
       }

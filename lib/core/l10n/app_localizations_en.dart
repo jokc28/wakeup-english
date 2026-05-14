@@ -240,6 +240,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get explanationLabel => 'Explanation';
 
   @override
+  String get verifiedReelSource => 'Verified Reel expression';
+
+  @override
+  String get sourceLinkCopied => 'Source link copied';
+
+  @override
   String get quizCompleteButton => 'Complete Quiz';
 
   @override
@@ -379,7 +385,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upgradeToPremium => 'Upgrade to Premium';
 
   @override
-  String get unlockAllContent => 'Unlock all sounds and questions';
+  String get unlockAllContent =>
+      'Unlock every verified expression and alarm sound';
 
   @override
   String get restorePurchasesLabel => 'Restore Purchases';
@@ -466,14 +473,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unlockPremium => 'Unlock Premium';
 
   @override
-  String get premiumSubtitle => 'Make your morning perfect with OK-Morning Pro';
+  String get premiumSubtitle =>
+      'Keep your morning routine growing with verified real-life expressions';
 
   @override
-  String get feature1Title => '120 Quiz Questions';
+  String get feature1Title => 'Full Verified Expression Library';
 
   @override
   String get feature1Desc =>
-      'Full library across all categories and difficulties';
+      'Learn Reel-based expressions with Korean situation notes';
 
   @override
   String get feature2Title => '10 Alarm Sounds';
@@ -482,16 +490,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feature2Desc => 'Premium sounds: ocean waves, piano, jazz & more';
 
   @override
-  String get feature3Title => 'Advanced Learning';
+  String get feature3Title => 'Progress & Smart Review';
 
   @override
-  String get feature3Desc => 'Personalized quizzes focused on your weak areas';
+  String get feature3Desc =>
+      'Save XP, levels, mastery, and repeat weak expressions';
 
   @override
-  String get feature4Title => 'New Content Updates';
+  String get feature4Title => 'New Real-Life Updates';
 
   @override
-  String get feature4Desc => 'Regular new questions and sound additions';
+  String get feature4Desc =>
+      'Verified expressions and morning missions added regularly';
 
   @override
   String get subscribeNowButton => 'Subscribe Now';
@@ -510,12 +520,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyPolicy => 'Privacy Policy';
 
   @override
-  String get premiumMonthlyPlan => 'Premium Monthly';
+  String get premiumMonthlyPlan => 'Monthly';
 
   @override
   String premiumMonthlyPrice(String price) {
     return '$price/mo';
   }
+
+  @override
+  String get premiumAnnualPlan => 'Annual';
+
+  @override
+  String premiumAnnualPrice(String price) {
+    return '$price/yr';
+  }
+
+  @override
+  String get premiumAnnualBadge => 'Recommended';
+
+  @override
+  String get premiumNoOfferings =>
+      'Subscription products are not configured yet. Prices will appear after monthly and annual products are connected in RevenueCat.';
 
   @override
   String get trialIncluded => 'Includes 7-day free trial';
@@ -566,7 +591,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get freePlanStatus => 'Free Plan';
 
   @override
-  String get freePlanLimits => '30 questions, 3 sounds';
+  String get freePlanLimits => 'Limited expressions, 3 sounds';
 
   @override
   String get upgradeButton => 'Upgrade';
@@ -600,6 +625,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String masteredCount(int count) {
     return '$count mastered';
   }
+
+  @override
+  String get dailyGoalTitle => 'Daily Goal';
+
+  @override
+  String dailyGoalProgress(int current, int target) {
+    return '$current/$target XP';
+  }
+
+  @override
+  String get dailyGoalDone => 'Daily goal complete';
+
+  @override
+  String get dailyGoalSubtitle =>
+      'Solve your morning quiz and keep your streak alive';
 
   @override
   String get devForceSeedDb => 'DEV: Force Seed DB';

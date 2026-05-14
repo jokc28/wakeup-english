@@ -102,6 +102,9 @@ class QuizQuestion {
   final String? hint;
   final String? explanation;
   final String? explanationKo;
+  final String? source;
+  final String? sourceUrl;
+  final String? sourceLabel;
 
   const QuizQuestion({
     required this.id,
@@ -115,6 +118,9 @@ class QuizQuestion {
     this.hint,
     this.explanation,
     this.explanationKo,
+    this.source,
+    this.sourceUrl,
+    this.sourceLabel,
   });
 
   /// Check if the given answer is correct
@@ -194,6 +200,9 @@ class QuizQuestion {
     String? hint,
     String? explanation,
     String? explanationKo,
+    String? source,
+    String? sourceUrl,
+    String? sourceLabel,
   }) {
     return QuizQuestion(
       id: id ?? this.id,
@@ -207,6 +216,9 @@ class QuizQuestion {
       hint: hint ?? this.hint,
       explanation: explanation ?? this.explanation,
       explanationKo: explanationKo ?? this.explanationKo,
+      source: source ?? this.source,
+      sourceUrl: sourceUrl ?? this.sourceUrl,
+      sourceLabel: sourceLabel ?? this.sourceLabel,
     );
   }
 

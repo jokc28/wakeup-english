@@ -536,6 +536,18 @@ abstract class AppLocalizations {
   /// **'Explanation'**
   String get explanationLabel;
 
+  /// No description provided for @verifiedReelSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Reel expression'**
+  String get verifiedReelSource;
+
+  /// No description provided for @sourceLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Source link copied'**
+  String get sourceLinkCopied;
+
   /// No description provided for @quizCompleteButton.
   ///
   /// In en, this message translates to:
@@ -791,7 +803,7 @@ abstract class AppLocalizations {
   /// No description provided for @unlockAllContent.
   ///
   /// In en, this message translates to:
-  /// **'Unlock all sounds and questions'**
+  /// **'Unlock every verified expression and alarm sound'**
   String get unlockAllContent;
 
   /// No description provided for @restorePurchasesLabel.
@@ -959,19 +971,19 @@ abstract class AppLocalizations {
   /// No description provided for @premiumSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Make your morning perfect with OK-Morning Pro'**
+  /// **'Keep your morning routine growing with verified real-life expressions'**
   String get premiumSubtitle;
 
   /// No description provided for @feature1Title.
   ///
   /// In en, this message translates to:
-  /// **'120 Quiz Questions'**
+  /// **'Full Verified Expression Library'**
   String get feature1Title;
 
   /// No description provided for @feature1Desc.
   ///
   /// In en, this message translates to:
-  /// **'Full library across all categories and difficulties'**
+  /// **'Learn Reel-based expressions with Korean situation notes'**
   String get feature1Desc;
 
   /// No description provided for @feature2Title.
@@ -989,25 +1001,25 @@ abstract class AppLocalizations {
   /// No description provided for @feature3Title.
   ///
   /// In en, this message translates to:
-  /// **'Advanced Learning'**
+  /// **'Progress & Smart Review'**
   String get feature3Title;
 
   /// No description provided for @feature3Desc.
   ///
   /// In en, this message translates to:
-  /// **'Personalized quizzes focused on your weak areas'**
+  /// **'Save XP, levels, mastery, and repeat weak expressions'**
   String get feature3Desc;
 
   /// No description provided for @feature4Title.
   ///
   /// In en, this message translates to:
-  /// **'New Content Updates'**
+  /// **'New Real-Life Updates'**
   String get feature4Title;
 
   /// No description provided for @feature4Desc.
   ///
   /// In en, this message translates to:
-  /// **'Regular new questions and sound additions'**
+  /// **'Verified expressions and morning missions added regularly'**
   String get feature4Desc;
 
   /// No description provided for @subscribeNowButton.
@@ -1043,7 +1055,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumMonthlyPlan.
   ///
   /// In en, this message translates to:
-  /// **'Premium Monthly'**
+  /// **'Monthly'**
   String get premiumMonthlyPlan;
 
   /// No description provided for @premiumMonthlyPrice.
@@ -1051,6 +1063,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{price}/mo'**
   String premiumMonthlyPrice(String price);
+
+  /// No description provided for @premiumAnnualPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get premiumAnnualPlan;
+
+  /// No description provided for @premiumAnnualPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/yr'**
+  String premiumAnnualPrice(String price);
+
+  /// No description provided for @premiumAnnualBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get premiumAnnualBadge;
+
+  /// No description provided for @premiumNoOfferings.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription products are not configured yet. Prices will appear after monthly and annual products are connected in RevenueCat.'**
+  String get premiumNoOfferings;
 
   /// No description provided for @trialIncluded.
   ///
@@ -1139,7 +1175,7 @@ abstract class AppLocalizations {
   /// No description provided for @freePlanLimits.
   ///
   /// In en, this message translates to:
-  /// **'30 questions, 3 sounds'**
+  /// **'Limited expressions, 3 sounds'**
   String get freePlanLimits;
 
   /// No description provided for @upgradeButton.
@@ -1183,6 +1219,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} mastered'**
   String masteredCount(int count);
+
+  /// No description provided for @dailyGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Goal'**
+  String get dailyGoalTitle;
+
+  /// No description provided for @dailyGoalProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{target} XP'**
+  String dailyGoalProgress(int current, int target);
+
+  /// No description provided for @dailyGoalDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily goal complete'**
+  String get dailyGoalDone;
+
+  /// No description provided for @dailyGoalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve your morning quiz and keep your streak alive'**
+  String get dailyGoalSubtitle;
 
   /// No description provided for @devForceSeedDb.
   ///

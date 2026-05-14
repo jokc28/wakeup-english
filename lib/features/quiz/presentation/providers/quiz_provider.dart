@@ -92,6 +92,8 @@ class QuizSession extends _$QuizSession {
       ],
       correctAnswer: 'Put yourself out there',
       hint: '출처: @ok.english.kr Instagram Reel',
+      source: 'instagram_reel',
+      sourceLabel: '@ok.english.kr Reel',
     ),
     QuizQuestion(
       id: 'fallback_reel_squeeze_in',
@@ -108,6 +110,8 @@ class QuizSession extends _$QuizSession {
       ],
       correctAnswer: 'squeeze in',
       hint: '출처: @ok.english.kr Instagram Reel',
+      source: 'instagram_reel',
+      sourceLabel: '@ok.english.kr Reel',
     ),
     QuizQuestion(
       id: 'fallback_reel_corny',
@@ -124,6 +128,8 @@ class QuizSession extends _$QuizSession {
       ],
       correctAnswer: 'corny',
       hint: '출처: @ok.english.kr Instagram Reel',
+      source: 'instagram_reel',
+      sourceLabel: '@ok.english.kr Reel',
     ),
   ];
 
