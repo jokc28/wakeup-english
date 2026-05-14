@@ -51,10 +51,10 @@
 
 - 표현 상세 provenance UI: Reel 출처, 상황, 난이도, 학습 상태를 보여준다. 2026-05-15 현재 `source/sourceUrl/sourceLabel` DB 필드와 퀴즈 카드 검증 출처 표시를 적용했다.
 - 취약 표현 복습 큐: 틀린 표현, 오래 안 본 표현, 아직 숙달 안 된 표현을 우선 출제한다. 2026-05-15 현재 오답/미숙달/오래 미노출 항목을 우선 섞는 출제 랭킹을 적용했다.
-- 공개 데이터 import 파이프라인: Tatoeba 영한 문장쌍을 받아 금칙어/길이/난이도/중복/출처 필터를 통과한 행만 별도 테이블 또는 source로 저장한다.
+- 공개 데이터 import 파이프라인: Tatoeba 영한 문장쌍을 받아 금칙어/길이/난이도/중복/출처 필터를 통과한 행만 별도 테이블 또는 source로 저장한다. 2026-05-15 현재 `tool/tatoeba_filter.dart`로 리뷰 후보 JSON을 생성하는 안전한 1차 도구를 추가했다. 출력물은 `review_status=needs_manual_review`이며 앱 번들에 자동 포함하지 않는다.
 
 ### 3차 적용
 
-- 가격 실험: 월간/연간/가족 플랜 후보를 RevenueCat에 구성하고 conversion event를 기록한다.
+- 가격 실험: 월간/연간/가족 플랜 후보를 RevenueCat에 구성하고 conversion event를 기록한다. 2026-05-15 현재 상품 ID, 목표 가격, RevenueCat/App Store 설정 순서는 `docs/monetization-launch-checklist.md`에 정리했다.
 - 말하기 미션 고도화: ELSA/Speak처럼 정밀 평가를 표방하기보다, 알람 해제에 안정적인 짧은 발화 체크와 입력 대체 경로를 강화한다.
 - 온보딩 레벨 진단: 말해보카의 20문제 진단을 그대로 복제하지 않고, 첫 3회 알람 결과로 난이도를 자동 조정한다.

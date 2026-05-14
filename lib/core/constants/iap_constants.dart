@@ -1,11 +1,31 @@
 abstract class IapConstants {
-  // RevenueCat API Keys (replace with real keys before release)
-  static const String revenueCatApiKeyIOS = 'appl_YOUR_IOS_API_KEY_HERE';
-  static const String revenueCatApiKeyAndroid =
-      'goog_YOUR_ANDROID_API_KEY_HERE';
+  // RevenueCat API Keys.
+  // Pass real values at build time:
+  // --dart-define=REVENUECAT_IOS_API_KEY=appl_xxx
+  // --dart-define=REVENUECAT_ANDROID_API_KEY=goog_xxx
+  static const String revenueCatApiKeyIOS = String.fromEnvironment(
+    'REVENUECAT_IOS_API_KEY',
+    defaultValue: 'appl_YOUR_IOS_API_KEY_HERE',
+  );
+  static const String revenueCatApiKeyAndroid = String.fromEnvironment(
+    'REVENUECAT_ANDROID_API_KEY',
+    defaultValue: 'goog_YOUR_ANDROID_API_KEY_HERE',
+  );
 
   // Entitlement ID
   static const String premiumEntitlementId = 'premium';
+
+  // RevenueCat offering/package identifiers.
+  static const String defaultOfferingId = 'default';
+  static const String monthlyProductId = 'okmorning_premium_monthly';
+  static const String annualProductId = 'okmorning_premium_annual';
+  static const String familyProductId = 'okmorning_premium_family_annual';
+
+  // First pricing experiment candidates. Storefront prices must be configured
+  // in App Store Connect / Play Console and then attached in RevenueCat.
+  static const int targetMonthlyPriceKrw = 5900;
+  static const int targetAnnualPriceKrw = 49000;
+  static const int targetFamilyAnnualPriceKrw = 79000;
 
   // Legal policy URLs. Replace these before App Store / Play Store release.
   static const String termsOfServiceUrl = 'https://okmorning.app/terms';
