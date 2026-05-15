@@ -136,6 +136,25 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
     }
   }
 
+  /// Returns a Pretendard TextStyle. Pretendard is bundled locally so no
+  /// runtime network fetch is needed — safe for offline and CI.
+  static TextStyle _pretendard({
+    required double fontSize,
+    required Color color,
+    FontWeight fontWeight = FontWeight.w500,
+    double? letterSpacing,
+    double? height,
+  }) {
+    return TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+      height: height,
+      color: color,
+    );
+  }
+
   static TextTheme _buildTextTheme(Brightness brightness) {
     final base = brightness == Brightness.light
         ? AppColors.textPrimaryLight
@@ -145,76 +164,88 @@ class _OkMorningAppState extends ConsumerState<OkMorningApp> {
         : AppColors.textSecondaryDark;
 
     return TextTheme(
-      // Headings use Jua — rounded, friendly Korean font
-      displayLarge: _jua(
-        fontSize: 72,
-        letterSpacing: 0,
-        height: 1.1,
+      // Display / large numerals — Jua for warmth
+      displayLarge: _jua(fontSize: 64, height: 1.1, color: base),
+      displayMedium: _jua(fontSize: 48, height: 1.15, color: base),
+      displaySmall: _jua(fontSize: 36, height: 1.2, color: base),
+
+      // Headlines — Pretendard ExtraBold for assertive Korean text
+      headlineLarge: _pretendard(
+        fontSize: 28,
+        fontWeight: FontWeight.w800,
         color: base,
+        letterSpacing: -0.4,
       ),
-      displayMedium: _jua(
-        fontSize: 44,
-        letterSpacing: 0,
-        height: 1.15,
+      headlineMedium: _pretendard(
+        fontSize: 24,
+        fontWeight: FontWeight.w800,
         color: base,
+        letterSpacing: -0.3,
       ),
-      headlineLarge: _jua(
-        fontSize: 32,
-        letterSpacing: 0,
-        color: base,
-      ),
-      headlineMedium: _jua(
-        fontSize: 26,
-        color: base,
-      ),
-      headlineSmall: _jua(
-        fontSize: 22,
-        color: base,
-      ),
-      // Body/label text: system font for readability
-      titleLarge: TextStyle(
+      headlineSmall: _pretendard(
         fontSize: 20,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.15,
+        fontWeight: FontWeight.w800,
         color: base,
+        letterSpacing: -0.2,
       ),
-      titleMedium: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.15,
+
+      // Titles — SemiBold/Bold
+      titleLarge: _pretendard(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
         color: base,
+        letterSpacing: -0.2,
       ),
-      titleSmall: TextStyle(
+      titleMedium: _pretendard(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: base,
+        letterSpacing: -0.1,
+      ),
+      titleSmall: _pretendard(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        letterSpacing: 0.1,
         color: base,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.15,
-        height: 1.5,
+
+      // Body — Medium
+      bodyLarge: _pretendard(
+        fontSize: 17,
+        fontWeight: FontWeight.w500,
         color: base,
+        height: 1.45,
       ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.25,
-        height: 1.5,
+      bodyMedium: _pretendard(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: base,
+        height: 1.45,
+      ),
+      bodySmall: _pretendard(
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
         color: muted,
+        height: 1.4,
       ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.4,
-        color: muted,
-      ),
-      labelLarge: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.5,
+
+      // Labels — for chips and buttons
+      labelLarge: _pretendard(
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
         color: base,
+        letterSpacing: -0.1,
+      ),
+      labelMedium: _pretendard(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: base,
+        letterSpacing: -0.1,
+      ),
+      labelSmall: _pretendard(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: muted,
+        letterSpacing: 0.2,
       ),
     );
   }
