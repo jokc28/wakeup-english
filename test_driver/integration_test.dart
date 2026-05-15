@@ -6,8 +6,8 @@ Future<void> main() async {
   await integrationDriver(
     onScreenshot: (name, bytes, [args]) async {
       final outDir = Directory('build/store-screenshots');
-      if (!await outDir.exists()) {
-        await outDir.create(recursive: true);
+      if (!outDir.existsSync()) {
+        outDir.createSync(recursive: true);
       }
       final file = File('${outDir.path}/$name.png');
       await file.writeAsBytes(bytes);

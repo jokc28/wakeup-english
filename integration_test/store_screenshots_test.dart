@@ -49,6 +49,20 @@ void main() {
     await tester.pump(const Duration(milliseconds: 800));
   }
 
+  testWidgets('onboarding screenshot', (tester) async {
+    await AlarmService.initialize();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          firstLaunchCompleteProvider.overrideWith((ref) => false),
+        ],
+        child: const OkMorningApp(),
+      ),
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await shoot(tester, '00_onboarding');
+  });
+
   testWidgets('store screenshots', (tester) async {
     await AlarmService.initialize();
     await tester.pumpWidget(
