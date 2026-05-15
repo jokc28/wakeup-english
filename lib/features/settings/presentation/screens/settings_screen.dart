@@ -335,23 +335,19 @@ class SettingsScreen extends ConsumerWidget {
 
     String statusText;
     String subtitleText;
-    IconData statusIcon;
     Color statusColor;
 
     if (subState.isPremium) {
       statusText = l10n.premiumStatus;
       subtitleText = l10n.premiumAllContent;
-      statusIcon = Icons.workspace_premium;
       statusColor = AppColors.accent;
     } else if (subState.isTrialActive) {
       statusText = l10n.freeTrialStatus;
       subtitleText = l10n.trialDaysRemaining(subState.daysRemaining);
-      statusIcon = Icons.timer;
       statusColor = AppColors.warning;
     } else {
       statusText = l10n.freePlanStatus;
       subtitleText = l10n.freePlanLimits;
-      statusIcon = Icons.lock_outline;
       statusColor = theme.colorScheme.onSurfaceVariant;
     }
 
