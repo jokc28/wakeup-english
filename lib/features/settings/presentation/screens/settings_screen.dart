@@ -15,6 +15,7 @@ import '../../../../core/services/locale_provider.dart';
 import '../../../../core/services/mission_type_provider.dart';
 import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
+import '../../../../core/widgets/sunny.dart';
 import '../../../alarm/domain/entities/alarm.dart';
 import '../../../quiz/presentation/providers/level_progress_provider.dart';
 
@@ -354,28 +355,27 @@ class SettingsScreen extends ConsumerWidget {
       statusColor = theme.colorScheme.onSurfaceVariant;
     }
 
+    final heroExpression = subState.isPremium
+        ? SunnyExpression.excited
+        : (subState.isTrialActive
+            ? SunnyExpression.smile
+            : SunnyExpression.sleepy);
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         side: BorderSide(
           color: statusColor.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
+      color: AppColors.primarySurface,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(statusIcon, color: statusColor),
-            ),
+            Sunny(expression: heroExpression, size: 56),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
