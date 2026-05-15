@@ -19,12 +19,15 @@ if [[ -z "${DEVICE_ID}" ]]; then
   exit 1
 fi
 
+ANDROID_KEY="${REVENUECAT_ANDROID_API_KEY:-goog_PLACEHOLDER}"
+IOS_KEY="${REVENUECAT_IOS_API_KEY:-appl_PLACEHOLDER}"
+
 flutter drive \
   --driver test_driver/integration_test.dart \
   --target integration_test/store_screenshots_test.dart \
   --device-id "${DEVICE_ID}" \
-  --dart-define=REVENUECAT_ANDROID_API_KEY=goog_PLACEHOLDER \
-  --dart-define=REVENUECAT_IOS_API_KEY=appl_PLACEHOLDER
+  --dart-define=REVENUECAT_ANDROID_API_KEY="${ANDROID_KEY}" \
+  --dart-define=REVENUECAT_IOS_API_KEY="${IOS_KEY}"
 
 echo
 echo "Screenshots saved to: ${OUT_DIR}/"
