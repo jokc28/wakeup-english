@@ -1,0 +1,17 @@
+import 'dart:io';
+
+import 'package:integration_test/integration_test_driver_extended.dart';
+
+Future<void> main() async {
+  await integrationDriver(
+    onScreenshot: (name, bytes, [args]) async {
+      final outDir = Directory('build/store-screenshots');
+      if (!await outDir.exists()) {
+        await outDir.create(recursive: true);
+      }
+      final file = File('${outDir.path}/$name.png');
+      await file.writeAsBytes(bytes);
+      return true;
+    },
+  );
+}

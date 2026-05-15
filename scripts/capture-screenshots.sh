@@ -19,15 +19,12 @@ if [[ -z "${DEVICE_ID}" ]]; then
   exit 1
 fi
 
-flutter test integration_test/store_screenshots_test.dart \
+flutter drive \
+  --driver test_driver/integration_test.dart \
+  --target integration_test/store_screenshots_test.dart \
   --device-id "${DEVICE_ID}" \
-  --reporter expanded
-
-# integration_test saves screenshots under build/integration_response_data/
-# (Android) or as XCTest attachments (iOS). Surface them in a unified folder.
-if [[ -d build/integration_response_data ]]; then
-  cp build/integration_response_data/*.png "${OUT_DIR}/" 2>/dev/null || true
-fi
+  --dart-define=REVENUECAT_ANDROID_API_KEY=goog_PLACEHOLDER \
+  --dart-define=REVENUECAT_IOS_API_KEY=appl_PLACEHOLDER
 
 echo
 echo "Screenshots saved to: ${OUT_DIR}/"

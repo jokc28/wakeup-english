@@ -1,13 +1,8 @@
-// Captures Play Store / App Store screenshots by driving the app through its
-// key screens and saving a PNG at each stop.
+// Captures Play Store / App Store screenshots by navigating via the router
+// (no UI taps — avoids brittle widget finders) and saving a PNG at each stop.
 //
 // Run with:
-//   flutter test integration_test/store_screenshots_test.dart \
-//     --device-id <emulator-id>
-//
-// Screenshots are saved by IntegrationTestWidgetsFlutterBinding under
-// build/integration_response_data/ on Android, or as test artifacts in CI.
-// Use the helper script scripts/capture-screenshots.sh for the full flow.
+//   ./scripts/capture-screenshots.sh <device-id>
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,8 +16,17 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   Future<void> shoot(WidgetTester tester, String name) async {
-    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    // Use pump() with a fixed duration instead of pumpAndSettle so the
+    // continuous animations on the paywall do not block the test.
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pump(const Duration(milliseconds: 800));
     await binding.takeScreenshot(name);
+  }
+
+  Future<void> go(WidgetTester tester, String route) async {
+    AppRouter.router.go(route);
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pump(const Duration(milliseconds: 800));
   }
 
   testWidgets('store screenshots', (tester) async {
@@ -35,31 +39,21 @@ void main() {
         child: const OkMorningApp(),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // 1) Empty alarm list — the main entry screen.
-    await shoot(tester, '01_home_empty');
+    // 1) Home (alarm list) — initial route.
+    await shoot(tester, '01_home');
 
-    // 2) Alarm add/edit screen — shows the mission configuration.
-    await tester.tap(find.text('알람 추가'));
-    await tester.pumpAndSettle();
-    await shoot(tester, '02_alarm_edit');
+    // 2) Add alarm screen.
+    await go(tester, AppStrings.alarmAddRoute);
+    await shoot(tester, '02_alarm_add');
 
-    // Back to home.
-    AppRouter.router.go(AppStrings.alarmListRoute);
-    await tester.pumpAndSettle();
-
-    // 3) Settings — language, sounds, account links.
-    AppRouter.router.go(AppStrings.settingsRoute);
-    await tester.pumpAndSettle();
+    // 3) Settings.
+    await go(tester, AppStrings.settingsRoute);
     await shoot(tester, '03_settings');
 
-    // 4) Paywall — premium pitch.
-    await AppRouter.router.push(AppStrings.paywallRoute);
-    await tester.pumpAndSettle(const Duration(seconds: 1));
+    // 4) Paywall.
+    await go(tester, AppStrings.paywallRoute);
     await shoot(tester, '04_paywall');
-
-    // Optional further screens (quiz lock, onboarding) can be added here
-    // once driving them in test mode is stable.
   });
 }
