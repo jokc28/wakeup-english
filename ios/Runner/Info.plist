@@ -53,7 +53,9 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>스피킹 퀴즈의 음성 인식을 위해 권한이 필요합니다.</string>
 	<key>NSUserNotificationUsageDescription</key>
-	<string>OK-Morning needs notification permission to alert you when alarms fire.</string>
+	<string>알람이 울릴 때 알림을 보내기 위해 알림 권한이 필요합니다.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
