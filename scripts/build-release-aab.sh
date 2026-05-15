@@ -22,7 +22,9 @@ if [[ ! -f android/key.properties ]]; then
   exit 1
 fi
 
-flutter clean
+# Intentionally no `flutter clean` — it deletes build/ globally, which would
+# wipe any iOS archive sitting in build/ios/archive/ from a previous run.
+# Gradle handles incremental builds correctly on its own.
 flutter pub get
 flutter build appbundle --release \
   --dart-define=REVENUECAT_ANDROID_API_KEY="${REVENUECAT_ANDROID_API_KEY}"

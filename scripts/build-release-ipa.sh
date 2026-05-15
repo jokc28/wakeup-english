@@ -21,7 +21,8 @@ if [[ "${REVENUECAT_IOS_API_KEY}" == appl_YOUR_* ]]; then
   exit 1
 fi
 
-flutter clean
+# Intentionally no `flutter clean` — it deletes build/ globally, which would
+# wipe an AAB sitting in build/app/outputs/bundle/release/ from a previous run.
 flutter pub get
 (cd ios && pod install --repo-update)
 
