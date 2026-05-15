@@ -889,39 +889,54 @@ class _MiniSegment<T> extends StatelessWidget {
     required this.onChanged,
   });
 
+  Color _colorFor(T value) {
+    if (value is QuizDifficulty) {
+      switch (value) {
+        case QuizDifficulty.easy:
+          return AppColors.action;
+        case QuizDifficulty.medium:
+          return AppColors.primary;
+        case QuizDifficulty.hard:
+          return AppColors.error;
+      }
+    }
+    return AppColors.primary;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.all(3),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: values.map((v) {
-          final isActive = v == selected;
-          return GestureDetector(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: values.map((v) {
+        final isActive = v == selected;
+        final color = _colorFor(v);
+        return Padding(
+          padding: const EdgeInsets.only(left: 6),
+          child: GestureDetector(
             onTap: () => onChanged(v),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              duration: const Duration(milliseconds: 180),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
-                color: isActive ? AppColors.primary : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
+                color: isActive ? color : color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isActive ? color : Colors.transparent,
+                  width: 1.5,
+                ),
               ),
               child: Text(
                 labelOf(v),
                 style: TextStyle(
-                  color: isActive ? Colors.white : _kTextHint,
+                  color: isActive ? Colors.white : color,
                   fontSize: 13,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
