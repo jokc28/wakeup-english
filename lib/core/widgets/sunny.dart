@@ -11,8 +11,8 @@ extension SunnyExpressionAsset on SunnyExpression {
 /// an animation widget if motion is needed.
 class Sunny extends StatelessWidget {
   const Sunny({
-    super.key,
     required this.expression,
+    super.key,
     this.size = 64,
     this.semanticLabel,
   });

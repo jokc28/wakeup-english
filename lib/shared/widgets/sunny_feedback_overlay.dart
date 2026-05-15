@@ -13,7 +13,7 @@ class SunnyFeedbackController extends ChangeNotifier {
   Future<void> _flash(SunnyExpression expression) async {
     _active = expression;
     notifyListeners();
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future<void>.delayed(const Duration(milliseconds: 800));
     _active = null;
     notifyListeners();
   }
@@ -24,9 +24,9 @@ class SunnyFeedbackController extends ChangeNotifier {
 /// instance.
 class SunnyFeedbackOverlay extends StatelessWidget {
   const SunnyFeedbackOverlay({
-    super.key,
     required this.controller,
     required this.child,
+    super.key,
   });
 
   final SunnyFeedbackController controller;
