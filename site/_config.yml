@@ -1,0 +1,12 @@
+title: 옥모닝
+description: 옥모닝 (OK-Morning) 법적 고지
+theme: jekyll-theme-minimal
+permalink: /:basename/
+lang: ko
+markdown: kramdown
+kramdown:
+  input: GFM
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor

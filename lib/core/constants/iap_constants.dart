@@ -27,9 +27,11 @@ abstract class IapConstants {
   static const int targetAnnualPriceKrw = 49000;
   static const int targetFamilyAnnualPriceKrw = 79000;
 
-  // Legal policy URLs. Replace these before App Store / Play Store release.
-  static const String termsOfServiceUrl = 'https://okmorning.app/terms';
-  static const String privacyPolicyUrl = 'https://okmorning.app/privacy';
+  // Legal policy URLs served by GitHub Pages — see site/ directory.
+  static const String termsOfServiceUrl =
+      'https://jokc28.github.io/wakeup-english/terms/';
+  static const String privacyPolicyUrl =
+      'https://jokc28.github.io/wakeup-english/privacy/';
 
   // Trial duration in days
   static const int trialDurationDays = 7;
