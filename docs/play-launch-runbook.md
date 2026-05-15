@@ -2,7 +2,7 @@
 
 검토일: 2026-05-15. 본 문서는 옥모닝(`com.wakeup.english.wakeup_english`)을 Google
 Play 스토어에 처음 출시할 때 따르는 작업 순서이다. 코드 수준에서 가능한 준비는
-끝났고, 남은 작업은 외부 시스템(Play Console / RevenueCat / 도메인 호스팅)에서
+끝났고, 남은 작업은 외부 시스템(Play Console / RevenueCat / 정책 페이지 호스팅)에서
 진행해야 한다.
 
 ## A. 코드/리포지토리에 이미 준비된 것
@@ -45,9 +45,13 @@ cp android/key.properties.example android/key.properties
 > ❗ `android/key.properties`와 `.jks` 파일은 절대 git에 커밋하지 말 것.
 > `.gitignore`에 이미 포함되어 있는지 출시 전 확인.
 
-### 2단계. 도메인 확보 + 약관/개인정보 게재
+### 2단계. 개인정보처리방침 / 이용약관 공개 URL 확보
 
-- `okmorning.app` (또는 보유 도메인) 구매 및 정적 호스팅 셋업.
+- 도메인은 **필수가 아님**. 다음 중 하나를 골라 무료로 호스팅하면 된다:
+  - **GitHub Pages**: 공개 repo → `Settings → Pages` → md 파일 그대로 표시
+  - **Notion 공개 페이지**: 워크스페이스 → Share → Publish to web
+  - **Vercel / Netlify**: `*.vercel.app` / `*.netlify.app` 서브도메인
+  - **Google Sites**: `sites.google.com/view/<slug>`
 - `docs/privacy-policy-draft.md` → 변호사 검토 → 실제 페이지 게재.
 - `docs/terms-of-service-draft.md` → 변호사 검토 → 실제 페이지 게재.
 - 게재 완료 후 `lib/core/constants/iap_constants.dart`의 두 URL 상수를 실제
