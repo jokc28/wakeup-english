@@ -529,7 +529,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get premiumNoOfferings =>
-      '구독 상품 설정 전입니다. RevenueCat에 월간/연간 상품을 연결하면 가격이 표시됩니다.';
+      '프리미엄 구독은 곧 출시됩니다.\n월간 5,900원, 연간 49,000원 (7일 무료 체험 포함) 예정.';
 
   @override
   String get trialIncluded => '7일 무료 체험 포함';

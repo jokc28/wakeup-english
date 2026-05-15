@@ -540,7 +540,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get premiumNoOfferings =>
-      'Subscription products are not configured yet. Prices will appear after monthly and annual products are connected in RevenueCat.';
+      'Premium subscriptions are launching soon.\nMonthly ₩5,900 / Annual ₩49,000 (7-day free trial included).';
 
   @override
   String get trialIncluded => 'Includes 7-day free trial';

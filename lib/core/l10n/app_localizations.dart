@@ -1085,7 +1085,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumNoOfferings.
   ///
   /// In en, this message translates to:
-  /// **'Subscription products are not configured yet. Prices will appear after monthly and annual products are connected in RevenueCat.'**
+  /// **'Premium subscriptions are launching soon.\nMonthly ₩5,900 / Annual ₩49,000 (7-day free trial included).'**
   String get premiumNoOfferings;
 
   /// No description provided for @trialIncluded.

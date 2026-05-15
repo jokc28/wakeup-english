@@ -364,7 +364,7 @@
     }
   },
   "premiumAnnualBadge": "Recommended",
-  "premiumNoOfferings": "Subscription products are not configured yet. Prices will appear after monthly and annual products are connected in RevenueCat.",
+  "premiumNoOfferings": "Premium subscriptions are launching soon.\nMonthly ₩5,900 / Annual ₩49,000 (7-day free trial included).",
   "trialIncluded": "Includes 7-day free trial",
   "welcomeToPremium": "Welcome to Premium!",
   "purchasesRestored": "Purchases restored!",
