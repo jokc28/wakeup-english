@@ -9,12 +9,14 @@ and Korean copy. Run from repo root:
 
 from __future__ import annotations
 
+import subprocess
+import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
 REPO = Path(__file__).resolve().parents[1]
-ICON_PATH = REPO / "ios" / "Runner" / "Assets.xcassets" / "AppIcon.appiconset" / "Icon-App-1024x1024@1x.png"
+MASCOT_SVG = REPO / "assets" / "mascot" / "sunny-smile.svg"
 OUT_DIR = REPO / "dist"
 OUT_PATH = OUT_DIR / "feature-graphic.png"
 
@@ -56,13 +58,21 @@ def main() -> None:
     # Accent orange stripe along the bottom edge
     draw.rectangle((0, HEIGHT - 12, WIDTH, HEIGHT), fill=ACCENT_ORANGE)
 
-    # Place the app icon on the left
-    icon = Image.open(ICON_PATH).convert("RGBA")
-    icon_size = 360
-    icon = icon.resize((icon_size, icon_size), Image.LANCZOS)
+    # Render the Sunny mascot SVG to a transparent PNG, then paste on the left
+    mascot_size = 360
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tf:
+        mascot_png_path = Path(tf.name)
+    subprocess.run(
+        ["rsvg-convert", "-w", str(mascot_size), "-h", str(mascot_size),
+         "-o", str(mascot_png_path), str(MASCOT_SVG)],
+        check=True,
+    )
+    icon = Image.open(mascot_png_path).convert("RGBA")
+    icon_size = mascot_size
     icon_x = 64
     icon_y = (HEIGHT - icon_size) // 2
     canvas.paste(icon, (icon_x, icon_y), icon)
+    mascot_png_path.unlink(missing_ok=True)
 
     # Right-hand text block
     title_font = ImageFont.truetype(KOREAN_FONT, 120, index=1)  # Bold
