@@ -14,6 +14,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
+import '../../../../shared/widgets/sunny_feedback_overlay.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
 import '../providers/level_progress_provider.dart';
@@ -48,6 +49,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   // Feedback overlay state
   bool _showCorrectOverlay = false;
   bool _showWrongShake = false;
+  final _sunnyFeedback = SunnyFeedbackController();
 
   // XP award result (set after quiz completion)
   XpAwardResult? _xpResult;
@@ -81,6 +83,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   void dispose() {
     _confettiController.dispose();
     _bgShimmerController.dispose();
+    _sunnyFeedback.dispose();
     unawaited(
       SystemChrome.setEnabledSystemUIMode(
         SystemUiMode.manual,
@@ -99,6 +102,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
     HapticFeedback.mediumImpact();
     _confettiController.play();
     setState(() => _showCorrectOverlay = true);
+    _sunnyFeedback.showCorrect();
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) setState(() => _showCorrectOverlay = false);
     });
@@ -107,6 +111,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   void _triggerWrongFeedback() {
     HapticFeedback.heavyImpact();
     setState(() => _showWrongShake = true);
+    _sunnyFeedback.showWrong();
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) setState(() => _showWrongShake = false);
     });
