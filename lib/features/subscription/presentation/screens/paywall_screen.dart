@@ -108,26 +108,40 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Value props with green checkmark circles
-                    _buildFeatureItem(
-                      context,
-                      l10n.feature1Title,
-                      l10n.feature1Desc,
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      l10n.feature2Title,
-                      l10n.feature2Desc,
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      l10n.feature3Title,
-                      l10n.feature3Desc,
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      l10n.feature4Title,
-                      l10n.feature4Desc,
+                    // Value props — 2×2 grid of feature cards
+                    GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1.05,
+                      children: [
+                        _buildFeatureCard(
+                          context,
+                          Icons.menu_book_rounded,
+                          l10n.feature1Title,
+                          l10n.feature1Desc,
+                        ),
+                        _buildFeatureCard(
+                          context,
+                          Icons.music_note_rounded,
+                          l10n.feature2Title,
+                          l10n.feature2Desc,
+                        ),
+                        _buildFeatureCard(
+                          context,
+                          Icons.trending_up_rounded,
+                          l10n.feature3Title,
+                          l10n.feature3Desc,
+                        ),
+                        _buildFeatureCard(
+                          context,
+                          Icons.auto_awesome_rounded,
+                          l10n.feature4Title,
+                          l10n.feature4Desc,
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 32),
 
@@ -243,45 +257,51 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _buildFeatureItem(
+  Widget _buildFeatureCard(
     BuildContext context,
+    IconData icon,
     String title,
     String subtitle,
   ) {
     final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.primarySurface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.18),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Green checkmark circle
           Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: AppColors.action,
-              shape: BoxShape.circle,
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 22,
-            ),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleSmall,
-                ),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodySmall,
-                ),
-              ],
+            child: Text(
+              subtitle,
+              style: theme.textTheme.bodySmall,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
