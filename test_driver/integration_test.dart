@@ -5,7 +5,8 @@ import 'package:integration_test/integration_test_driver_extended.dart';
 Future<void> main() async {
   await integrationDriver(
     onScreenshot: (name, bytes, [args]) async {
-      final outDir = Directory('build/store-screenshots');
+      // Save outside build/ so flutter clean doesn't wipe captures.
+      final outDir = Directory('dist/store-screenshots');
       if (!outDir.existsSync()) {
         outDir.createSync(recursive: true);
       }

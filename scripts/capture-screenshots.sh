@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-OUT_DIR="build/store-screenshots"
+OUT_DIR="dist/store-screenshots"
 mkdir -p "${OUT_DIR}"
 
 DEVICE_ID="${1:-}"
