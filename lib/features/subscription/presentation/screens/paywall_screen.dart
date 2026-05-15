@@ -13,6 +13,7 @@ import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/iap_constants.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/services/subscription_provider.dart';
+import '../../../../core/widgets/sunny.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
   const PaywallScreen({super.key});
@@ -73,19 +74,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   children: [
                     const SizedBox(height: 8),
 
-                    // Mascot area — gradient circle with school icon
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        gradient: AppGradients.premiumCard,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.school_rounded,
-                        size: 56,
-                        color: Colors.white,
-                      ),
+                    // Mascot — Sunny Excited (the brand reward moment)
+                    const Sunny(
+                      expression: SunnyExpression.excited,
+                      size: 132,
+                      semanticLabel: 'Premium unlock',
                     )
                         .animate()
                         .scale(
