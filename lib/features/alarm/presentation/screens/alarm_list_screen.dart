@@ -5,10 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_shape.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/iap_constants.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/services/streak_provider.dart';
+import '../../../../core/widgets/sunny.dart';
 import '../../../quiz/presentation/providers/level_progress_provider.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
@@ -24,57 +27,75 @@ class AlarmListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(l10n.appTitle),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => context.push(AppStrings.settingsRoute),
-          ),
-        ],
-      ),
-      body: alarmsAsync.when(
-        data: (alarms) {
-          if (alarms.isEmpty) {
-            return _buildEmptyState(context);
-          }
-          return _buildAlarmList(context, ref, alarms);
-        },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: AppColors.error,
+      backgroundColor: AppColors.backgroundLight,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.l, AppSpacing.s, AppSpacing.s, 0),
+              child: Row(
+                children: [
+                  Text(
+                    l10n.appTitle,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.settings_outlined),
+                    color: AppColors.textPrimaryLight,
+                    onPressed: () => context.push(AppStrings.settingsRoute),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.errorLoadingAlarms,
-                style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Expanded(
+              child: alarmsAsync.when(
+                data: (alarms) => Column(
+                  children: [
+                    _buildHomeHeader(context, ref, alarms),
+                    Expanded(
+                      child: alarms.isEmpty
+                          ? _buildEmptyState(context)
+                          : _buildAlarmList(context, ref, alarms),
+                    ),
+                  ],
+                ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => _buildErrorState(context, l10n, error),
               ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppStrings.alarmAddRoute),
-        backgroundColor: AppColors.action,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: Text(l10n.addAlarm),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(
+      BuildContext context, AppLocalizations l10n, Object error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.l),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+            const SizedBox(height: AppSpacing.m),
+            Text(l10n.errorLoadingAlarms,
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: AppSpacing.s),
+            Text(error.toString(),
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center),
+          ],
+        ),
       ),
     );
   }
@@ -83,33 +104,21 @@ class AlarmListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.alarm_off_outlined,
-              size: 100,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.3),
-            ),
-            const SizedBox(height: 24),
+            const Sunny(expression: SunnyExpression.sleepy, size: 120),
+            const SizedBox(height: AppSpacing.l),
             Text(
               l10n.noAlarms,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.s),
             Text(
               l10n.noAlarmsSubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant
-                        .withValues(alpha: 0.7),
+                    color: AppColors.textSecondaryLight,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -125,61 +134,52 @@ class AlarmListScreen extends ConsumerWidget {
     List<AlarmEntity> alarms,
   ) {
     final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        _buildHomeHeader(context, ref, alarms),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-            itemCount: alarms.length,
-            itemBuilder: (context, index) {
-              final alarm = alarms[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: AlarmTile(
-                  alarm: alarm,
-                  onTap: () =>
-                      context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
-                  onDelete: () async {
-                    final messenger = ScaffoldMessenger.of(context);
-                    final operations =
-                        ref.read(alarmOperationsProvider.notifier);
-                    await operations.deleteAlarm(alarm.id!);
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          alarm.label.isNotEmpty
-                              ? l10n.alarmDeletedMessage(alarm.label)
-                              : l10n.alarmDeletedGeneric,
-                        ),
-                        action: SnackBarAction(
-                          label: l10n.undoAction,
-                          onPressed: () {
-                            unawaited(
-                              () async {
-                                try {
-                                  await operations.restoreAlarm(alarm);
-                                } catch (error) {
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(error.toString()),
-                                      backgroundColor: AppColors.error,
-                                    ),
-                                  );
-                                }
-                              }(),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.m, AppSpacing.s, AppSpacing.m, 100),
+      itemCount: alarms.length,
+      itemBuilder: (context, index) {
+        final alarm = alarms[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.s + 4),
+          child: AlarmTile(
+            alarm: alarm,
+            onTap: () =>
+                context.push('${AppStrings.alarmEditRoute}/${alarm.id}'),
+            onDelete: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              final operations = ref.read(alarmOperationsProvider.notifier);
+              await operations.deleteAlarm(alarm.id!);
+              messenger.showSnackBar(
+                SnackBar(
+                  content: Text(
+                    alarm.label.isNotEmpty
+                        ? l10n.alarmDeletedMessage(alarm.label)
+                        : l10n.alarmDeletedGeneric,
+                  ),
+                  action: SnackBarAction(
+                    label: l10n.undoAction,
+                    onPressed: () {
+                      unawaited(() async {
+                        try {
+                          await operations.restoreAlarm(alarm);
+                        } catch (error) {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(error.toString()),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      }());
+                    },
+                  ),
                 ),
               );
             },
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -197,137 +197,106 @@ class AlarmListScreen extends ConsumerWidget {
     final dailyGoalProgress = (levelState.dailyXp / dailyGoal).clamp(0.0, 1.0);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
-      child: DecoratedBox(
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.m, AppSpacing.s, AppSpacing.m, AppSpacing.s),
+      child: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              AppColors.surfaceWarmLight,
-              AppColors.surfaceSoftLight,
-            ],
+            colors: [AppColors.primaryLight, AppColors.primary],
           ),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.outlineLight),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowWarm.withValues(alpha: 0.08),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(AppShape.radiusXL),
+          boxShadow: AppElevation.orange,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.homeWelcome,
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: AppColors.textSecondaryLight,
-                                  ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          nextAlarm?.timeDisplay ?? l10n.noAlarms,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium
-                              ?.copyWith(
-                                color: AppColors.textPrimaryLight,
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.78),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.alarm_on_rounded,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _MetricChip(
-                      icon: Icons.trending_up_rounded,
-                      label: l10n.levelLabel(levelState.currentLevel),
-                      value: l10n.totalXpLabel(levelState.totalXp),
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _MetricChip(
-                      icon: Icons.local_fire_department_rounded,
-                      label: l10n.morningStreak,
-                      value: streak.currentStreak > 0
-                          ? l10n.streakDays(streak.currentStreak)
-                          : l10n.streakStart,
-                      color: AppColors.action,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l10n.dailyGoalTitle,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: AppColors.textPrimaryLight,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                  ),
-                  Text(
-                    dailyGoalDone
-                        ? l10n.dailyGoalDone
-                        : l10n.dailyGoalProgress(levelState.dailyXp, dailyGoal),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: dailyGoalDone
-                              ? AppColors.action
-                              : AppColors.textSecondaryLight,
-                          fontWeight: FontWeight.w800,
-                        ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(999),
-                child: LinearProgressIndicator(
-                  value: dailyGoalProgress,
-                  minHeight: 8,
-                  backgroundColor: Colors.white.withValues(alpha: 0.78),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    dailyGoalDone ? AppColors.action : AppColors.primary,
+        padding: const EdgeInsets.all(AppSpacing.l),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.homeWelcome,
+                        style:
+                            Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs + 2),
+                      Text(
+                        nextAlarm?.timeDisplay ?? l10n.noAlarms,
+                        style:
+                            Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: Colors.white,
+                                ),
+                      ),
+                    ],
                   ),
                 ),
+                const Sunny(expression: SunnyExpression.smile, size: 72),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.m),
+            Row(
+              children: [
+                Expanded(
+                  child: _HeroChip(
+                    icon: Icons.trending_up_rounded,
+                    label: l10n.levelLabel(levelState.currentLevel),
+                    value: l10n.totalXpLabel(levelState.totalXp),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s + 2),
+                Expanded(
+                  child: _HeroChip(
+                    icon: Icons.local_fire_department_rounded,
+                    label: l10n.morningStreak,
+                    value: streak.currentStreak > 0
+                        ? l10n.streakDays(streak.currentStreak)
+                        : l10n.streakStart,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.m - 2),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.dailyGoalTitle,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Colors.white,
+                        ),
+                  ),
+                ),
+                Text(
+                  dailyGoalDone
+                      ? l10n.dailyGoalDone
+                      : l10n.dailyGoalProgress(
+                          levelState.dailyXp, dailyGoal),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.95),
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.s),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: dailyGoalProgress,
+                minHeight: 8,
+                backgroundColor: Colors.white.withValues(alpha: 0.3),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -344,33 +313,29 @@ class AlarmListScreen extends ConsumerWidget {
   }
 }
 
-class _MetricChip extends StatelessWidget {
+class _HeroChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final Color color;
 
-  const _MetricChip({
+  const _HeroChip({
     required this.icon,
     required this.label,
     required this.value,
-    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 64),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AppSpacing.s + 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.14)),
+        color: Colors.white.withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(AppShape.radiusM),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 8),
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(width: AppSpacing.s),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,8 +345,8 @@ class _MetricChip extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColors.textPrimaryLight,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Colors.white,
                       ),
                 ),
                 const SizedBox(height: 2),
@@ -390,7 +355,8 @@ class _MetricChip extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondaryLight,
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w700,
                       ),
                 ),
               ],

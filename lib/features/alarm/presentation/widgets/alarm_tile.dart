@@ -37,7 +37,7 @@ class AlarmTile extends ConsumerWidget {
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
           color: AppColors.error,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: const Icon(
           Icons.delete_outline,
@@ -58,7 +58,7 @@ class AlarmTile extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(20),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.all(16),
@@ -66,7 +66,7 @@ class AlarmTile extends ConsumerWidget {
               color: isEnabled
                   ? AppColors.surfaceLight
                   : AppColors.surfaceSoftLight,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isEnabled
                     ? AppColors.primary.withValues(alpha: 0.28)
@@ -90,7 +90,7 @@ class AlarmTile extends ConsumerWidget {
                     color: isEnabled
                         ? AppColors.primary.withValues(alpha: 0.12)
                         : AppColors.alarmInactive.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Icon(
                     isEnabled
@@ -263,7 +263,7 @@ class _StatusPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         isEnabled ? l10n.alarmEnabled : l10n.alarmDisabled,
