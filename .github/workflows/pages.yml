@@ -27,9 +27,9 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
           working-directory: site
+      # First-time setup: in repo Settings → Pages → Source, select
+      # "GitHub Actions". After that the workflow runs unattended.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Build with Jekyll
         run: bundle exec jekyll build --source ./ --destination ../_site
         working-directory: site
