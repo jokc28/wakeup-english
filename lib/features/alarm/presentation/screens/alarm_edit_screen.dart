@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/constants/alarm_sounds.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/widgets/sunny.dart';
 import '../../data/repositories/alarm_repository.dart';
 import '../../domain/entities/alarm.dart';
 import '../providers/alarm_provider.dart';
@@ -160,18 +161,19 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
         _selectTime(context, form);
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: [
             Text(
               form.timeDisplay,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontWeight: FontWeight.w300,
                     color: AppColors.primary,
-                    fontSize: 72,
-                    letterSpacing: 0,
+                    fontSize: 88,
+                    letterSpacing: -2,
                   ),
             ),
+            const SizedBox(height: 8),
+            const Sunny(expression: SunnyExpression.smile, size: 48),
             const SizedBox(height: 4),
             Text(
               l10n.timePickerTapHint,
