@@ -14,6 +14,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
+import '../../../../core/widgets/sunny.dart';
 import '../../../../shared/widgets/sunny_feedback_overlay.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
@@ -144,42 +145,45 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
     return PopScope(
       canPop: false,
       child: Scaffold(
-        body: Stack(
-          children: [
-            // Content
-            _buildPhaseContent(session),
-            // Correct answer green flash
-            if (_showCorrectOverlay)
-              AnimatedOpacity(
-                opacity: _showCorrectOverlay ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 200),
-                child: IgnorePointer(
-                  child: Container(
-                    color: AppColors.quizCorrect.withValues(alpha: 0.15),
+        body: SunnyFeedbackOverlay(
+          controller: _sunnyFeedback,
+          child: Stack(
+            children: [
+              // Content
+              _buildPhaseContent(session),
+              // Correct answer green flash
+              if (_showCorrectOverlay)
+                AnimatedOpacity(
+                  opacity: _showCorrectOverlay ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    child: Container(
+                      color: AppColors.quizCorrect.withValues(alpha: 0.15),
+                    ),
                   ),
                 ),
+              // Confetti
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  numberOfParticles: 20,
+                  maxBlastForce: 20,
+                  minBlastForce: 5,
+                  gravity: 0.2,
+                  colors: const [
+                    AppColors.action,
+                    AppColors.primaryLight,
+                    AppColors.primary,
+                    AppColors.info,
+                    Colors.white,
+                  ],
+                ),
               ),
-            // Confetti
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _confettiController,
-                blastDirectionality: BlastDirectionality.explosive,
-                shouldLoop: false,
-                numberOfParticles: 20,
-                maxBlastForce: 20,
-                minBlastForce: 5,
-                gravity: 0.2,
-                colors: const [
-                  AppColors.action,
-                  AppColors.primaryLight,
-                  AppColors.primary,
-                  AppColors.info,
-                  Colors.white,
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -230,6 +234,17 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(flex: 2),
+                  // Brand mascot — Sunny waking up with the user
+                  const Sunny(expression: SunnyExpression.smile, size: 120)
+                      .animate()
+                      .fadeIn(duration: 600.ms)
+                      .scale(
+                        begin: const Offset(0.8, 0.8),
+                        end: const Offset(1, 1),
+                        duration: 600.ms,
+                        curve: Curves.easeOutBack,
+                      ),
+                  const SizedBox(height: 20),
                   // Greeting
                   Text(
                     l10n.goodMorningGreeting,
