@@ -13,6 +13,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/services/alarm_service.dart';
+import '../../../../core/widgets/sunny.dart';
 import '../../../alarm/data/repositories/alarm_repository.dart';
 import '../../../alarm/domain/entities/alarm.dart';
 
@@ -380,7 +381,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildIconHero(Icons.wb_sunny_rounded),
+          // Lead with the actual brand mascot, not a stock weather icon.
+          const Sunny(expression: SunnyExpression.smile, size: 160),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingWelcomeTitle,
