@@ -75,6 +75,7 @@ flutter:
 
   assets:
     - assets/sounds/
+    - assets/sounds/sfx/
     - assets/data/
     - assets/mascot/
 

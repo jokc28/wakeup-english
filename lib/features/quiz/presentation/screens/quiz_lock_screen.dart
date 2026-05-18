@@ -13,6 +13,7 @@ import '../../../../core/constants/app_shape.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/sound_service.dart';
 import '../../../../core/services/streak_provider.dart';
 import '../../../../core/services/subscription_provider.dart';
 import '../../../../core/widgets/sunny.dart';
@@ -114,8 +115,14 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
     setState(() => _showCorrectOverlay = true);
     final session = ref.read(quizSessionProvider(widget.alarmId));
     // session.consecutiveCorrect was just incremented for THIS correct answer
+    final combo = session.consecutiveCorrect;
+    // Combo flourish at the bonus-multiplier breakpoints (2 and 5); otherwise
+    // standard "correct" tone.
+    unawaited(SoundService.instance.play(
+      combo >= 2 ? SfxKind.combo : SfxKind.correct,
+    ));
     _sunnyFeedback.showCorrect(
-      message: _encouragementForCombo(session.consecutiveCorrect),
+      message: _encouragementForCombo(combo),
     );
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) setState(() => _showCorrectOverlay = false);
@@ -125,6 +132,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   void _triggerWrongFeedback() {
     HapticFeedback.heavyImpact();
     setState(() => _showWrongShake = true);
+    unawaited(SoundService.instance.play(SfxKind.wrong));
     final l10n = AppLocalizations.of(context)!;
     _sunnyFeedback.showWrong(message: l10n.encourageWrong);
     Future.delayed(const Duration(milliseconds: 400), () {
@@ -162,6 +170,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
       if (next.isCompleted && _phase != LockScreenPhase.completed) {
         setState(() => _phase = LockScreenPhase.completed);
         _confettiController.play();
+        unawaited(SoundService.instance.play(SfxKind.complete));
         _awardXpOnCompletion(next);
       }
     });
