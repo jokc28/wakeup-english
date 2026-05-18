@@ -1304,6 +1304,12 @@ abstract class AppLocalizations {
   /// **'It\'s okay, you\'ve got the next one!'**
   String get encourageWrong;
 
+  /// No description provided for @tapToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to continue'**
+  String get tapToContinue;
+
   /// No description provided for @xpLockedTitle.
   ///
   /// In en, this message translates to:

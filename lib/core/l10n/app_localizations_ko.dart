@@ -666,6 +666,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get encourageWrong => '괜찮아요, 다음에 잘 풀어요!';
 
   @override
+  String get tapToContinue => '탭하여 계속';
+
+  @override
   String get xpLockedTitle => '성장 기록 잠김';
 
   @override

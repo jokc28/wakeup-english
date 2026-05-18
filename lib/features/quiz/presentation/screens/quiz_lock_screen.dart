@@ -53,6 +53,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   // Feedback overlay state
   bool _showCorrectOverlay = false;
   bool _showWrongShake = false;
+  bool _showLevelUpCelebration = false;
   final _sunnyFeedback = SunnyFeedbackController();
 
   // XP award result (set after quiz completion)
@@ -194,6 +195,12 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                       color: AppColors.quizCorrect.withValues(alpha: 0.15),
                     ),
                   ),
+                ),
+              // Level-up celebration (fullscreen, tap to dismiss)
+              if (_showLevelUpCelebration && _xpResult?.newLevel != null)
+                _LevelUpCelebration(
+                  newLevel: _xpResult!.newLevel!,
+                  onDismiss: () => setState(() => _showLevelUpCelebration = false),
                 ),
               // Confetti
               Align(
@@ -954,9 +961,15 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
           comboBonusXp: session.comboBonusXp,
         );
     if (mounted) {
-      setState(() => _xpResult = result);
+      setState(() {
+        _xpResult = result;
+        if (result.leveledUp) {
+          _showLevelUpCelebration = true;
+        }
+      });
       if (result.leveledUp) {
         _confettiController.play();
+        unawaited(SoundService.instance.play(SfxKind.complete));
       }
     }
   }
@@ -1173,6 +1186,91 @@ class _CountdownPhaseState extends State<_CountdownPhase> {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Fullscreen take-over shown when the user levels up at the end of a quiz.
+/// Big Sunny Excited + level number + "tap to continue" — tap anywhere
+/// dismisses to reveal the standard completion screen below.
+class _LevelUpCelebration extends StatelessWidget {
+  const _LevelUpCelebration({
+    required this.newLevel,
+    required this.onDismiss,
+  });
+
+  final int newLevel;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Positioned.fill(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onDismiss,
+        child: Container(
+          color: Colors.black.withValues(alpha: 0.7),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Sunny(expression: SunnyExpression.excited, size: 220)
+                    .animate()
+                    .scale(
+                      begin: const Offset(0.5, 0.5),
+                      end: const Offset(1, 1),
+                      duration: 500.ms,
+                      curve: Curves.elasticOut,
+                    )
+                    .fadeIn(),
+                const SizedBox(height: 24),
+                Text(
+                  'LEVEL UP!',
+                  style: GoogleFonts.jua(
+                    fontSize: 56,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(
+                        color: Color(0x66000000),
+                        offset: Offset(0, 6),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
+                )
+                    .animate(delay: 200.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideY(begin: 0.3, end: 0),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.levelUpMessage(newLevel),
+                  style: GoogleFonts.jua(
+                    fontSize: 32,
+                    color: AppColors.primaryLight,
+                  ),
+                ).animate(delay: 400.ms).fadeIn(duration: 400.ms),
+                const SizedBox(height: 48),
+                Text(
+                  l10n.tapToContinue,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                )
+                    .animate(
+                      onPlay: (c) => c.repeat(reverse: true),
+                      delay: 800.ms,
+                    )
+                    .fadeIn(duration: 300.ms)
+                    .then(delay: 700.ms)
+                    .fadeOut(duration: 600.ms),
+              ],
             ),
           ),
         ),

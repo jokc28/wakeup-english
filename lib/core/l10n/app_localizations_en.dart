@@ -678,6 +678,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get encourageWrong => 'It\'s okay, you\'ve got the next one!';
 
   @override
+  String get tapToContinue => 'Tap to continue';
+
+  @override
   String get xpLockedTitle => 'Progress Locked';
 
   @override
