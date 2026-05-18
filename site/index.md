@@ -12,7 +12,9 @@ permalink: /
 
 - [개인정보처리방침]({{ '/privacy/' | relative_url }})
 - [이용약관]({{ '/terms/' | relative_url }})
+- [데이터 삭제 안내]({{ '/data-deletion/' | relative_url }})
 
 ## 문의
 
+- [고객지원]({{ '/support/' | relative_url }})
 - 이메일: <secalabs1@gmail.com>

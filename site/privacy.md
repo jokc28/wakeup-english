@@ -56,7 +56,7 @@ permalink: /privacy/
 이용자는 언제든지 다음 권리를 행사할 수 있습니다.
 
 - 단말 내부 데이터는 앱 삭제로 즉시 파기됩니다.
-- 구독 데이터 삭제는 운영자 이메일(<secalabs1@gmail.com>)로 요청하시거나 RevenueCat의 사용자 삭제 API를 통해 처리됩니다.
+- 구독 데이터 삭제는 운영자 이메일(<secalabs1@gmail.com>)로 요청하시거나 RevenueCat의 사용자 삭제 API를 통해 처리됩니다. 자세한 절차는 [데이터 삭제 안내]({{ '/data-deletion/' | relative_url }}) 페이지를 참고해 주세요.
 - 구독 해지는 Google Play / App Store의 구독 관리 메뉴에서 직접 진행할 수 있습니다.
 
 ## 7. 개인정보의 안전성 확보 조치
