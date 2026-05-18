@@ -29,7 +29,7 @@ import '../widgets/speaking_challenge_widget.dart';
 import '../widgets/text_input_widget.dart';
 import '../widgets/word_scramble_widget.dart';
 
-enum LockScreenPhase { alarm, quiz, completed }
+enum LockScreenPhase { alarm, countdown, quiz, completed }
 
 /// Lock screen that appears when alarm fires
 /// User must solve quiz to dismiss the alarm
@@ -98,6 +98,13 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
 
   void _onSlideComplete() {
     HapticFeedback.mediumImpact();
+    setState(() => _phase = LockScreenPhase.countdown);
+  }
+
+  /// Called by the countdown widget once "Go!" has finished animating.
+  void _onCountdownComplete() {
+    if (!mounted) return;
+    HapticFeedback.lightImpact();
     setState(() => _phase = LockScreenPhase.quiz);
   }
 
@@ -210,6 +217,8 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
     switch (_phase) {
       case LockScreenPhase.alarm:
         return _buildAlarmPhase();
+      case LockScreenPhase.countdown:
+        return _CountdownPhase(onComplete: _onCountdownComplete);
       case LockScreenPhase.quiz:
         if (session.questions.isEmpty) return _buildLoading();
         return _buildQuizPhase(session);
@@ -1067,6 +1076,95 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 3-2-1-Go countdown shown between slide-to-start and the first question.
+/// Calls [onComplete] when the "Go" frame finishes.
+class _CountdownPhase extends StatefulWidget {
+  const _CountdownPhase({required this.onComplete});
+  final VoidCallback onComplete;
+
+  @override
+  State<_CountdownPhase> createState() => _CountdownPhaseState();
+}
+
+class _CountdownPhaseState extends State<_CountdownPhase> {
+  // 4 ticks: 3 → 2 → 1 → Go
+  int _index = 0;
+  static const _labels = ['3', '2', '1', 'GO!'];
+  late final List<Timer> _timers;
+
+  @override
+  void initState() {
+    super.initState();
+    HapticFeedback.lightImpact();
+    _timers = [
+      Timer(const Duration(milliseconds: 700), () => _advance(1)),
+      Timer(const Duration(milliseconds: 1400), () => _advance(2)),
+      Timer(const Duration(milliseconds: 2100), () => _advance(3)),
+      Timer(const Duration(milliseconds: 2900), widget.onComplete),
+    ];
+  }
+
+  void _advance(int next) {
+    if (!mounted) return;
+    HapticFeedback.lightImpact();
+    setState(() => _index = next);
+  }
+
+  @override
+  void dispose() {
+    for (final t in _timers) {
+      t.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final label = _labels[_index];
+    return AnimatedBuilder(
+      animation: const AlwaysStoppedAnimation(0),
+      builder: (_, __) => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primaryLight, AppColors.primary],
+          ),
+        ),
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            transitionBuilder: (child, anim) => FadeTransition(
+              opacity: anim,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.7, end: 1).animate(
+                  CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+                ),
+                child: child,
+              ),
+            ),
+            child: Text(
+              label,
+              key: ValueKey(_index),
+              style: GoogleFonts.jua(
+                fontSize: label == 'GO!' ? 140 : 200,
+                color: Colors.white,
+                shadows: const [
+                  Shadow(
+                    color: Color(0x55000000),
+                    offset: Offset(0, 8),
+                    blurRadius: 24,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
