@@ -498,6 +498,12 @@
     }
   },
 
+  "encourageCorrect1": "Nice!",
+  "encourageCorrect2": "Keep going!",
+  "encourageCorrect3": "Fantastic!",
+  "encourageCorrect4": "Perfect streak!",
+  "encourageWrong": "It's okay, you've got the next one!",
+
   "xpLockedTitle": "Progress Locked",
   "xpLockedMessage": "Your trial has ended. XP and progress cannot be saved.",
   "xpLockedSubscribe": "Subscribe to Keep Growing",

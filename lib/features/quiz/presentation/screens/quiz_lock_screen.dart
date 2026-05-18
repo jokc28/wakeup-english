@@ -105,7 +105,11 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
     HapticFeedback.mediumImpact();
     _confettiController.play();
     setState(() => _showCorrectOverlay = true);
-    _sunnyFeedback.showCorrect();
+    final session = ref.read(quizSessionProvider(widget.alarmId));
+    // session.consecutiveCorrect was just incremented for THIS correct answer
+    _sunnyFeedback.showCorrect(
+      message: _encouragementForCombo(session.consecutiveCorrect),
+    );
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) setState(() => _showCorrectOverlay = false);
     });
@@ -114,10 +118,21 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
   void _triggerWrongFeedback() {
     HapticFeedback.heavyImpact();
     setState(() => _showWrongShake = true);
-    _sunnyFeedback.showWrong();
+    final l10n = AppLocalizations.of(context)!;
+    _sunnyFeedback.showWrong(message: l10n.encourageWrong);
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) setState(() => _showWrongShake = false);
     });
+  }
+
+  /// Picks one of 4 escalating encouragement strings based on the current
+  /// consecutive-correct count.
+  String _encouragementForCombo(int combo) {
+    final l10n = AppLocalizations.of(context)!;
+    if (combo >= 7) return l10n.encourageCorrect4;
+    if (combo >= 4) return l10n.encourageCorrect3;
+    if (combo >= 2) return l10n.encourageCorrect2;
+    return l10n.encourageCorrect1;
   }
 
   @override

@@ -1274,6 +1274,36 @@ abstract class AppLocalizations {
   /// **'×{value}'**
   String comboMultiplier(String value);
 
+  /// No description provided for @encourageCorrect1.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice!'**
+  String get encourageCorrect1;
+
+  /// No description provided for @encourageCorrect2.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going!'**
+  String get encourageCorrect2;
+
+  /// No description provided for @encourageCorrect3.
+  ///
+  /// In en, this message translates to:
+  /// **'Fantastic!'**
+  String get encourageCorrect3;
+
+  /// No description provided for @encourageCorrect4.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect streak!'**
+  String get encourageCorrect4;
+
+  /// No description provided for @encourageWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s okay, you\'ve got the next one!'**
+  String get encourageWrong;
+
   /// No description provided for @xpLockedTitle.
   ///
   /// In en, this message translates to:

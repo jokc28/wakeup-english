@@ -663,6 +663,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get encourageCorrect1 => 'Nice!';
+
+  @override
+  String get encourageCorrect2 => 'Keep going!';
+
+  @override
+  String get encourageCorrect3 => 'Fantastic!';
+
+  @override
+  String get encourageCorrect4 => 'Perfect streak!';
+
+  @override
+  String get encourageWrong => 'It\'s okay, you\'ve got the next one!';
+
+  @override
   String get xpLockedTitle => 'Progress Locked';
 
   @override

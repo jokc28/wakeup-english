@@ -651,6 +651,21 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get encourageCorrect1 => '좋아요!';
+
+  @override
+  String get encourageCorrect2 => '잘하고 있어요!';
+
+  @override
+  String get encourageCorrect3 => '환상적이에요!';
+
+  @override
+  String get encourageCorrect4 => '완벽해요!';
+
+  @override
+  String get encourageWrong => '괜찮아요, 다음에 잘 풀어요!';
+
+  @override
   String get xpLockedTitle => '성장 기록 잠김';
 
   @override
