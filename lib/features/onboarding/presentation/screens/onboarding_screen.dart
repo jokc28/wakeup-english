@@ -411,7 +411,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildIconHero(Icons.alarm_on_rounded, muted: true),
+          const Sunny(expression: SunnyExpression.wink, size: 140),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingValueTitle,
@@ -574,7 +574,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildIconHero(Icons.task_alt_rounded),
+          const Sunny(expression: SunnyExpression.excited, size: 160),
           const SizedBox(height: 40),
           Text(
             l10n.onboardingCtaTitle,
