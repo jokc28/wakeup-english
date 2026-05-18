@@ -653,6 +653,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String comboLabel(int count) {
+    return '$count combo';
+  }
+
+  @override
+  String comboMultiplier(String value) {
+    return '×$value';
+  }
+
+  @override
   String get xpLockedTitle => 'Progress Locked';
 
   @override

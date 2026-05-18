@@ -54,6 +54,30 @@ class XpFormula {
     return 1;
   }
 
+  /// Base XP that is awarded per correct answer (base 20 + accuracy 15).
+  /// Combo multipliers apply to this amount.
+  static const int perCorrectBaseXp = 35;
+
+  /// XP multiplier for the current consecutive-correct combo.
+  /// 0–1 → 1x, 2–4 → 1.5x, 5+ → 2x.
+  static double comboMultiplier(int combo) {
+    if (combo >= 5) return 2;
+    if (combo >= 2) return 1.5;
+    return 1;
+  }
+
+  /// Bonus XP awarded for a single correct answer at the given combo value
+  /// (the combo value AT THE TIME of the answer — i.e. after incrementing).
+  /// Returns the extra XP on top of [perCorrectBaseXp] already counted in
+  /// [calculateSessionXp]. Floored to an int so the per-question multiplier
+  /// is rounded down.
+  static int comboBonusForAnswer(int combo) {
+    final multiplier = comboMultiplier(combo);
+    final boosted = (perCorrectBaseXp * multiplier).floor();
+    final bonus = boosted - perCorrectBaseXp;
+    return bonus < 0 ? 0 : bonus;
+  }
+
   /// Calculate total XP earned for a quiz session
   static int calculateSessionXp({
     required int questionCount,

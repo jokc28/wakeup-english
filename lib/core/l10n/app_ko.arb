@@ -217,6 +217,23 @@
     }
   },
 
+  "comboLabel": "{count} 콤보",
+  "@comboLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "comboMultiplier": "×{value}",
+  "@comboMultiplier": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
   "xpLockedTitle": "성장 기록 잠김",
   "xpLockedMessage": "무료 체험이 종료되어 오늘의 학습 경험치(XP)와 성장 기록을 저장할 수 없습니다.",
   "xpLockedSubscribe": "구독하고 계속 성장하기",

@@ -1262,6 +1262,18 @@ abstract class AppLocalizations {
   /// **'Seeded {count} items into DB'**
   String devSeedComplete(int count);
 
+  /// Consecutive-correct combo badge shown on the quiz lock screen
+  ///
+  /// In en, this message translates to:
+  /// **'{count} combo'**
+  String comboLabel(int count);
+
+  /// XP multiplier label, e.g. ×1.5 or ×2
+  ///
+  /// In en, this message translates to:
+  /// **'×{value}'**
+  String comboMultiplier(String value);
+
   /// No description provided for @xpLockedTitle.
   ///
   /// In en, this message translates to:

@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_shape.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
@@ -18,6 +19,7 @@ import '../../../../core/widgets/sunny.dart';
 import '../../../../shared/widgets/sunny_feedback_overlay.dart';
 import '../../../alarm/presentation/providers/alarm_provider.dart';
 import '../../domain/entities/quiz_question.dart';
+import '../../domain/utils/xp_formula.dart';
 import '../providers/level_progress_provider.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/animated_clock_widget.dart';
@@ -344,9 +346,40 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
             animationDuration: 300,
             animateFromLastPercent: true,
           ),
+          if (session.consecutiveCorrect >= 2) ...[
+            const SizedBox(height: 10),
+            _buildComboChip(session.consecutiveCorrect),
+          ],
         ],
       ),
     );
+  }
+
+  Widget _buildComboChip(int combo) {
+    final l10n = AppLocalizations.of(context)!;
+    final multiplier = XpFormula.comboMultiplier(combo);
+    final multiplierLabel =
+        multiplier == multiplier.truncateToDouble()
+            ? multiplier.toStringAsFixed(0)
+            : multiplier.toStringAsFixed(1);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.warning,
+        borderRadius: BorderRadius.circular(AppShape.radiusS),
+      ),
+      child: Text(
+        '🔥 ${l10n.comboLabel(combo)} ${l10n.comboMultiplier(multiplierLabel)}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    )
+        .animate()
+        .fadeIn(duration: 200.ms)
+        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
   }
 
   Widget _buildQuizCard(
@@ -885,6 +918,7 @@ class _QuizLockScreenState extends ConsumerState<QuizLockScreen>
           totalCount: session.questions.length,
           newMasteryCount: session.newMasteryCount,
           streakDays: streak.currentStreak,
+          comboBonusXp: session.comboBonusXp,
         );
     if (mounted) {
       setState(() => _xpResult = result);

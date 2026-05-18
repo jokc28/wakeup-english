@@ -7,6 +7,7 @@ import '../../../alarm/data/repositories/alarm_repository.dart';
 import '../../data/repositories/quiz_repository.dart';
 import '../../data/repositories/vocabulary_repository.dart';
 import '../../domain/entities/quiz_question.dart';
+import '../../domain/utils/xp_formula.dart';
 import 'level_progress_provider.dart';
 
 part 'quiz_provider.g.dart';
@@ -21,6 +22,8 @@ class QuizSessionState {
   final String? selectedAnswer;
   final bool showingResult;
   final int newMasteryCount; // Items newly mastered this session
+  final int consecutiveCorrect; // Current consecutive-correct combo
+  final int comboBonusXp; // Accumulated XP bonus earned via combo multipliers
 
   const QuizSessionState({
     this.questions = const [],
@@ -31,6 +34,8 @@ class QuizSessionState {
     this.selectedAnswer,
     this.showingResult = false,
     this.newMasteryCount = 0,
+    this.consecutiveCorrect = 0,
+    this.comboBonusXp = 0,
   });
 
   QuizQuestion? get currentQuestion {
@@ -53,6 +58,8 @@ class QuizSessionState {
     String? selectedAnswer,
     bool? showingResult,
     int? newMasteryCount,
+    int? consecutiveCorrect,
+    int? comboBonusXp,
   }) {
     return QuizSessionState(
       questions: questions ?? this.questions,
@@ -63,6 +70,8 @@ class QuizSessionState {
       selectedAnswer: selectedAnswer,
       showingResult: showingResult ?? this.showingResult,
       newMasteryCount: newMasteryCount ?? this.newMasteryCount,
+      consecutiveCorrect: consecutiveCorrect ?? this.consecutiveCorrect,
+      comboBonusXp: comboBonusXp ?? this.comboBonusXp,
     );
   }
 }
@@ -180,6 +189,8 @@ class QuizSession extends _$QuizSession {
       isCompleted: false,
       startTime: DateTime.now(),
       newMasteryCount: 0,
+      consecutiveCorrect: 0,
+      comboBonusXp: 0,
     );
   }
 
@@ -220,12 +231,22 @@ class QuizSession extends _$QuizSession {
       );
     }
 
+    // Update combo + accumulated combo bonus XP.
+    // Correct answer: bump combo first so the multiplier applies to the
+    // current answer ("AT THE TIME OF THE CORRECT ANSWER").
+    // Wrong answer: combo resets to 0.
+    final newCombo = isCorrect ? state.consecutiveCorrect + 1 : 0;
+    final addedBonus =
+        isCorrect ? XpFormula.comboBonusForAnswer(newCombo) : 0;
+
     // Show result
     state = state.copyWith(
       selectedAnswer: answer,
       showingResult: true,
       answers: [...state.answers, isCorrect],
       newMasteryCount: state.newMasteryCount + (newlyMastered ? 1 : 0),
+      consecutiveCorrect: newCombo,
+      comboBonusXp: state.comboBonusXp + addedBonus,
     );
 
     return isCorrect;
@@ -250,6 +271,7 @@ class QuizSession extends _$QuizSession {
           answers: [],
           showingResult: false,
           startTime: DateTime.now(),
+          consecutiveCorrect: 0,
         );
         return;
       }

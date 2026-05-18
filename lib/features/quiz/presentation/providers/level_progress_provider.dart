@@ -115,13 +115,18 @@ class LevelProgressNotifier extends StateNotifier<LevelProgressState> {
     required int totalCount,
     required int newMasteryCount,
     required int streakDays,
+    int comboBonusXp = 0,
   }) async {
-    final xpEarned = XpFormula.calculateSessionXp(
+    final sessionXp = XpFormula.calculateSessionXp(
       questionCount: totalCount,
       correctCount: correctCount,
       streakDays: streakDays,
       newMasteryCount: newMasteryCount,
     );
+    // Combo bonus is added on top of the session XP. It is already computed
+    // per-question (at the time of each correct answer) and is not affected
+    // by the streak multiplier, so add it after the streak math.
+    final xpEarned = sessionXp + comboBonusXp;
 
     final progress = await _db.getUserLevelProgress();
     final newTotalXp = progress.totalXp + xpEarned;

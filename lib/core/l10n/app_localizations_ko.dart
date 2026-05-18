@@ -641,6 +641,16 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String comboLabel(int count) {
+    return '$count 콤보';
+  }
+
+  @override
+  String comboMultiplier(String value) {
+    return '×$value';
+  }
+
+  @override
   String get xpLockedTitle => '성장 기록 잠김';
 
   @override

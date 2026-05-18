@@ -479,6 +479,25 @@
     }
   },
 
+  "comboLabel": "{count} combo",
+  "@comboLabel": {
+    "description": "Consecutive-correct combo badge shown on the quiz lock screen",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "comboMultiplier": "×{value}",
+  "@comboMultiplier": {
+    "description": "XP multiplier label, e.g. ×1.5 or ×2",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
   "xpLockedTitle": "Progress Locked",
   "xpLockedMessage": "Your trial has ended. XP and progress cannot be saved.",
   "xpLockedSubscribe": "Subscribe to Keep Growing",
