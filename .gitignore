@@ -54,3 +54,4 @@ app.*.map.json
 
 # Generated store screenshots (regenerated via scripts/capture-screenshots.sh)
 /dist/
+.superpowers/
